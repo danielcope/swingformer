@@ -1,0 +1,11 @@
+# Godot 4+ specific ignores
+.godot/
+/android/
+
+# Godot export artifacts
+/build/
+/export/
+*.translation
+
+# Claude Code machine-local settings
+.claude/settings.local.json

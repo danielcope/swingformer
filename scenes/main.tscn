@@ -1,0 +1,125 @@
+[gd_scene load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://scripts/game.gd" id="1_game"]
+[ext_resource type="Script" path="res://scripts/background.gd" id="2_bg"]
+[ext_resource type="Script" path="res://scripts/level_generator.gd" id="3_gen"]
+[ext_resource type="PackedScene" path="res://scenes/player.tscn" id="4_player"]
+[ext_resource type="Script" path="res://scripts/follow_camera.gd" id="5_cam"]
+[ext_resource type="Script" path="res://scripts/hud.gd" id="6_hud"]
+
+[node name="Main" type="Node2D"]
+script = ExtResource("1_game")
+
+[node name="Background" type="CanvasLayer" parent="."]
+layer = -10
+
+[node name="Sky" type="Control" parent="Background"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("2_bg")
+
+[node name="LevelGenerator" type="Node2D" parent="."]
+script = ExtResource("3_gen")
+
+[node name="Player" parent="." instance=ExtResource("4_player")]
+
+[node name="FollowCamera" type="Camera2D" parent="."]
+script = ExtResource("5_cam")
+
+[node name="UI" type="CanvasLayer" parent="."]
+
+[node name="HUD" type="Control" parent="UI"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("6_hud")
+
+[node name="Stats" type="VBoxContainer" parent="UI/HUD"]
+offset_left = 24.0
+offset_top = 18.0
+offset_right = 400.0
+offset_bottom = 160.0
+theme_override_constants/separation = 2
+
+[node name="Distance" type="Label" parent="UI/HUD/Stats"]
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.6)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+theme_override_font_sizes/font_size = 44
+text = "0 m"
+
+[node name="Best" type="Label" parent="UI/HUD/Stats"]
+theme_override_colors/font_color = Color(1, 0.95, 0.75, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.6)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+theme_override_font_sizes/font_size = 20
+text = "best  0 m"
+
+[node name="Orbs" type="Label" parent="UI/HUD/Stats"]
+theme_override_colors/font_color = Color(1, 0.88, 0.4, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.6)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+theme_override_font_sizes/font_size = 20
+text = "orbs  0  (best 0)"
+
+[node name="Speed" type="Label" parent="UI/HUD/Stats"]
+theme_override_colors/font_color = Color(0.8, 0.9, 1, 0.7)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.6)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+theme_override_font_sizes/font_size = 16
+text = "0"
+
+[node name="Hint" type="Label" parent="UI/HUD"]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -420.0
+offset_top = -110.0
+offset_right = 420.0
+offset_bottom = -30.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_colors/font_color = Color(1, 1, 1, 0.85)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.6)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+theme_override_font_sizes/font_size = 20
+text = "SPACE / CLICK  grab + release        A D  pump the swing        W S  reel rope        R  restart"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Dead" type="Label" parent="UI/HUD"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -300.0
+offset_top = -60.0
+offset_right = 300.0
+offset_bottom = 60.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 0.9, 0.9, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.7)
+theme_override_constants/shadow_offset_x = 3
+theme_override_constants/shadow_offset_y = 3
+theme_override_font_sizes/font_size = 40
+text = "you fell
+
+press SPACE to run again"
+horizontal_alignment = 1
+vertical_alignment = 1
