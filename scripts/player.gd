@@ -1,56 +1,78 @@
 class_name Player
 extends CharacterBody2D
 
-## The swinger. Two states:
+## The climber. Two states:
 ##
-##   FREE     - ballistic projectile. Gravity + weak air control.
-##   SWINGING - attached to a Vine. Position is driven by pendulum
-##              integration around the vine's anchor, NOT by velocity.
+##   FREE     - ballistic, or walking if it happens to be standing on rock.
+##   SWINGING - attached to a Vine. Position is driven by pendulum integration
+##              around the anchor, NOT by velocity.
 ##
-## Everything about the swing is hand-integrated rather than done with a
-## RigidBody2D + PinJoint2D. That costs us a bit of realism and buys total
-## control over the feel: we can pump, reel, clamp and boost without fighting
-## the physics solver.
+## There is no death state and no kill(). Falling is not failure, it is just
+## movement -- you fall until a ledge happens to catch you, and you carry on
+## from wherever that is. Removing the respawn is what makes the fall hurt.
 
 enum State { FREE, SWINGING }
 
 signal grabbed(vine: Vine)
 signal released(vine: Vine, launch_speed: float)
-signal died
+signal knocked_off(impact_speed: float)
+signal landed(fall_distance: float)
 
 # --- Free flight -------------------------------------------------------------
 @export_group("Free flight")
 @export var gravity: float = 1500.0
-@export var air_control: float = 420.0      ## px/s^2 of horizontal nudge
-@export var max_fall_speed: float = 1600.0
+## Deliberately weak. You commit to a swing at the moment you release; you do
+## not get to steer your way out of a bad launch.
+@export var air_control: float = 260.0
+@export var max_air_speed: float = 520.0   ## cap on air-control-added horizontal
+@export var max_fall_speed: float = 1900.0
+
+# --- Ground ------------------------------------------------------------------
+@export_group("Ground")
+## Walking exists only so a botched landing is recoverable, not as a way to
+## make progress. Keep it slow.
+@export var ground_speed: float = 210.0
+@export var ground_accel: float = 1400.0
+@export var ground_friction: float = 1600.0
+## Sets the recovery envelope: a standing jump rises v^2/2g (about 203px) and
+## grab_reach adds another 200, so anything within ~400px overhead can be
+## retrieved from a standstill. Ledges and the opening anchor are placed inside
+## that envelope -- at 700 this was 163+200, and the first vine sat 203px away,
+## unreachable by three pixels.
+@export var jump_velocity: float = 780.0
 
 # --- Rope --------------------------------------------------------------------
 @export_group("Rope")
-@export var max_rope_length: float = 300.0  ## also the grab reach
+## How far you can be from an anchor and still grab it. Deliberately much
+## shorter than max_rope_length: reach is the precision knob, rope length is
+## the physics knob. Coupling them (as the endless-runner build did) makes the
+## game far more forgiving than intended.
+@export var grab_reach: float = 200.0
+@export var max_rope_length: float = 320.0
 @export var min_rope_length: float = 70.0
-@export var reel_speed: float = 220.0       ## px/s while holding up/down
+@export var reel_speed: float = 230.0
 
 # --- Swing -------------------------------------------------------------------
 @export_group("Swing")
-## Angular acceleration added by holding left/right. This is the "pump".
-@export var pump_accel: float = 4.5
-@export var swing_damping: float = 0.35     ## fraction of angular vel bled per second
-@export var max_angular_speed: float = 6.0  ## rad/s
-## Extra multiplier on launch velocity when you let go. >1 feels arcade-good.
-@export var release_boost: float = 1.12
-## Straight-up impulse added on release, so letting go always gains a little air.
-@export var release_lift: float = 120.0
+## Must exceed gravity's restoring torque at full rope (g / max_rope_length,
+## about 4.7) or the swing physically cannot be driven past horizontal -- and
+## horizontal is exactly where you need to be to launch upward.
+@export var pump_accel: float = 6.5
+@export var swing_damping: float = 0.32
+@export var max_angular_speed: float = 6.0
+@export var release_boost: float = 1.05
+## No free lift on release. In the runner build this papered over sloppy
+## timing; here the launch must come entirely from the swing you built.
+@export var release_lift: float = 0.0
 
 # --- Grabbing ----------------------------------------------------------------
 @export_group("Grabbing")
-## A vine must be at least this far above the player to be grabbable.
-@export var min_grab_height: float = 24.0
-## Seconds after releasing a vine before that same vine can be grabbed again.
-@export var regrab_lockout: float = 0.35
-## Holding a direction biases vine selection that way, in pixels of "discount".
-@export var aim_bias: float = 140.0
-## If you press swing slightly before a vine is in reach, we remember the press.
-@export var grab_buffer_time: float = 0.15
+@export var min_grab_height: float = 16.0
+@export var regrab_lockout: float = 0.30
+## Soft aim assist. Much smaller than the runner build -- you are expected to
+## actually be near the vine.
+@export var aim_bias: float = 55.0
+@export var grab_buffer_time: float = 0.12
 
 var state: State = State.FREE
 var current_vine: Vine = null
@@ -60,22 +82,18 @@ var rope_length: float = 0.0
 var angle: float = 0.0
 var angular_velocity: float = 0.0
 
+var peak_height: float = 0.0   ## most negative y reached since last landing
+
 var _last_vine: Vine = null
 var _lockout_timer: float = 0.0
 var _grab_buffer: float = 0.0
-var _alive: bool = true
+var _was_on_floor: bool = false
+var _fall_start_y: float = 0.0
 
-@onready var _sprite_radius: float = 14.0
-
-
-func _ready() -> void:
-	set_physics_process(true)
+const SPRITE_RADIUS := 14.0
 
 
 func _physics_process(delta: float) -> void:
-	if not _alive:
-		return
-
 	_lockout_timer = maxf(0.0, _lockout_timer - delta)
 	_grab_buffer = maxf(0.0, _grab_buffer - delta)
 
@@ -91,24 +109,58 @@ func _physics_process(delta: float) -> void:
 		State.SWINGING:
 			_process_swinging(delta)
 
+	peak_height = minf(peak_height, global_position.y)
 	queue_redraw()
 
 
 # -----------------------------------------------------------------------------
-# FREE
+# FREE  (airborne or standing)
 # -----------------------------------------------------------------------------
 func _process_free(delta: float) -> void:
 	var dir := Input.get_axis("move_left", "move_right")
-	velocity.x += dir * air_control * delta
-	velocity.y = minf(velocity.y + gravity * delta, max_fall_speed)
+	var on_floor := is_on_floor()
+
+	if on_floor:
+		if dir != 0.0:
+			velocity.x = move_toward(velocity.x, dir * ground_speed, ground_accel * delta)
+		else:
+			velocity.x = move_toward(velocity.x, 0.0, ground_friction * delta)
+		if Input.is_action_just_pressed("reel_in"):
+			velocity.y = -jump_velocity
+	else:
+		# Air control cannot push you past max_air_speed, but it also never
+		# slows you below it -- a fast launch stays fast.
+		var target := velocity.x + dir * air_control * delta
+		if absf(target) <= max_air_speed or signf(target) != signf(dir):
+			velocity.x = target
+		velocity.y = minf(velocity.y + gravity * delta, max_fall_speed)
 
 	move_and_slide()
-	rotation = lerp_angle(rotation, clampf(velocity.x / 900.0, -0.6, 0.6), 10.0 * delta)
+
+	if on_floor:
+		rotation = lerp_angle(rotation, 0.0, 12.0 * delta)
+	else:
+		rotation = lerp_angle(rotation, clampf(velocity.x / 900.0, -0.6, 0.6), 8.0 * delta)
+
+	_track_landing(on_floor)
 
 	if _grab_buffer > 0.0:
 		var vine := _find_best_vine()
 		if vine:
 			attach_to(vine)
+
+
+## Reports how far you fell, so the HUD can tell you what the fall cost.
+func _track_landing(on_floor: bool) -> void:
+	if not on_floor:
+		if _was_on_floor or velocity.y <= 0.0:
+			_fall_start_y = minf(_fall_start_y, global_position.y)
+		if _was_on_floor:
+			_fall_start_y = global_position.y
+	elif not _was_on_floor:
+		landed.emit(maxf(0.0, global_position.y - _fall_start_y))
+		_fall_start_y = global_position.y
+	_was_on_floor = on_floor
 
 
 # -----------------------------------------------------------------------------
@@ -121,17 +173,30 @@ func _process_swinging(delta: float) -> void:
 
 	var anchor := current_vine.global_position
 
-	# Reel the rope in/out. Shortening at the bottom of the arc and letting out
-	# at the top is the physically correct way to gain height -- but we do not
-	# conserve angular momentum here, because doing so makes reeling in feel
-	# like a slingshot. Keeping it simple reads better.
 	var reel := Input.get_axis("reel_in", "reel_out")
 	if reel != 0.0:
+		var old_length := rope_length
 		rope_length = clampf(
 			rope_length + reel * reel_speed * delta, min_rope_length, max_rope_length
 		)
+		if rope_length != old_length:
+			# Conserve angular momentum (L^2 * w): rope tension acts along the
+			# radius, so it exerts no torque about the anchor. Hauling yourself
+			# in therefore spins you up, and letting out slows you down.
+			#
+			# The runner build deliberately skipped this and treated reeling as
+			# pure repositioning. That was wrong for a climbing game: it made
+			# the reel a no-op mechanically, and it killed the one technique
+			# that rewards timing. With conservation, reeling in at the BOTTOM
+			# of the arc and out at the extremes is a real energy pump -- the
+			# playground-swing trick -- and getting the timing wrong bleeds
+			# energy instead of adding it.
+			angular_velocity = clampf(
+				angular_velocity * pow(old_length / rope_length, 2.0),
+				-max_angular_speed,
+				max_angular_speed
+			)
 
-	# Pendulum: angular acceleration from gravity, plus the player's pump.
 	var pump := Input.get_axis("move_left", "move_right")
 	var angular_accel := -(gravity / rope_length) * sin(angle) + pump * pump_accel
 
@@ -140,12 +205,21 @@ func _process_swinging(delta: float) -> void:
 	angular_velocity = clampf(angular_velocity, -max_angular_speed, max_angular_speed)
 	angle += angular_velocity * delta
 
-	global_position = anchor + Vector2(sin(angle), cos(angle)) * rope_length
+	# Move along the arc with collision rather than teleporting. Swinging into
+	# rock knocks you off the vine -- the shaft is an obstacle course, not a
+	# backdrop, and a greedy long rope will smash you into a ledge.
+	var target := anchor + Vector2(sin(angle), cos(angle)) * rope_length
+	var hit := move_and_collide(target - global_position)
 
-	# Keep velocity in sync so the transition to FREE (and the camera, and any
-	# code reading velocity) is seamless.
 	velocity = _tangent() * angular_velocity * rope_length
 	rotation = angle
+
+	if hit:
+		var impact := velocity.length()
+		release()
+		velocity = velocity.bounce(hit.get_normal()) * 0.45
+		knocked_off.emit(impact)
+		return
 
 	if _grab_buffer > 0.0:
 		var vine := _find_best_vine()
@@ -154,7 +228,9 @@ func _process_swinging(delta: float) -> void:
 			attach_to(vine)
 
 
-## Unit vector pointing along the direction of travel around the circle.
+## Unit vector along the direction of travel around the circle. At angle = 90
+## degrees this is (0, -1) -- straight up, which is why a horizontal rope is
+## the optimal release point.
 func _tangent() -> Vector2:
 	return Vector2(cos(angle), -sin(angle))
 
@@ -167,9 +243,8 @@ func attach_to(vine: Vine) -> void:
 	rope_length = clampf(offset.length(), min_rope_length, max_rope_length)
 	angle = atan2(offset.x, offset.y)
 
-	# Project current linear velocity onto the tangent so we keep our momentum
-	# instead of snapping to a dead stop. The radial component is absorbed by
-	# the rope, which is exactly what a real rope does.
+	# Project linear velocity onto the tangent; the radial component is
+	# absorbed by the rope, exactly as a real rope does.
 	angular_velocity = clampf(
 		velocity.dot(_tangent()) / rope_length, -max_angular_speed, max_angular_speed
 	)
@@ -177,6 +252,7 @@ func attach_to(vine: Vine) -> void:
 	state = State.SWINGING
 	current_vine = vine
 	_grab_buffer = 0.0
+	_was_on_floor = false
 	vine.on_grabbed(self)
 	grabbed.emit(vine)
 
@@ -187,6 +263,7 @@ func release() -> void:
 
 	velocity = _tangent() * angular_velocity * rope_length * release_boost
 	velocity.y -= release_lift
+	_fall_start_y = global_position.y
 
 	if is_instance_valid(current_vine):
 		current_vine.on_released()
@@ -201,9 +278,6 @@ func release() -> void:
 # -----------------------------------------------------------------------------
 # Vine selection
 # -----------------------------------------------------------------------------
-## Scores every nearby vine and returns the most appealing one, or null.
-## Lower score wins. Score is distance, discounted for being in the direction
-## the player is holding -- so the stick is a soft aim, not a hard filter.
 func _find_best_vine() -> Vine:
 	var best: Vine = null
 	var best_score: float = INF
@@ -218,9 +292,9 @@ func _find_best_vine() -> Vine:
 
 		var offset := vine.global_position - global_position
 		if offset.y > -min_grab_height:
-			continue  # at or below us -- you cannot swing from that
+			continue  # at or below us -- nothing to swing from
 		var dist := offset.length()
-		if dist > max_rope_length:
+		if dist > grab_reach:
 			continue
 
 		var score := dist
@@ -233,28 +307,32 @@ func _find_best_vine() -> Vine:
 	return best
 
 
-# -----------------------------------------------------------------------------
-# Life cycle
-# -----------------------------------------------------------------------------
-func kill() -> void:
-	if not _alive:
-		return
-	_alive = false
-	release()
-	velocity = Vector2.ZERO
-	died.emit()
+## Nearest grabbable vine regardless of reach, for the HUD's proximity ring.
+func nearest_vine_distance() -> float:
+	var best := INF
+	for node in get_tree().get_nodes_in_group("vines"):
+		var vine := node as Vine
+		if vine == null or not vine.grabbable:
+			continue
+		var offset := vine.global_position - global_position
+		if offset.y > -min_grab_height:
+			continue
+		best = minf(best, offset.length())
+	return best
 
 
 func reset_at(pos: Vector2) -> void:
-	_alive = true
 	state = State.FREE
 	current_vine = null
 	_last_vine = null
 	_lockout_timer = 0.0
 	_grab_buffer = 0.0
+	_was_on_floor = false
 	velocity = Vector2.ZERO
 	rotation = 0.0
 	global_position = pos
+	_fall_start_y = pos.y
+	peak_height = pos.y
 
 
 # -----------------------------------------------------------------------------
@@ -264,12 +342,10 @@ func _draw() -> void:
 	var body := Color(0.98, 0.82, 0.32)
 	var outline := Color(0.15, 0.11, 0.08)
 
-	draw_circle(Vector2.ZERO, _sprite_radius, body)
-	draw_arc(Vector2.ZERO, _sprite_radius, 0.0, TAU, 24, outline, 2.5, true)
-	# A little nose so rotation is readable at a glance.
-	draw_line(Vector2(0, -_sprite_radius), Vector2(0, -_sprite_radius - 8.0), outline, 3.0)
+	draw_circle(Vector2.ZERO, SPRITE_RADIUS, body)
+	draw_arc(Vector2.ZERO, SPRITE_RADIUS, 0.0, TAU, 24, outline, 2.5, true)
+	draw_line(Vector2(0, -SPRITE_RADIUS), Vector2(0, -SPRITE_RADIUS - 8.0), outline, 3.0)
 
 	if state == State.SWINGING:
-		# Arms up toward the anchor (which is straight "up" in local space).
-		draw_line(Vector2(-6, -4), Vector2(-3, -_sprite_radius - 4), outline, 3.0)
-		draw_line(Vector2(6, -4), Vector2(3, -_sprite_radius - 4), outline, 3.0)
+		draw_line(Vector2(-6, -4), Vector2(-3, -SPRITE_RADIUS - 4), outline, 3.0)
+		draw_line(Vector2(6, -4), Vector2(3, -SPRITE_RADIUS - 4), outline, 3.0)

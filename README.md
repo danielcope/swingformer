@@ -1,92 +1,127 @@
 # swingformer
 
-A 2D side-scrolling vine-swinger, scaled up from a minigame into an endless run.
-Godot 4.7, mobile renderer. No art assets — everything is drawn procedurally so
-the feel can be tuned before anything gets locked into sprites.
-
-Run it: open the project and hit F5, or
+A Foddian vine-swinging climber. One shaft, straight up, no checkpoints and no
+respawn. Godot 4.7, no art assets — everything is drawn procedurally so the feel
+can be tuned before anything gets locked into sprites.
 
 ```bash
-godot --path . 
+godot --path .
 ```
 
-**Controls** — `Space`/`Click` grab & release · `A`/`D` pump the swing · `W`/`S` reel the rope in/out · `R` restart
+**Controls** — `Space`/`Click` grab & release · `A`/`D` pump the swing · `W`/`S`
+reel the rope in/out (`W` jumps when standing)
 
-## How the swing works
+## The one thing to understand
 
-The swing is **hand-integrated, not a physics joint**. A `RigidBody2D` on a
-`PinJoint2D` is the obvious approach and it is the wrong one here: the solver
-fights you every time you want to pump, clamp, boost, or reel, and the feel ends
-up hostage to the physics tick.
+Solving the release physics (`test/ascent_envelope.gd`) gives the whole game:
 
-Instead `Player` has two states:
+| rope | ω=4 | ω=5 | ω=6 |
+|---|---|---|---|
+| 180 | **−7** | +90 | +209 |
+| 250 | +83 | +271 | **+500** |
 
-- **FREE** — a plain ballistic projectile. Gravity, weak air control, `move_and_slide`.
-- **SWINGING** — position is *derived* from a pendulum integrated around the
-  vine anchor. `velocity` is kept in sync every frame so the handoff back to
-  FREE is seamless.
+The optimal release is always at **90° — rope horizontal, tangent pointing
+straight up**. Pump until the rope swings level, let go, rocket. And the height
+you gain is brutally sensitive to how well you pumped: a sloppy swing on a short
+rope gains *nothing*, a fully-pumped long one gains 500px.
 
-The two conversions that make it feel right are in `attach_to()` and `release()`:
+There is a second, tighter rule that falls out of the same maths: releasing at
+90° with only just enough energy to have reached 90° gains **exactly one rope
+length**. So the rope wants to be about as long as the climb ahead. Reeling is
+not a garnish, it is how you aim.
 
-- On grab, current linear velocity is **projected onto the tangent**. The radial
-  component is discarded — which is exactly what a real rope does — so you keep
-  your momentum instead of snapping to a dead stop.
-- On release, angular velocity converts back to linear (`ω · L` along the
-  tangent), times `release_boost`, plus a little straight-up `release_lift` so
-  letting go always buys some air.
+## Design rules this build commits to
 
-Vine selection (`_find_best_vine`) scores candidates by distance and *discounts*
-whichever side you are holding, so the direction keys act as a soft aim rather
-than a hard filter. Vines at or below you are rejected outright.
+**Falling is not failure, it is movement.** There is no death state, no respawn
+and no restart — `kill()` does not exist. You fall until something catches you
+and carry on from wherever that is. Removing the respawn is the entire reason a
+fall hurts.
+
+**Checkpoints are geometry, not state.** Nothing is ever saved. A "checkpoint"
+is a *bough* — a slab wide enough that a fall probably lands on it — placed
+every 4th tier. Narrow ledges in between are a coin flip. Boughs have a **gap**
+in them: a solid slab would catch every fall but would also wall off the ascent,
+so the gap is both the way up and the only way a fall gets past.
+
+**Ledges are one-way.** This is load-bearing, not a convention. Ledges sit on a
+tier grid that knows nothing about where the vine arcs are, so solid ones park
+themselves inside the only available swing and knock you off before you can
+build amplitude. One-way lets an ascending swing pass through while a fall still
+lands on top. The shaft *walls* stay solid, so swinging into rock is still
+punished — `_process_swinging` moves along the arc with `move_and_collide`
+rather than teleporting, and a hit knocks you off the vine.
+
+**The tower is never culled.** Generation is upward-only and nothing is ever
+freed. This is a hard requirement, not laziness: a fall has to be able to
+traverse the whole tower, so every ledge below you must still exist. Node counts
+stay trivial — a 200-tier climb is a few hundred static bodies.
 
 ## Layout
 
 | File | Role |
 |---|---|
-| `scripts/player.gd` | State machine + pendulum. **Most of the feel lives here.** |
-| `scripts/vine.gd` | Anchor point. Rope is lagged points that lerp toward taut — that lag is why it reads as rope and not a stick. |
-| `scripts/level_generator.gd` | Endless rolling window: spawns ahead, culls behind. |
-| `scripts/follow_camera.gd` | Velocity lookahead + speed-based zoom out. |
-| `scripts/background.gd` | Procedural parallax ridges, screen space. |
-| `scripts/game.gd` | Run controller: score, death, restart. |
-| `test/autopilot.gd` | Headless reachability harness (see below). |
+| `scripts/player.gd` | FREE/SWINGING state machine + pendulum. **Most of the feel is here.** |
+| `scripts/tower_generator.gd` | The shaft: vine chain, tiers, ledges, boughs, walls. |
+| `scripts/ledge.gd` | Physical checkpoint. One-way. |
+| `scripts/biome.gd` | Height-keyed palette, so altitude is legible without reading the number. |
+| `scripts/follow_camera.gd` | Vertical chase; follows falls harder than climbs. |
+| `scripts/game.gd` | Height, high-water mark, fall reporting. |
 
-The canopy height is a **pure function of x** (layered sines, seeded per run)
-rather than a random walk. That is deliberate: it means `death_y(x)` can be
-answered for any x without having generated anything there yet.
+The swing is **hand-integrated, not a `PinJoint2D`**. The solver fights you every
+time you want to pump, clamp or reel. Two conversions do the work: on grab,
+linear velocity is projected onto the tangent and the radial component discarded
+(what a real rope does); on release it converts back, `ω · L` along the tangent.
+Reeling **conserves angular momentum** (`L²ω`), so hauling in spins you up and
+letting out slows you down.
 
 ## Tuning
 
-Everything below is an `@export`, so it is live in the inspector.
+All `@export`, live in the inspector.
 
-**Feel** (`Player`): `pump_accel` is how hard the swing responds to input;
-`swing_damping` is how fast a swing dies if you stop pumping; `release_boost`
-and `release_lift` are the arcade knobs — raise them if the game feels sluggish.
-`max_rope_length` doubles as your grab reach, so raising it makes the game
-noticeably more forgiving in two ways at once.
+`Player.pump_accel` must stay above `gravity / max_rope_length` (~4.7) or the
+swing physically cannot be driven past horizontal — and horizontal is where the
+launch is. `jump_velocity` sets the recovery envelope: a standing jump plus
+`grab_reach` is ~400px, and the opening anchor must sit inside it. (At 700 it
+did not, by three pixels, and the game was unwinnable from the floor.)
 
-**Difficulty** (`LevelGenerator`): `gap_start` → `gap_hard` is the anchor spacing
-ramp and is the single biggest lever. `ramp_distance` (default 14000 px ≈ 218 m)
-is how long the ramp takes.
+`TowerGenerator.rise_easy`/`rise_hard` is the difficulty ramp and the biggest
+lever. `bough_every` is how forgiving the climb is. `anchor_margin` must exceed
+`max_rope_length` or swings scrape the walls near the shaft edges.
 
-### Checking that the course is still beatable
-
-`test/autopilot.gd` drives the real player with synthetic input using a crude
-"pump forward, let go past the bottom of the arc" policy. It is not an AI — it
-is a reachability check on the generator numbers. If a dumb bot cannot chain
-vines, the spacing is too mean; if it never dies, it is too kind.
+## Harnesses
 
 ```bash
-godot --headless --path . res://test/autopilot.tscn --quit-after 20000
+godot --headless --path . --script res://test/ascent_envelope.gd
+godot --headless --path . res://test/ledge_catch.tscn --quit-after 900
+godot --headless --path . res://test/autopilot.tscn --quit-after 10000
 ```
 
-Current baseline: **5 deaths, avg 279 m, peak 441 m**. Most runs die past the
-end of the difficulty ramp, which is what you want.
+- **ascent_envelope** — solves the release physics. Re-run after changing
+  gravity, rope limits or the angular clamp; the tower's rise numbers are
+  derived from it.
+- **ledge_catch** — drops a real player onto a real ledge at 400–2400px/s.
+  Guards against tunnelling, so "physical checkpoints" cannot silently stop
+  existing exactly when a fall is bad enough to need them. (Currently all
+  speeds are caught.)
+- **autopilot** — climbs the tower with synthetic input, sizing each swing to
+  the gap ahead. Add `--  --dump-ledges` to audit per-tier coverage.
+
+**What autopilot does and does not prove.** It is a reachability check, not a
+skill benchmark. It has perfect timing but a rigid policy — it cannot aim, and
+it releases in a fixed angular window. It currently peaks between roughly 10m
+and 50m depending on the tower, which confirms the shaft is climbable and that
+boughs catch falls; it is *not* evidence about where a human tops out. Treat a
+bot that cannot leave the floor as a red flag and a bot that climbs forever as
+a sign the tower has gone soft.
+
+Its per-tier coverage audit is the more reliable signal, and it caught a real
+bug: independently-drawn ledge positions clump (two ledges 60px apart, both on
+the same side, reporting "29% coverage" over an open chute), so ledges are now
+banded across the shaft.
 
 ## Next up
 
-- Terrain and hazards — the player already has `collision_mask = 1` for a world
-  layer that nothing occupies yet.
-- Swing-through-and-regrab chains, wall bounces, moving anchors.
-- Replace the `_draw` placeholders with sprites; the parallax `LAYERS` array is
-  built to swap one-for-one with textures.
+- Hazards, moving anchors, ropes that fray or detach under load.
+- Wind or swaying anchors at altitude, to make the upper biomes bite.
+- Replace the `_draw` placeholders with sprites; `background.gd`'s `LAYERS`
+  array is built to swap one-for-one with textures.

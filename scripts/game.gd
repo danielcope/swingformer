@@ -1,82 +1,59 @@
 extends Node2D
 
-## Run controller: wires the pieces together, owns the score, and handles
-## death / restart.
+## Climb controller.
+##
+## There is no run, no death and no restart, so this is much thinner than the
+## endless-runner version. It tracks two numbers -- where you are and the
+## highest you have ever been -- and the gap between them is the whole story.
+## `best_height` never decreases. That is the scar.
 
-const START_ANGLE := -0.6  ## start pulled back a little so the first swing is free
+const PX_PER_M := 64.0
 
 @onready var player: Player = $Player
-@onready var generator: LevelGenerator = $LevelGenerator
+@onready var tower: TowerGenerator = $TowerGenerator
 @onready var camera: FollowCamera = $FollowCamera
 @onready var hud: HUD = $UI/HUD
 @onready var background = $Background/Sky
 
-var distance: float = 0.0
-var best_distance: float = 0.0
-var orbs: int = 0
-var best_orbs: int = 0
-var running: bool = false
-
-var _death_delay: float = 0.0
+var height: float = 0.0        ## metres above the floor, current
+var best_height: float = 0.0   ## metres, high-water mark for the session
+var last_fall: float = 0.0     ## metres lost in the most recent landing
 
 
 func _ready() -> void:
 	camera.set_target(player)
 	background.set_camera(camera)
-	generator.orb_collected.connect(_on_orb_collected)
-	player.died.connect(_on_player_died)
-	start_run()
-
-
-func start_run() -> void:
-	distance = 0.0
-	orbs = 0
-	_death_delay = 0.0
-	running = true
-
-	var first := generator.reset()
-	var anchor := first.global_position
-	var rope: float = first.length
-
-	player.reset_at(anchor + Vector2(sin(START_ANGLE), cos(START_ANGLE)) * rope)
-	player.attach_to(first)
-
+	player.landed.connect(_on_landed)
+	player.knocked_off.connect(_on_knocked_off)
+	player.reset_at(Vector2(0.0, -60.0))
 	camera.snap_to_target()
-	hud.set_dead(false)
-	hud.show_hint(true)
 
 
-func _process(delta: float) -> void:
-	generator.update_window(camera.global_position.x)
+func _process(_delta: float) -> void:
+	tower.update_window(camera.global_position.y)
 
-	if running:
-		var x := player.global_position.x
-		if x > distance:
-			distance = x
-			best_distance = maxf(best_distance, distance)
-		if player.global_position.y > generator.death_y(x):
-			player.kill()
-		if distance > 600.0:
-			hud.show_hint(false)
-	else:
-		_death_delay = maxf(0.0, _death_delay - delta)
-		if _death_delay == 0.0 and (
-			Input.is_action_just_pressed("swing") or Input.is_action_just_pressed("restart")
-		):
-			start_run()
+	height = maxf(0.0, -player.global_position.y / PX_PER_M)
+	best_height = maxf(best_height, height)
 
-	if Input.is_action_just_pressed("restart") and running:
-		start_run()
-
-	hud.update_stats(distance, best_distance, orbs, best_orbs, player.velocity.length())
+	var biome := Biome.at(player.global_position.y)
+	hud.update_climb(
+		height,
+		best_height,
+		-tower.bough_below(player.global_position.y) / PX_PER_M,
+		biome["name"],
+		player.state == Player.State.SWINGING
+	)
 
 
-func _on_orb_collected(value: int) -> void:
-	orbs += value
-	best_orbs = maxi(best_orbs, orbs)
+## The only feedback the game gives about failure: how far you just fell.
+## Small drops are noise, so they are not worth interrupting the player for.
+func _on_landed(fall_distance: float) -> void:
+	var metres := fall_distance / PX_PER_M
+	if metres < 3.0:
+		return
+	last_fall = metres
+	hud.flash_fall(metres)
 
 
-func _on_player_died() -> void:
-	running = false
-	_death_delay = 0.6
-	hud.set_dead(true)
+func _on_knocked_off(impact_speed: float) -> void:
+	camera.shake(clampf(impact_speed / 1400.0, 0.15, 1.0))
