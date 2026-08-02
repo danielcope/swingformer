@@ -120,13 +120,22 @@ func _process_free(delta: float) -> void:
 	var dir := Input.get_axis("move_left", "move_right")
 	var on_floor := is_on_floor()
 
+	# One button does both. A press means "get me onto a vine": if one is in
+	# reach that is a grab, and if not it becomes a jump -- which is usually
+	# the first half of reaching a vine anyway. Resolving it here, before
+	# move_and_slide, keeps the jump on the same frame as the press.
+	var wanted: Vine = null
+	if _grab_buffer > 0.0:
+		wanted = _find_best_vine()
+		if wanted == null and on_floor:
+			velocity.y = -jump_velocity
+			_grab_buffer = 0.0
+
 	if on_floor:
 		if dir != 0.0:
 			velocity.x = move_toward(velocity.x, dir * ground_speed, ground_accel * delta)
 		else:
 			velocity.x = move_toward(velocity.x, 0.0, ground_friction * delta)
-		if Input.is_action_just_pressed("reel_in"):
-			velocity.y = -jump_velocity
 	else:
 		# Air control cannot push you past max_air_speed, but it also never
 		# slows you below it -- a fast launch stays fast.
@@ -144,10 +153,8 @@ func _process_free(delta: float) -> void:
 
 	_track_landing(on_floor)
 
-	if _grab_buffer > 0.0:
-		var vine := _find_best_vine()
-		if vine:
-			attach_to(vine)
+	if wanted and is_instance_valid(wanted):
+		attach_to(wanted)
 
 
 ## Reports how far you fell, so the HUD can tell you what the fall cost.

@@ -8,8 +8,11 @@ can be tuned before anything gets locked into sprites.
 godot --path .
 ```
 
-**Controls** — `Space`/`Click` grab & release · `A`/`D` pump the swing · `W`/`S`
-reel the rope in/out (`W` jumps when standing)
+**Controls** — `Space`/`Click` jump, grab & release · `A`/`D` pump the swing ·
+`W`/`S` reel the rope in/out
+
+`Space` is the only action button. It means "get me onto a vine": if one is in
+reach it grabs, otherwise it jumps.
 
 ## The one thing to understand
 

@@ -194,7 +194,9 @@ func _drive_air() -> void:
 	if absf(dx) > 40.0:
 		Input.action_press("move_right" if dx > 0.0 else "move_left")
 	else:
-		Input.action_press("reel_in")  # jump
+		# Same button as the grab: on the ground it falls through to a jump
+		# when nothing is in reach.
+		Input.action_press("swing")
 
 
 ## Nearest anchor ABOVE the player -- the way back into the climb. Targeting
@@ -219,7 +221,8 @@ func _recovery_vine() -> Vine:
 
 func _on_landed(fall_px: float) -> void:
 	var m := fall_px / 64.0
-	if m < 3.0:
+	# Above a standing jump (~3.2m), so hopping does not pollute the stats.
+	if m < 5.0:
 		return
 	_falls.append(m)
 	print("  fell %.0f m  (at %.0f m)" % [m, -player.global_position.y / 64.0])
@@ -236,7 +239,7 @@ func _exit_tree() -> void:
 	print("\n--- climb summary ---")
 	print("peak height   : %.0f m" % _peak_m)
 	print("final height  : %.0f m" % (-player.global_position.y / 64.0 if player else 0.0))
-	print("falls (>3m)   : %d" % _falls.size())
+	print("falls (>5m)   : %d" % _falls.size())
 	print("worst fall    : %.0f m" % worst)
 	print("average fall  : %.0f m" % avg)
 	var line := ""

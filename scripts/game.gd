@@ -47,9 +47,16 @@ func _process(_delta: float) -> void:
 
 ## The only feedback the game gives about failure: how far you just fell.
 ## Small drops are noise, so they are not worth interrupting the player for.
+##
+## The floor here must clear a plain standing jump (780^2 / 2g = 203px, about
+## 3.2m) or simply hopping on the spot flashes "-3 m" at you, which is both
+## wrong and, now that jump and grab share a button, constant.
+const MIN_REPORTED_FALL := 5.0
+
+
 func _on_landed(fall_distance: float) -> void:
 	var metres := fall_distance / PX_PER_M
-	if metres < 3.0:
+	if metres < MIN_REPORTED_FALL:
 		return
 	last_fall = metres
 	hud.flash_fall(metres)
