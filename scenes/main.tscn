@@ -122,6 +122,7 @@ theme_override_constants/shadow_offset_y = 2
 theme_override_font_sizes/font_size = 19
 text = "SPACE jump / grab / release      A D pump      W S reel rope
 
-pump until the rope swings level, then let go — that launches you straight up"
+pump until the rope swings level, then let go — that launches you straight up
+falling? hit SPACE as you land for a bigger bounce"
 horizontal_alignment = 1
 vertical_alignment = 1

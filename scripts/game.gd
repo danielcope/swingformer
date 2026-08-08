@@ -75,5 +75,6 @@ func _on_grabbed(_vine: Vine, impact_speed: float) -> void:
 		camera.shake(clampf(impact_speed / 4000.0, 0.05, 0.35))
 
 
-func _on_bounced(impact_speed: float) -> void:
-	camera.shake(clampf(impact_speed / 2600.0, 0.06, 0.5))
+func _on_bounced(impact_speed: float, boosted: bool) -> void:
+	var kick := clampf(impact_speed / 2600.0, 0.06, 0.5)
+	camera.shake(kick * 1.6 if boosted else kick)

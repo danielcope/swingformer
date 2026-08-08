@@ -17,7 +17,7 @@ signal grabbed(vine: Vine, impact_speed: float)
 signal released(vine: Vine, launch_speed: float)
 signal knocked_off(impact_speed: float)
 signal landed(fall_distance: float)
-signal bounced(impact_speed: float)
+signal bounced(impact_speed: float, boosted: bool)
 ## Fired when a grab press expires with nothing in reach. Drives the "you
 ## missed" feedback, which is also how the player learns what grab_reach is.
 signal grab_missed
@@ -50,6 +50,20 @@ signal grab_missed
 ## Fraction of the into-surface speed returned on impact. The ball is the whole
 ## character here, so this is a feel dial more than a physics constant.
 @export_range(0.0, 1.0) var bounciness: float = 0.55
+## Walls are springier than rock you land on, so the shaft edges are a way back
+## into play rather than a surface you slide down.
+@export_range(0.0, 1.0) var wall_bounciness: float = 0.75
+## Press the action button as you land and the rebound gains this much, flat.
+##
+## Flat, not a multiplier, and that is the whole balance of the mechanic. A
+## multiplier refunds a fall in proportion to its size -- drop 30m, rebound 20m,
+## mistake erased. A fixed impulse gives a big second chance to a small fall and
+## a modest one to a catastrophic fall, which is what "a chance at recovery"
+## should mean in a game about losing progress.
+@export var bounce_boost_impulse: float = 380.0
+## Safety net on the rebound. Also stops a timed bounce off terminal velocity
+## from launching you further than a swing could.
+@export var max_bounce_speed: float = 1300.0
 ## Impacts slower than this along the surface normal just stop. Without a floor
 ## like this you jitter forever on a ledge instead of settling, and can never
 ## stand still to line up a jump.
@@ -131,6 +145,7 @@ var _fall_start_y: float = 0.0
 var _whiff: float = 0.0
 var _squash: float = 0.0
 var _squash_normal: Vector2 = Vector2.UP
+var _boost_flash: float = 0.0
 
 const SPRITE_RADIUS := 14.0
 
@@ -139,6 +154,7 @@ func _physics_process(delta: float) -> void:
 	_lockout_timer = maxf(0.0, _lockout_timer - delta)
 	_whiff = maxf(0.0, _whiff - delta * 2.0)
 	_squash = maxf(0.0, _squash - delta * 6.0)
+	_boost_flash = maxf(0.0, _boost_flash - delta * 2.5)
 
 	var had_buffer := _grab_buffer > 0.0
 	_grab_buffer = maxf(0.0, _grab_buffer - delta)
@@ -247,14 +263,28 @@ func _apply_bounce(pre_velocity: Vector2) -> void:
 	if hardest < bounce_threshold or normal == Vector2.ZERO:
 		return
 
+	# A buffered press that found no vine becomes a timed bounce, so the button
+	# always means the same thing -- "get me back into play" -- and a press that
+	# would otherwise have been a whiff still does something.
+	var boosted := _grab_buffer > 0.0
+	if boosted:
+		_grab_buffer = 0.0
+
+	var restitution := wall_bounciness if absf(normal.x) > 0.7 else bounciness
+	var rebound: float = hardest * restitution
+	if boosted:
+		rebound += bounce_boost_impulse
+	rebound = minf(rebound, max_bounce_speed)
+
 	var reflected := pre_velocity.bounce(normal)
-	var along_normal := normal * reflected.dot(normal)
-	var along_surface := reflected - along_normal
-	velocity = along_normal * bounciness + along_surface * (1.0 - bounce_friction)
+	var along_surface := reflected - normal * reflected.dot(normal)
+	velocity = normal * rebound + along_surface * (1.0 - bounce_friction)
 
 	_squash = 1.0
 	_squash_normal = normal
-	bounced.emit(hardest)
+	if boosted:
+		_boost_flash = 1.0
+	bounced.emit(hardest, boosted)
 
 
 ## Reports how far you fell, so the HUD can tell you what the fall cost.
@@ -531,6 +561,14 @@ func _draw() -> void:
 		draw_line(
 			to_target.normalized() * (SPRITE_RADIUS + 4.0), to_target,
 			Color(1.0, 1.0, 0.85, 0.34), 2.0, true
+		)
+
+	# Successful timed bounce: a ring blooming off the ball. Timing mechanics
+	# are unlearnable without a clear yes, and this is the yes.
+	if _boost_flash > 0.0:
+		draw_arc(
+			Vector2.ZERO, SPRITE_RADIUS + (1.0 - _boost_flash) * 46.0, 0.0, TAU, 32,
+			Color(0.75, 1.0, 0.85, 0.75 * _boost_flash), 3.0, true
 		)
 
 	# Squash along the impact normal, stretch across it. The node itself is
