@@ -13,10 +13,13 @@ extends CharacterBody2D
 
 enum State { FREE, SWINGING }
 
-signal grabbed(vine: Vine)
+signal grabbed(vine: Vine, impact_speed: float)
 signal released(vine: Vine, launch_speed: float)
 signal knocked_off(impact_speed: float)
 signal landed(fall_distance: float)
+## Fired when a grab press expires with nothing in reach. Drives the "you
+## missed" feedback, which is also how the player learns what grab_reach is.
+signal grab_missed
 
 # --- Free flight -------------------------------------------------------------
 @export_group("Free flight")
@@ -47,7 +50,14 @@ signal landed(fall_distance: float)
 ## shorter than max_rope_length: reach is the precision knob, rope length is
 ## the physics knob. Coupling them (as the endless-runner build did) makes the
 ## game far more forgiving than intended.
-@export var grab_reach: float = 200.0
+##
+## THIS IS THE DIFFICULTY DIAL. It is the one number that decides how punishing
+## the game is, so it is worth setting by feel rather than by argument. 200 left
+## a lot of catches failing by ~20px at the apex of a launch, which reads as the
+## game being stingy rather than as your mistake; 225 converts most of those
+## while still demanding a genuinely aimed launch. Drop it back towards 180 if
+## the climb feels too soft.
+@export var grab_reach: float = 225.0
 @export var max_rope_length: float = 320.0
 @export var min_rope_length: float = 70.0
 @export var reel_speed: float = 230.0
@@ -72,7 +82,16 @@ signal landed(fall_distance: float)
 ## Soft aim assist. Much smaller than the runner build -- you are expected to
 ## actually be near the vine.
 @export var aim_bias: float = 55.0
-@export var grab_buffer_time: float = 0.12
+## Discount for anchors you are already travelling towards, so the grab picks
+## the vine you are obviously going for rather than the one a few pixels nearer.
+@export var travel_bias: float = 70.0
+## Forgives pressing early. This forgives input TIMING, never aim, which is the
+## distinction that matters in a precision climber: you still have to be in
+## range, you just do not have to be frame-perfect about asking.
+@export var grab_buffer_time: float = 0.20
+## How much of your arrival speed survives the grab. 0 is a physically exact
+## rope (and a dead stop on any vertical catch); 1 keeps everything.
+@export_range(0.0, 1.0) var grab_momentum_retention: float = 0.65
 
 var state: State = State.FREE
 var current_vine: Vine = null
@@ -83,19 +102,31 @@ var angle: float = 0.0
 var angular_velocity: float = 0.0
 
 var peak_height: float = 0.0   ## most negative y reached since last landing
+## The vine a grab would take right now, or null. Highlighted every frame so
+## reach is something you can see rather than something you infer from failure.
+var target_vine: Vine = null
 
 var _last_vine: Vine = null
 var _lockout_timer: float = 0.0
 var _grab_buffer: float = 0.0
 var _was_on_floor: bool = false
 var _fall_start_y: float = 0.0
+var _whiff: float = 0.0
 
 const SPRITE_RADIUS := 14.0
 
 
 func _physics_process(delta: float) -> void:
 	_lockout_timer = maxf(0.0, _lockout_timer - delta)
+	_whiff = maxf(0.0, _whiff - delta * 2.0)
+
+	var had_buffer := _grab_buffer > 0.0
 	_grab_buffer = maxf(0.0, _grab_buffer - delta)
+	# The press ran out with nothing in range. Say so, rather than leaving the
+	# player to wonder whether the input registered at all.
+	if had_buffer and _grab_buffer == 0.0 and state == State.FREE:
+		_whiff = 1.0
+		grab_missed.emit()
 
 	if Input.is_action_just_pressed("swing"):
 		if state == State.SWINGING:
@@ -109,8 +140,20 @@ func _physics_process(delta: float) -> void:
 		State.SWINGING:
 			_process_swinging(delta)
 
+	_set_target(_find_best_vine())
+
 	peak_height = minf(peak_height, global_position.y)
 	queue_redraw()
+
+
+func _set_target(vine: Vine) -> void:
+	if vine == target_vine:
+		return
+	if is_instance_valid(target_vine):
+		target_vine.set_targeted(false)
+	if vine:
+		vine.set_targeted(true)
+	target_vine = vine
 
 
 # -----------------------------------------------------------------------------
@@ -205,12 +248,29 @@ func _process_swinging(delta: float) -> void:
 			)
 
 	var pump := Input.get_axis("move_left", "move_right")
+
+	# A rope cannot push you over the top -- past horizontal it would go slack.
+	# Without this, pump_accel exceeds gravity's restoring torque at long rope,
+	# so simply holding a direction spins you around the anchor forever pinned
+	# at max angular speed. That is a cheese strategy (spin up, release for free
+	# height) and it makes the swing feel uncontrolled.
+	#
+	# Cancelling only the OUTWARD pump past 90 degrees leaves the ceiling
+	# exactly at horizontal, which is where the optimal release already is, and
+	# leaves release timing entirely with the player.
+	if absf(angle) > PI * 0.5 and signf(pump) == signf(angle):
+		pump = 0.0
+
 	var angular_accel := -(gravity / rope_length) * sin(angle) + pump * pump_accel
 
 	angular_velocity += angular_accel * delta
 	angular_velocity -= angular_velocity * swing_damping * delta
 	angular_velocity = clampf(angular_velocity, -max_angular_speed, max_angular_speed)
 	angle += angular_velocity * delta
+	# Keep angle bounded. Trig does not care, but everything that reasons about
+	# "how far round am I" does, and an unbounded angle silently breaks any
+	# check for being near horizontal once a swing has looped.
+	angle = wrapf(angle, -PI, PI)
 
 	# Move along the arc with collision rather than teleporting. Swinging into
 	# rock knocks you off the vine -- the shaft is an obstacle course, not a
@@ -230,7 +290,7 @@ func _process_swinging(delta: float) -> void:
 
 	if _grab_buffer > 0.0:
 		var vine := _find_best_vine()
-		if vine and vine != current_vine:
+		if vine:
 			release()
 			attach_to(vine)
 
@@ -250,18 +310,48 @@ func attach_to(vine: Vine) -> void:
 	rope_length = clampf(offset.length(), min_rope_length, max_rope_length)
 	angle = atan2(offset.x, offset.y)
 
-	# Project linear velocity onto the tangent; the radial component is
-	# absorbed by the rope, exactly as a real rope does.
+	var speed := velocity.length()
+	var tangential := velocity.dot(_tangent())
+
+	# Which way round the anchor to start swinging. The sign of the tangential
+	# component is the honest answer, but when you arrive moving almost along
+	# the rope it is near zero and its sign is just noise, so fall back to
+	# intent: what you are holding, then where you were already going.
+	var dir := signf(tangential)
+	if absf(tangential) < speed * 0.35 or dir == 0.0:
+		var aim := Input.get_axis("move_left", "move_right")
+		if aim != 0.0:
+			dir = signf(aim)
+		elif absf(velocity.x) > 25.0:
+			dir = signf(velocity.x)
+		elif angle != 0.0:
+			dir = signf(angle)
+		else:
+			dir = 1.0
+
+	# A physically exact rope keeps only the tangential component and lets the
+	# radial part go. That is what a real rope does and it plays terribly here,
+	# because the signature move -- launch vertically off a 90-degree release,
+	# catch the next anchor from below -- arrives almost purely radially. Exact
+	# handling keeps 0% of your speed in that case and drops you to a dead
+	# hang, which is why grabbing felt so dead.
+	#
+	# Retaining part of the radial speed turns the arrival into a swing instead
+	# of eating it. It cannot manufacture energy: the result is capped by the
+	# speed you actually turned up with.
+	var retained: float = lerpf(absf(tangential), speed, grab_momentum_retention)
 	angular_velocity = clampf(
-		velocity.dot(_tangent()) / rope_length, -max_angular_speed, max_angular_speed
+		dir * retained / rope_length, -max_angular_speed, max_angular_speed
 	)
 
 	state = State.SWINGING
 	current_vine = vine
 	_grab_buffer = 0.0
 	_was_on_floor = false
+	_whiff = 0.0
+	_set_target(null)
 	vine.on_grabbed(self)
-	grabbed.emit(vine)
+	grabbed.emit(vine, speed)
 
 
 func release() -> void:
@@ -290,9 +380,14 @@ func _find_best_vine() -> Vine:
 	var best_score: float = INF
 	var aim := Input.get_axis("move_left", "move_right")
 
+	var heading := velocity.normalized()
+	var moving := velocity.length() > 60.0
+
 	for node in get_tree().get_nodes_in_group("vines"):
 		var vine := node as Vine
 		if vine == null or not vine.grabbable:
+			continue
+		if vine == current_vine:
 			continue
 		if vine == _last_vine and _lockout_timer > 0.0:
 			continue
@@ -300,6 +395,11 @@ func _find_best_vine() -> Vine:
 		var offset := vine.global_position - global_position
 		if offset.y > -min_grab_height:
 			continue  # at or below us -- nothing to swing from
+		# Cheap rejects before the square root. This runs every frame for the
+		# targeting highlight and the tower never culls, so the vine list only
+		# ever grows -- a scalar compare per vine keeps that flat.
+		if offset.y < -grab_reach or absf(offset.x) > grab_reach:
+			continue
 		var dist := offset.length()
 		if dist > grab_reach:
 			continue
@@ -307,6 +407,11 @@ func _find_best_vine() -> Vine:
 		var score := dist
 		if aim != 0.0 and signf(offset.x) == signf(aim):
 			score -= aim_bias
+		# Favour what you are flying towards. Without this the grab can snap to
+		# an anchor a few pixels nearer but behind you, which reads as the game
+		# ignoring an obvious intent.
+		if moving:
+			score -= maxf(0.0, offset.normalized().dot(heading)) * travel_bias
 		if score < best_score:
 			best_score = score
 			best = vine
@@ -348,6 +453,24 @@ func reset_at(pos: Vector2) -> void:
 func _draw() -> void:
 	var body := Color(0.98, 0.82, 0.32)
 	var outline := Color(0.15, 0.11, 0.08)
+
+	# Missed grab: flash the reach radius. This is the only place the game ever
+	# states how far you can reach, and showing it exactly when you fell short
+	# is when it actually means something.
+	if _whiff > 0.0:
+		draw_arc(
+			Vector2.ZERO, grab_reach * (0.82 + 0.18 * (1.0 - _whiff)), 0.0, TAU, 48,
+			Color(1.0, 1.0, 1.0, 0.28 * _whiff), 2.0, true
+		)
+
+	# A line to whatever a grab would catch right now. Drawn in world terms but
+	# from a rotating node, so undo the rotation.
+	if is_instance_valid(target_vine) and state == State.FREE:
+		var to_target := (target_vine.global_position - global_position).rotated(-rotation)
+		draw_line(
+			to_target.normalized() * (SPRITE_RADIUS + 4.0), to_target,
+			Color(1.0, 1.0, 0.85, 0.34), 2.0, true
+		)
 
 	draw_circle(Vector2.ZERO, SPRITE_RADIUS, body)
 	draw_arc(Vector2.ZERO, SPRITE_RADIUS, 0.0, TAU, 24, outline, 2.5, true)

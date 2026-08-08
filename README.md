@@ -71,11 +71,34 @@ stay trivial — a 200-tier climb is a few hundred static bodies.
 | `scripts/game.gd` | Height, high-water mark, fall reporting. |
 
 The swing is **hand-integrated, not a `PinJoint2D`**. The solver fights you every
-time you want to pump, clamp or reel. Two conversions do the work: on grab,
-linear velocity is projected onto the tangent and the radial component discarded
-(what a real rope does); on release it converts back, `ω · L` along the tangent.
-Reeling **conserves angular momentum** (`L²ω`), so hauling in spins you up and
-letting out slows you down.
+time you want to pump, clamp or reel. On release, angular velocity converts back
+to linear as `ω · L` along the tangent. Reeling **conserves angular momentum**
+(`L²ω`), so hauling in spins you up and letting out slows you down.
+
+Two places where the exact physics was deliberately abandoned, both because it
+played badly:
+
+**Grabs retain momentum** (`grab_momentum_retention`, default 0.65). An exact
+rope keeps only the tangential component. Measured against the game's actual
+arrivals (`test/grab_feel.gd`), that meant:
+
+| arrival | exact | retained |
+|---|---|---|
+| straight up, anchor overhead | **0%** | 65% |
+| straight up, 60px to side | 37% | 78% |
+| rising diagonally | 31% | 76% |
+| falling past an anchor | 92% | 97% |
+
+The signature move — launch vertically off a 90° release, catch the next anchor
+from below — arrives *almost purely radially*, so an exact grab deleted between
+63% and 100% of your speed and dropped you to a dead hang. This cannot
+manufacture energy; the result is capped by the speed you arrived with.
+
+**The pump cannot drive you past horizontal.** `pump_accel` exceeds gravity's
+restoring torque at long rope, so holding a direction used to spin you around
+the anchor forever, pinned at max angular speed. A rope would go slack. Only the
+*outward* pump is cancelled past 90°, which puts the ceiling exactly where the
+optimal release already is and leaves release timing with the player.
 
 ## Tuning
 
@@ -95,6 +118,7 @@ lever. `bough_every` is how forgiving the climb is. `anchor_margin` must exceed
 
 ```bash
 godot --headless --path . --script res://test/ascent_envelope.gd
+godot --headless --path . --script res://test/grab_feel.gd
 godot --headless --path . res://test/ledge_catch.tscn --quit-after 900
 godot --headless --path . res://test/autopilot.tscn --quit-after 10000
 ```
@@ -102,6 +126,9 @@ godot --headless --path . res://test/autopilot.tscn --quit-after 10000
 - **ascent_envelope** — solves the release physics. Re-run after changing
   gravity, rope limits or the angular clamp; the tower's rise numbers are
   derived from it.
+- **grab_feel** — how much speed a grab keeps, for each way you can arrive at
+  an anchor. Re-run after touching `grab_momentum_retention`; watch the
+  "straight up, anchor overhead" row, which is the one that used to read 0%.
 - **ledge_catch** — drops a real player onto a real ledge at 400–2400px/s.
   Guards against tunnelling, so "physical checkpoints" cannot silently stop
   existing exactly when a fall is bad enough to need them. (Currently all

@@ -25,6 +25,7 @@ func _ready() -> void:
 	background.set_camera(camera)
 	player.landed.connect(_on_landed)
 	player.knocked_off.connect(_on_knocked_off)
+	player.grabbed.connect(_on_grabbed)
 	player.reset_at(Vector2(0.0, -60.0))
 	camera.snap_to_target()
 
@@ -64,3 +65,10 @@ func _on_landed(fall_distance: float) -> void:
 
 func _on_knocked_off(impact_speed: float) -> void:
 	camera.shake(clampf(impact_speed / 1400.0, 0.15, 1.0))
+
+
+## A small kick scaled to how hard you caught it, so a fast catch lands with
+## some weight and a gentle one stays quiet.
+func _on_grabbed(_vine: Vine, impact_speed: float) -> void:
+	if impact_speed > 300.0:
+		camera.shake(clampf(impact_speed / 4000.0, 0.05, 0.35))

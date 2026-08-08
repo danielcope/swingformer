@@ -139,7 +139,12 @@ func _drive_swing() -> void:
 		MIN_LAUNCH_SPEED, sqrt(2.0 * player.gravity * need_h) * 1.06
 	)
 
-	if outward and launch_speed >= want_speed:
+	# Do not launch until the rope is the length the plan assumed. Grabs now
+	# retain arrival momentum, so the swing can already be at full speed while
+	# the rope is still short -- releasing then throws you at the right speed
+	# from the wrong radius, and undershoots.
+	var rope_ready: bool = player.rope_length >= want_len - 25.0
+	if outward and rope_ready and launch_speed >= want_speed:
 		if absf(absf(a) - PI * 0.5) < RELEASE_WINDOW:
 			Input.action_press("swing")
 
