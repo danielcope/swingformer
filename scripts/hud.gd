@@ -17,6 +17,7 @@ extends Control
 @onready var _hint: Label = $Hint
 
 var _fall_timer: float = 0.0
+var _perfect_timer: float = 0.0
 var _hint_timer: float = 9.0
 
 
@@ -26,6 +27,7 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
+	_perfect_timer = maxf(0.0, _perfect_timer - delta)
 	if _fall_timer > 0.0:
 		_fall_timer = maxf(0.0, _fall_timer - delta)
 		_fall.modulate.a = clampf(_fall_timer / 0.8, 0.0, 1.0)
@@ -55,5 +57,22 @@ func update_climb(
 
 
 func flash_fall(metres: float) -> void:
+	# A perfect bounce emits before the landing does, so without this guard the
+	# "-30 m" notice immediately overwrites the celebration for the very fall
+	# the player just rescued.
+	if _perfect_timer > 0.0:
+		return
+	_fall.add_theme_color_override("font_color", Color(1.0, 0.55, 0.45))
 	_fall.text = "-%.0f m" % metres
 	_fall_timer = 2.2
+
+
+## Nailing the tight window off a fast fall is the best thing that can happen to
+## you in a bad moment, so it gets the one piece of celebratory text the game
+## has. It also overrides the "-Nm" fall notice, which would otherwise scold you
+## for the very drop you just rescued.
+func flash_perfect() -> void:
+	_fall.add_theme_color_override("font_color", Color(1.0, 0.93, 0.5))
+	_fall.text = "PERFECT BOUNCE"
+	_fall_timer = 1.6
+	_perfect_timer = 1.6

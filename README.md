@@ -123,20 +123,35 @@ edges are a way back into play rather than a surface you slide down.
 
 A buffered press that found no vine becomes a **boosted bounce**, so the button
 always means one thing and a press that would have been a whiff still does
-something.
+something. There are three tiers, measured from an identical 1800px drop:
 
-The boost is a **flat impulse, not a multiplier**, and that is the entire
-balance of the mechanic. A multiplier refunds a fall in proportion to its size —
-drop 30m, rebound 20m, mistake erased. A fixed impulse gives a big second chance
-to a small fall and a modest one to a catastrophic fall, which is what "a chance
-at recovery" should mean in a game about losing progress. Measured, from a 900px
-drop: **561px rebound timed against 290px plain**.
+| timing | first rebound |
+|---|---|
+| **plain** — no press | 386px |
+| **timed** — inside the 0.20s buffer | 696px |
+| **perfect** — inside a 0.09s window, landing above 1100px/s | **1003px** |
 
-There is one invariant here worth keeping. Timing *every* bounce converges to a
-fixed point, `impulse / (1 - bounciness)`. If that hop ever clears `tier_height`
-you can pogo up the tower without touching a vine. `test/bounce.gd` asserts it:
-currently 844px/s → a 238px hop against a 520px tier. Re-run it after touching
-`bounce_boost_impulse` or `bounciness`.
+The perfect bounce is the save: come off a bad fall at speed, nail the window,
+and you get most of the height back. That is the whole appeal — a disaster you
+can rescue if your nerve holds.
+
+Two invariants keep it honest, and both are asserted in `test/bounce.gd`:
+
+**A bounce must never return more than it received.** Rebound becomes the next
+impact, so an over-unity bounce escalates and you pogo to the top of the tower
+without touching a vine. For the perfect tier this means break-even
+(`impulse / (1 - restitution)`, currently 1000px/s) must sit *below* the speed
+that unlocks it (1100px/s), so it always loses a little at every speed it is
+available. This is the subtle one — it is easy to make the bounce feel great and
+accidentally break the game.
+
+**Repeated timed bounces must not climb a tier.** That tier has no speed gate,
+so it is bounded by its own fixed point instead: 844px/s, a 238px hop against a
+520px tier.
+
+The timed boost is a **flat impulse rather than a multiplier** for the same
+reason: a multiplier refunds a fall in proportion to its size, so a 30m drop
+rebounds 20m and the mistake is erased.
 
 Bounces also always decay to rest — a ball that never settles silently breaks
 ground recovery after a fall.
@@ -165,7 +180,7 @@ lever. `bough_every` is how forgiving the climb is. `anchor_margin` must exceed
 godot --headless --path . --script res://test/ascent_envelope.gd
 godot --headless --path . --script res://test/grab_feel.gd
 godot --headless --path . res://test/ledge_catch.tscn --quit-after 900
-godot --headless --path . res://test/bounce.tscn --quit-after 14000
+godot --headless --path . res://test/bounce.tscn --quit-after 26000
 godot --headless --path . res://test/autopilot.tscn --quit-after 10000
 ```
 
@@ -175,11 +190,13 @@ godot --headless --path . res://test/autopilot.tscn --quit-after 10000
 - **grab_feel** — how much speed a grab keeps, for each way you can arrive at
   an anchor. Re-run after touching `grab_momentum_retention`; watch the
   "straight up, anchor overhead" row, which is the one that used to read 0%.
-- **bounce** — rebound apexes, time to rest, timed-vs-plain comparison, and the
-  pogo ceiling. Watch for `NEVER SETTLED` and for the pogo assertion. Note the
-  frame budget is much larger than the others: headless runs idle frames faster
-  than physics ticks, so a small `--quit-after` exits before the test finishes
-  and prints nothing at all.
+- **bounce** — rebound apexes, time to rest, all three timing tiers, and both
+  escalation invariants. Watch for `NEVER SETTLED` and for either assertion
+  failing. Two traps if you extend it: the frame budget must be large, because
+  headless runs idle frames faster than physics ticks and a small `--quit-after`
+  exits before the test prints anything at all; and `Input` is global, so each
+  timed drop has to run with every other player retired, or a settled one reads
+  the press as a jump and reports phantom bounces.
 - **ledge_catch** — drops a real player onto a real ledge at 400–2400px/s.
   Guards against tunnelling, so "physical checkpoints" cannot silently stop
   existing exactly when a fall is bad enough to need them. (Currently all

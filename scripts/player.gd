@@ -12,12 +12,16 @@ extends CharacterBody2D
 ## from wherever that is. Removing the respawn is what makes the fall hurt.
 
 enum State { FREE, SWINGING }
+## PLAIN   - no press, or too slow / too early to count.
+## TIMED   - pressed inside the forgiving buffer. Flat impulse.
+## PERFECT - pressed inside the tight window while genuinely falling. The save.
+enum BounceQuality { PLAIN, TIMED, PERFECT }
 
 signal grabbed(vine: Vine, impact_speed: float)
 signal released(vine: Vine, launch_speed: float)
 signal knocked_off(impact_speed: float)
 signal landed(fall_distance: float)
-signal bounced(impact_speed: float, boosted: bool)
+signal bounced(impact_speed: float, quality: BounceQuality)
 ## Fired when a grab press expires with nothing in reach. Drives the "you
 ## missed" feedback, which is also how the player learns what grab_reach is.
 signal grab_missed
@@ -61,9 +65,26 @@ signal grab_missed
 ## a modest one to a catastrophic fall, which is what "a chance at recovery"
 ## should mean in a game about losing progress.
 @export var bounce_boost_impulse: float = 380.0
-## Safety net on the rebound. Also stops a timed bounce off terminal velocity
-## from launching you further than a swing could.
-@export var max_bounce_speed: float = 1300.0
+## Pure sanity backstop. The real limits are the two relations asserted in
+## test/bounce.gd, not this number.
+@export var max_bounce_speed: float = 2000.0
+
+@export_subgroup("Perfect bounce")
+## Land fast and press within this of touching down for a much bigger rebound.
+## Tight on purpose -- this is the reward for nerve, so it should be roughly a
+## fifth of the forgiving grab_buffer_time window.
+@export var perfect_bounce_window: float = 0.09
+## Minimum impact speed to unlock it at all. You have to be genuinely falling.
+##
+## This number is load-bearing. A bounce that returns MORE than it received
+## escalates: rebound becomes the next impact, and you pogo up the tower for
+## free without ever touching a vine. Keeping this above
+## perfect_bounce_impulse / (1 - perfect_bounciness) -- the break-even speed,
+## currently 1000 -- means the big bounce always loses a little, at every speed
+## it is available.
+@export var perfect_bounce_speed: float = 1100.0
+@export_range(0.0, 1.0) var perfect_bounciness: float = 0.80
+@export var perfect_bounce_impulse: float = 200.0
 ## Impacts slower than this along the surface normal just stop. Without a floor
 ## like this you jitter forever on a ledge instead of settling, and can never
 ## stand still to line up a jump.
@@ -146,6 +167,7 @@ var _whiff: float = 0.0
 var _squash: float = 0.0
 var _squash_normal: Vector2 = Vector2.UP
 var _boost_flash: float = 0.0
+var _boost_perfect: bool = false
 
 const SPRITE_RADIUS := 14.0
 
@@ -266,14 +288,27 @@ func _apply_bounce(pre_velocity: Vector2) -> void:
 	# A buffered press that found no vine becomes a timed bounce, so the button
 	# always means the same thing -- "get me back into play" -- and a press that
 	# would otherwise have been a whiff still does something.
-	var boosted := _grab_buffer > 0.0
-	if boosted:
+	#
+	# _grab_buffer counts down from grab_buffer_time, so what is left of it is
+	# how recently you pressed: a full buffer means you pressed on this very
+	# frame, which is a press timed to the landing.
+	var quality := BounceQuality.PLAIN
+	if _grab_buffer > 0.0:
+		var press_age: float = grab_buffer_time - _grab_buffer
+		quality = BounceQuality.TIMED
+		if hardest >= perfect_bounce_speed and press_age <= perfect_bounce_window:
+			quality = BounceQuality.PERFECT
 		_grab_buffer = 0.0
 
 	var restitution := wall_bounciness if absf(normal.x) > 0.7 else bounciness
-	var rebound: float = hardest * restitution
-	if boosted:
-		rebound += bounce_boost_impulse
+	var rebound: float
+	match quality:
+		BounceQuality.PERFECT:
+			rebound = hardest * perfect_bounciness + perfect_bounce_impulse
+		BounceQuality.TIMED:
+			rebound = hardest * restitution + bounce_boost_impulse
+		_:
+			rebound = hardest * restitution
 	rebound = minf(rebound, max_bounce_speed)
 
 	var reflected := pre_velocity.bounce(normal)
@@ -282,9 +317,10 @@ func _apply_bounce(pre_velocity: Vector2) -> void:
 
 	_squash = 1.0
 	_squash_normal = normal
-	if boosted:
+	if quality != BounceQuality.PLAIN:
 		_boost_flash = 1.0
-	bounced.emit(hardest, boosted)
+		_boost_perfect = quality == BounceQuality.PERFECT
+	bounced.emit(hardest, quality)
 
 
 ## Reports how far you fell, so the HUD can tell you what the fall cost.
@@ -564,11 +600,22 @@ func _draw() -> void:
 		)
 
 	# Successful timed bounce: a ring blooming off the ball. Timing mechanics
-	# are unlearnable without a clear yes, and this is the yes.
+	# are unlearnable without a clear yes, and this is the yes. A perfect
+	# bounce has to be unmistakably louder than a merely-timed one, or the two
+	# tiers are indistinguishable and the tight window is unlearnable.
 	if _boost_flash > 0.0:
+		var reach := 46.0
+		var ring := Color(0.75, 1.0, 0.85, 0.75 * _boost_flash)
+		if _boost_perfect:
+			reach = 104.0
+			ring = Color(1.0, 0.95, 0.55, 0.9 * _boost_flash)
+			draw_arc(
+				Vector2.ZERO, SPRITE_RADIUS + (1.0 - _boost_flash) * 62.0, 0.0, TAU, 32,
+				Color(1.0, 1.0, 1.0, 0.55 * _boost_flash), 5.0, true
+			)
 		draw_arc(
-			Vector2.ZERO, SPRITE_RADIUS + (1.0 - _boost_flash) * 46.0, 0.0, TAU, 32,
-			Color(0.75, 1.0, 0.85, 0.75 * _boost_flash), 3.0, true
+			Vector2.ZERO, SPRITE_RADIUS + (1.0 - _boost_flash) * reach, 0.0, TAU, 32,
+			ring, 3.0, true
 		)
 
 	# Squash along the impact normal, stretch across it. The node itself is

@@ -75,6 +75,13 @@ func _on_grabbed(_vine: Vine, impact_speed: float) -> void:
 		camera.shake(clampf(impact_speed / 4000.0, 0.05, 0.35))
 
 
-func _on_bounced(impact_speed: float, boosted: bool) -> void:
+func _on_bounced(impact_speed: float, quality: Player.BounceQuality) -> void:
 	var kick := clampf(impact_speed / 2600.0, 0.06, 0.5)
-	camera.shake(kick * 1.6 if boosted else kick)
+	match quality:
+		Player.BounceQuality.PERFECT:
+			camera.shake(minf(1.0, kick * 2.6))
+			hud.flash_perfect()
+		Player.BounceQuality.TIMED:
+			camera.shake(kick * 1.5)
+		_:
+			camera.shake(kick)
