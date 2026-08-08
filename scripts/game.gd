@@ -26,6 +26,7 @@ func _ready() -> void:
 	player.landed.connect(_on_landed)
 	player.knocked_off.connect(_on_knocked_off)
 	player.grabbed.connect(_on_grabbed)
+	player.bounced.connect(_on_bounced)
 	player.reset_at(Vector2(0.0, -60.0))
 	camera.snap_to_target()
 
@@ -72,3 +73,7 @@ func _on_knocked_off(impact_speed: float) -> void:
 func _on_grabbed(_vine: Vine, impact_speed: float) -> void:
 	if impact_speed > 300.0:
 		camera.shake(clampf(impact_speed / 4000.0, 0.05, 0.35))
+
+
+func _on_bounced(impact_speed: float) -> void:
+	camera.shake(clampf(impact_speed / 2600.0, 0.06, 0.5))

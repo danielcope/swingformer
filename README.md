@@ -100,6 +100,24 @@ the anchor forever, pinned at max angular speed. A rope would go slack. Only the
 *outward* pump is cancelled past 90°, which puts the ceiling exactly where the
 optimal release already is and leaves release timing with the player.
 
+## The ball bounces
+
+`_apply_bounce` reflects off whatever `move_and_slide` just hit. It runs *after*
+the slide rather than replacing it, so sliding still resolves the overlap and
+keeps `is_on_floor()` honest, and impacts under `bounce_threshold` fall through
+untouched — which is what lets you stand, walk and line up a jump.
+
+The impact has to be measured from the velocity going *in*, since the slide has
+already cancelled the into-surface component by the time you can inspect it.
+
+This turned out to help the climb rather than hurt it. Wall hits redirect you
+back into the shaft instead of sliding down it, and a rebound off a ledge can
+put you back in range of a vine. The worry that bouncing would make narrow
+ledges stop working as catches did not materialise: average falls went *down*.
+
+Bounces always decay to rest (`test/bounce.gd`) — a ball that never settles
+silently breaks ground recovery after a fall.
+
 ## Tuning
 
 All `@export`, live in the inspector.
@@ -109,6 +127,10 @@ swing physically cannot be driven past horizontal — and horizontal is where th
 launch is. `jump_velocity` sets the recovery envelope: a standing jump plus
 `grab_reach` is ~400px, and the opening anchor must sit inside it. (At 700 it
 did not, by three pixels, and the game was unwinnable from the floor.)
+
+`Player.bounciness` (0.55) is the ball's restitution and `bounce_threshold`
+(300) is the impact below which it simply stops — raise the threshold if the
+ball feels twitchy underfoot, lower `bounciness` if rebounds overstay.
 
 `TowerGenerator.rise_easy`/`rise_hard` is the difficulty ramp and the biggest
 lever. `bough_every` is how forgiving the climb is. `anchor_margin` must exceed
@@ -120,6 +142,7 @@ lever. `bough_every` is how forgiving the climb is. `anchor_margin` must exceed
 godot --headless --path . --script res://test/ascent_envelope.gd
 godot --headless --path . --script res://test/grab_feel.gd
 godot --headless --path . res://test/ledge_catch.tscn --quit-after 900
+godot --headless --path . res://test/bounce.tscn --quit-after 8000
 godot --headless --path . res://test/autopilot.tscn --quit-after 10000
 ```
 
@@ -129,6 +152,10 @@ godot --headless --path . res://test/autopilot.tscn --quit-after 10000
 - **grab_feel** — how much speed a grab keeps, for each way you can arrive at
   an anchor. Re-run after touching `grab_momentum_retention`; watch the
   "straight up, anchor overhead" row, which is the one that used to read 0%.
+- **bounce** — drops the ball from three heights and logs successive rebound
+  apexes and time to rest. Watch for `NEVER SETTLED`: standing, walking and
+  jumping all depend on coming to a stop. Note the frame budget is much larger
+  than the others — headless runs idle frames faster than physics ticks.
 - **ledge_catch** — drops a real player onto a real ledge at 400–2400px/s.
   Guards against tunnelling, so "physical checkpoints" cannot silently stop
   existing exactly when a fall is bad enough to need them. (Currently all

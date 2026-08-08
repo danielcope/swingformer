@@ -17,6 +17,7 @@ signal grabbed(vine: Vine, impact_speed: float)
 signal released(vine: Vine, launch_speed: float)
 signal knocked_off(impact_speed: float)
 signal landed(fall_distance: float)
+signal bounced(impact_speed: float)
 ## Fired when a grab press expires with nothing in reach. Drives the "you
 ## missed" feedback, which is also how the player learns what grab_reach is.
 signal grab_missed
@@ -43,6 +44,22 @@ signal grab_missed
 ## that envelope -- at 700 this was 163+200, and the first vine sat 203px away,
 ## unreachable by three pixels.
 @export var jump_velocity: float = 780.0
+
+# --- Bounce ------------------------------------------------------------------
+@export_group("Bounce")
+## Fraction of the into-surface speed returned on impact. The ball is the whole
+## character here, so this is a feel dial more than a physics constant.
+@export_range(0.0, 1.0) var bounciness: float = 0.55
+## Impacts slower than this along the surface normal just stop. Without a floor
+## like this you jitter forever on a ledge instead of settling, and can never
+## stand still to line up a jump.
+@export var bounce_threshold: float = 300.0
+## Speed scrubbed off ALONG the surface per bounce. Zero means a wall hit keeps
+## every bit of your vertical speed, which makes the shaft edges frictionless
+## slides.
+@export_range(0.0, 1.0) var bounce_friction: float = 0.12
+## Squash-and-stretch on impact, as a fraction of the radius.
+@export var squash_amount: float = 0.38
 
 # --- Rope --------------------------------------------------------------------
 @export_group("Rope")
@@ -112,6 +129,8 @@ var _grab_buffer: float = 0.0
 var _was_on_floor: bool = false
 var _fall_start_y: float = 0.0
 var _whiff: float = 0.0
+var _squash: float = 0.0
+var _squash_normal: Vector2 = Vector2.UP
 
 const SPRITE_RADIUS := 14.0
 
@@ -119,6 +138,7 @@ const SPRITE_RADIUS := 14.0
 func _physics_process(delta: float) -> void:
 	_lockout_timer = maxf(0.0, _lockout_timer - delta)
 	_whiff = maxf(0.0, _whiff - delta * 2.0)
+	_squash = maxf(0.0, _squash - delta * 6.0)
 
 	var had_buffer := _grab_buffer > 0.0
 	_grab_buffer = maxf(0.0, _grab_buffer - delta)
@@ -161,7 +181,9 @@ func _set_target(vine: Vine) -> void:
 # -----------------------------------------------------------------------------
 func _process_free(delta: float) -> void:
 	var dir := Input.get_axis("move_left", "move_right")
-	var on_floor := is_on_floor()
+	# Rising counts as airborne even while still touching, so the frame after a
+	# bounce does not get ground friction applied to the speed it just gained.
+	var on_floor := is_on_floor() and velocity.y >= -1.0
 
 	# One button does both. A press means "get me onto a vine": if one is in
 	# reach that is a grab, and if not it becomes a jump -- which is usually
@@ -187,17 +209,52 @@ func _process_free(delta: float) -> void:
 			velocity.x = target
 		velocity.y = minf(velocity.y + gravity * delta, max_fall_speed)
 
+	# move_and_slide cancels the into-surface component as it slides, so the
+	# impact has to be measured from the velocity going in.
+	var pre_velocity := velocity
 	move_and_slide()
+	var contact := is_on_floor()
+	_apply_bounce(pre_velocity)
 
 	if on_floor:
 		rotation = lerp_angle(rotation, 0.0, 12.0 * delta)
 	else:
 		rotation = lerp_angle(rotation, clampf(velocity.x / 900.0, -0.6, 0.6), 8.0 * delta)
 
-	_track_landing(on_floor)
+	_track_landing(contact)
 
 	if wanted and is_instance_valid(wanted):
 		attach_to(wanted)
+
+
+## Reflects off whatever move_and_slide just hit, if it was hit hard enough.
+##
+## Deliberately applied after the slide rather than replacing it: sliding still
+## does the work of resolving the overlap and keeping is_on_floor() honest, and
+## a soft landing falls through untouched so you can stand, walk and jump.
+func _apply_bounce(pre_velocity: Vector2) -> void:
+	var normal := Vector2.ZERO
+	var hardest := 0.0
+
+	# A corner produces several contacts at once; bounce off whichever one you
+	# actually drove into, or the reflection fights itself.
+	for i in get_slide_collision_count():
+		var into: float = -pre_velocity.dot(get_slide_collision(i).get_normal())
+		if into > hardest:
+			hardest = into
+			normal = get_slide_collision(i).get_normal()
+
+	if hardest < bounce_threshold or normal == Vector2.ZERO:
+		return
+
+	var reflected := pre_velocity.bounce(normal)
+	var along_normal := normal * reflected.dot(normal)
+	var along_surface := reflected - along_normal
+	velocity = along_normal * bounciness + along_surface * (1.0 - bounce_friction)
+
+	_squash = 1.0
+	_squash_normal = normal
+	bounced.emit(hardest)
 
 
 ## Reports how far you fell, so the HUD can tell you what the fall cost.
@@ -284,7 +341,11 @@ func _process_swinging(delta: float) -> void:
 	if hit:
 		var impact := velocity.length()
 		release()
-		velocity = velocity.bounce(hit.get_normal()) * 0.45
+		# Same restitution as a normal bounce, so rock behaves consistently
+		# whether you hit it swinging or falling.
+		velocity = velocity.bounce(hit.get_normal()) * bounciness
+		_squash = 1.0
+		_squash_normal = hit.get_normal()
 		knocked_off.emit(impact)
 		return
 
@@ -471,6 +532,18 @@ func _draw() -> void:
 			to_target.normalized() * (SPRITE_RADIUS + 4.0), to_target,
 			Color(1.0, 1.0, 0.85, 0.34), 2.0, true
 		)
+
+	# Squash along the impact normal, stretch across it. The node itself is
+	# never scaled -- that would drag the collision shape with it -- so this is
+	# a draw-only transform: rotate the squash axis onto X, scale, rotate back.
+	# _draw runs in the body's rotated space, hence the -rotation.
+	if _squash > 0.0:
+		var axis := Transform2D(_squash_normal.angle() - rotation, Vector2.ZERO)
+		var amount := _squash * squash_amount
+		var scale_m := Transform2D(
+			Vector2(1.0 - amount, 0.0), Vector2(0.0, 1.0 + amount), Vector2.ZERO
+		)
+		draw_set_transform_matrix(axis * scale_m * axis.affine_inverse())
 
 	draw_circle(Vector2.ZERO, SPRITE_RADIUS, body)
 	draw_arc(Vector2.ZERO, SPRITE_RADIUS, 0.0, TAU, 24, outline, 2.5, true)
