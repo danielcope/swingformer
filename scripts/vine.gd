@@ -1,3 +1,4 @@
+@tool
 class_name Vine
 extends Node2D
 
@@ -11,11 +12,24 @@ extends Node2D
 
 const SEGMENTS := 10
 
-@export var length: float = 220.0
-@export var grabbable: bool = true
-@export var color: Color = Color(0.31, 0.62, 0.28)
+@export var length: float = 220.0:
+	set(value):
+		length = value
+		queue_redraw()
+@export var grabbable: bool = true:
+	set(value):
+		grabbable = value
+		queue_redraw()
+@export var color: Color = Color(0.31, 0.62, 0.28):
+	set(value):
+		color = value
+		queue_redraw()
 ## How fast the drawn rope catches up to its target shape.
 @export var follow_speed: float = 22.0
+
+## Mirrors Player.grab_reach, for the editor gizmo only. If you retune the
+## player's reach, change this too -- it is the circle you place vines by.
+const EDITOR_GRAB_REACH := 225.0
 
 var held_by: Player = null
 ## True when this is the vine a grab would catch. The player highlights exactly
@@ -29,6 +43,9 @@ var _snap: float = 0.0
 
 
 func _ready() -> void:
+	if Engine.is_editor_hint():
+		queue_redraw()
+		return
 	add_to_group("vines")
 	_sway_phase = randf() * TAU
 	_points.resize(SEGMENTS + 1)
@@ -37,6 +54,8 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
+	if Engine.is_editor_hint():
+		return
 	_sway_phase += delta * 1.6
 	_flash = maxf(0.0, _flash - delta * 3.0)
 	_snap = maxf(0.0, _snap - delta * 4.0)
@@ -81,6 +100,10 @@ func set_targeted(value: bool) -> void:
 
 
 func _draw() -> void:
+	if Engine.is_editor_hint():
+		_draw_for_editor()
+		return
+
 	var c := color
 	if held_by != null:
 		c = c.lightened(0.35)
@@ -108,6 +131,47 @@ func _draw() -> void:
 	if _points.size() > 4:
 		_draw_leaf(_points[3], 1.0)
 		_draw_leaf(_points[6], -1.0)
+
+
+## Editor-only rendering, plus the gizmos you place vines by.
+##
+## The launch markers are the important ones. Releasing at a horizontal rope
+## throws you straight up from (anchor.x +/- length, anchor.y), so those two
+## points are where the player leaves this vine -- and therefore roughly where
+## the next anchor upward wants to be. Placing by eye without them is guesswork.
+func _draw_for_editor() -> void:
+	var c: Color = color if grabbable else color.darkened(0.45)
+
+	draw_line(Vector2.ZERO, Vector2(0.0, length), c, 5.0, true)
+	draw_circle(Vector2.ZERO, 9.0, c.darkened(0.25))
+	draw_circle(Vector2.ZERO, 5.0, c.lightened(0.2))
+	_draw_leaf(Vector2(0.0, length * 0.3), 1.0)
+	_draw_leaf(Vector2(0.0, length * 0.6), -1.0)
+
+	if not grabbable:
+		return
+
+	# Where a grab is possible at all.
+	draw_arc(
+		Vector2.ZERO, EDITOR_GRAB_REACH, 0.0, TAU, 48,
+		Color(1.0, 1.0, 1.0, 0.16), 1.5, true
+	)
+	# The arc the player actually travels on this rope.
+	draw_arc(Vector2.ZERO, length, 0.0, TAU, 48, Color(0.6, 0.9, 1.0, 0.13), 1.5, true)
+
+	for side in [-1.0, 1.0]:
+		var launch := Vector2(side * length, 0.0)
+		draw_circle(launch, 5.0, Color(1.0, 0.85, 0.35, 0.75))
+		# A well-pumped release climbs about one rope length from here.
+		draw_line(launch, launch + Vector2(0.0, -length), Color(1.0, 0.85, 0.35, 0.3), 2.0)
+		draw_line(
+			launch + Vector2(0.0, -length), launch + Vector2(-7.0, -length + 12.0),
+			Color(1.0, 0.85, 0.35, 0.3), 2.0
+		)
+		draw_line(
+			launch + Vector2(0.0, -length), launch + Vector2(7.0, -length + 12.0),
+			Color(1.0, 0.85, 0.35, 0.3), 2.0
+		)
 
 
 func _draw_leaf(at: Vector2, side: float) -> void:

@@ -1,5 +1,5 @@
 class_name TowerGenerator
-extends Node2D
+extends Level
 
 ## The shaft. Generated upward, on demand, and NEVER culled.
 ##
@@ -79,6 +79,10 @@ func _ready() -> void:
 	_last_anchor = Vector2(0.0, -360.0)
 	first_vine = _spawn_vine(_last_anchor, _last_rope)
 	generate_until(-2600.0)
+
+
+func start_position() -> Vector2:
+	return Vector2(0.0, -60.0)
 
 
 ## 0 at the floor, 1 once past ramp_height.

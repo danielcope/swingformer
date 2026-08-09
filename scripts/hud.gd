@@ -71,6 +71,13 @@ func flash_fall(metres: float) -> void:
 ## you in a bad moment, so it gets the one piece of celebratory text the game
 ## has. It also overrides the "-Nm" fall notice, which would otherwise scold you
 ## for the very drop you just rescued.
+func flash_summit(metres: float) -> void:
+	_fall.add_theme_color_override("font_color", Color(1.0, 0.97, 0.75))
+	_fall.text = "SUMMIT\n%.0f m" % metres
+	_fall_timer = 12.0
+	_perfect_timer = 12.0
+
+
 func flash_perfect() -> void:
 	_fall.add_theme_color_override("font_color", Color(1.0, 0.93, 0.5))
 	_fall.text = "PERFECT BOUNCE"

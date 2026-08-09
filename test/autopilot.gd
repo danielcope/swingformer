@@ -27,7 +27,7 @@ const MIN_LAUNCH_SPEED := 650.0
 var debug := false
 
 var player: Player
-var tower: TowerGenerator
+var tower: Level
 var game: Node2D
 
 var _frames: int = 0
@@ -46,26 +46,38 @@ func _ready() -> void:
 		push_error("autopilot: Main not found")
 		return
 	player = game.get_node("Player")
-	tower = game.get_node("TowerGenerator")
+	tower = game.level
 	player.landed.connect(_on_landed)
 	debug = "--debug-climb" in OS.get_cmdline_user_args()
 	if "--dump-ledges" in OS.get_cmdline_user_args():
 		_dump_ledges()
 
 
-## Coverage audit: how much of the shaft width each tier actually blocks.
+## Coverage audit: how much of the shaft width each band of the level blocks.
+## Works on hand-authored levels too, where it answers "is there a stretch of
+## my tower that a fall drops straight through?"
 func _dump_ledges() -> void:
+	var band := 520.0
+	var width := 1520.0
+	if tower is TowerGenerator:
+		band = (tower as TowerGenerator).tier_height
+		width = (tower as TowerGenerator).half_width * 2.0
+	else:
+		var shafts := tower.find_children("*", "Shaft", true, false)
+		if not shafts.is_empty():
+			width = (shafts[0] as Shaft).width
+
 	var by_tier := {}
 	for node in get_tree().get_nodes_in_group("ledges"):
 		var l := node as Ledge
-		var tier := int(round(-l.global_position.y / tower.tier_height))
+		var tier := int(round(-l.global_position.y / band))
 		if not by_tier.has(tier):
 			by_tier[tier] = []
 		by_tier[tier].append(l)
 
 	var tiers := by_tier.keys()
 	tiers.sort()
-	print("shaft width = %.0f" % (tower.half_width * 2.0))
+	print("shaft width = %.0f, band = %.0f" % [width, band])
 	for t in tiers:
 		var total := 0.0
 		var desc := ""
@@ -73,9 +85,8 @@ func _dump_ledges() -> void:
 			total += l.width
 			desc += " [x=%.0f w=%.0f%s]" % [l.global_position.x, l.width,
 				(" BOUGH" if l.is_bough else "")]
-		print("tier %2d (y=%6.0f) coverage %3.0f%% :%s"
-			% [t, -float(t) * tower.tier_height,
-				100.0 * total / (tower.half_width * 2.0), desc])
+		print("band %2d (y=%6.0f) coverage %3.0f%% :%s"
+			% [t, -float(t) * band, 100.0 * total / width, desc])
 
 
 func _physics_process(_delta: float) -> void:

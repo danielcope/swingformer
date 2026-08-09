@@ -1,0 +1,476 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/hand_built_level.gd" id="1_f5dit"]
+[ext_resource type="PackedScene" path="res://scenes/shaft.tscn" id="2_jo613"]
+[ext_resource type="Script" path="res://scripts/shaft.gd" id="3_s4x5j"]
+[ext_resource type="PackedScene" path="res://scenes/vine.tscn" id="4_owkwv"]
+[ext_resource type="Script" path="res://scripts/vine.gd" id="5_f8ne3"]
+[ext_resource type="PackedScene" path="res://scenes/ledge.tscn" id="6_uq6gp"]
+[ext_resource type="Script" path="res://scripts/ledge.gd" id="7_lk4cq"]
+[ext_resource type="PackedScene" path="res://scenes/summit.tscn" id="8_m0goe"]
+[ext_resource type="Script" path="res://scripts/summit.gd" id="9_ca7v1"]
+
+[node name="Tower" type="Node2D" unique_id=1747310486]
+script = ExtResource("1_f5dit")
+
+[node name="Shaft" type="Node2D" parent="." unique_id=655580632 instance=ExtResource("2_jo613")]
+script = ExtResource("3_s4x5j")
+height = 8180.0
+
+[node name="Vines" type="Node2D" parent="." unique_id=706151572]
+
+[node name="Vine0" type="Node2D" parent="Vines" unique_id=1625348594 instance=ExtResource("4_owkwv")]
+position = Vector2(0, -360)
+script = ExtResource("5_f8ne3")
+length = 200.0
+color = Color(0.2935, 0.55149996, 0.269, 1)
+
+[node name="Vine1" type="Node2D" parent="Vines" unique_id=522808869 instance=ExtResource("4_owkwv")]
+position = Vector2(248.1431, -576.3877)
+script = ExtResource("5_f8ne3")
+length = 188.38391
+color = Color(0.30161455, 0.5704339, 0.27440968, 1)
+
+[node name="Vine2" type="Node2D" parent="Vines" unique_id=464757068 instance=ExtResource("4_owkwv")]
+position = Vector2(-29.88861, -795.04224)
+script = ExtResource("5_f8ne3")
+length = 210.0188
+color = Color(0.3098141, 0.58956623, 0.27987605, 1)
+
+[node name="Vine3" type="Node2D" parent="Vines" unique_id=1338176661 instance=ExtResource("4_owkwv")]
+position = Vector2(190.42699, -972.5858)
+script = ExtResource("5_f8ne3")
+length = 197.3075
+color = Color(0.31647196, 0.6051013, 0.28431463, 1)
+
+[node name="Vine4" type="Node2D" parent="Vines" unique_id=150246801 instance=ExtResource("4_owkwv")]
+position = Vector2(-93.749985, -1179.7495)
+script = ExtResource("5_f8ne3")
+length = 208.35393
+color = Color(0.32424062, 0.6232281, 0.28949374, 1)
+
+[node name="Vine5" type="Node2D" parent="Vines" unique_id=247843272 instance=ExtResource("4_owkwv")]
+position = Vector2(-326.68884, -1376.431)
+script = ExtResource("5_f8ne3")
+length = 242.46289
+color = Color(0.33161616, 0.6404377, 0.2944108, 1)
+
+[node name="Vine6" type="Node2D" parent="Vines" unique_id=228604470 instance=ExtResource("4_owkwv")]
+position = Vector2(-28.988068, -1561.6328)
+script = ExtResource("5_f8ne3")
+length = 179.41924
+color = Color(0.33856124, 0.6566429, 0.29904082, 1)
+
+[node name="Vine7" type="Node2D" parent="Vines" unique_id=1602549797 instance=ExtResource("4_owkwv")]
+position = Vector2(214.58183, -1789.6746)
+script = ExtResource("5_f8ne3")
+length = 224.845
+color = Color(0.34613654, 0.65553707, 0.30111575, 1)
+
+[node name="Vine8" type="Node2D" parent="Vines" unique_id=649577867 instance=ExtResource("4_owkwv")]
+position = Vector2(5.8734894, -2027.3528)
+script = ExtResource("5_f8ne3")
+length = 214.74495
+color = Color(0.35382614, 0.64994466, 0.30251384, 1)
+
+[node name="Vine9" type="Node2D" parent="Vines" unique_id=711679957 instance=ExtResource("4_owkwv")]
+position = Vector2(274.0033, -2259.218)
+script = ExtResource("5_f8ne3")
+length = 208.24377
+color = Color(0.36132765, 0.644489, 0.30387777, 1)
+
+[node name="Vine10" type="Node2D" parent="Vines" unique_id=494344289 instance=ExtResource("4_owkwv")]
+position = Vector2(71.543304, -2481.0405)
+script = ExtResource("5_f8ne3")
+length = 203.75931
+color = Color(0.36850426, 0.63926965, 0.3051826, 1)
+
+[node name="Vine11" type="Node2D" parent="Vines" unique_id=2093407985 instance=ExtResource("4_owkwv")]
+position = Vector2(314.64746, -2661.9448)
+script = ExtResource("5_f8ne3")
+length = 184.46242
+color = Color(0.37435704, 0.6350131, 0.30624673, 1)
+
+[node name="Vine12" type="Node2D" parent="Vines" unique_id=928335252 instance=ExtResource("4_owkwv")]
+position = Vector2(32.91748, -2901.2605)
+script = ExtResource("5_f8ne3")
+length = 190.00354
+color = Color(0.3820996, 0.62938213, 0.30765447, 1)
+
+[node name="Vine13" type="Node2D" parent="Vines" unique_id=659470523 instance=ExtResource("4_owkwv")]
+position = Vector2(280.50122, -3116.2317)
+script = ExtResource("5_f8ne3")
+length = 258.59314
+color = Color(0.38905454, 0.62432396, 0.308919, 1)
+
+[node name="Vine14" type="Node2D" parent="Vines" unique_id=325447880 instance=ExtResource("4_owkwv")]
+position = Vector2(28.18367, -3345.317)
+script = ExtResource("5_f8ne3")
+length = 199.85954
+color = Color(0.39646614, 0.61893374, 0.31026658, 1)
+
+[node name="Vine15" type="Node2D" parent="Vines" unique_id=1884591297 instance=ExtResource("4_owkwv")]
+position = Vector2(263.73993, -3560.8638)
+script = ExtResource("5_f8ne3")
+length = 238.81586
+color = Color(0.4034397, 0.61386204, 0.3115345, 1)
+
+[node name="Vine16" type="Node2D" parent="Vines" unique_id=881971614 instance=ExtResource("4_owkwv")]
+position = Vector2(51.21936, -3763.7922)
+script = ExtResource("5_f8ne3")
+length = 195.15479
+color = Color(0.41000503, 0.6090872, 0.3127282, 1)
+
+[node name="Vine17" type="Node2D" parent="Vines" unique_id=960693257 instance=ExtResource("4_owkwv")]
+position = Vector2(251.83179, -3950.5354)
+script = ExtResource("5_f8ne3")
+length = 208.41898
+color = Color(0.41604674, 0.6046933, 0.31382668, 1)
+
+[node name="Vine18" type="Node2D" parent="Vines" unique_id=743796371 instance=ExtResource("4_owkwv")]
+position = Vector2(3.6367035, -4178.318)
+script = ExtResource("5_f8ne3")
+length = 243.26425
+color = Color(0.42341617, 0.5993337, 0.31516656, 1)
+
+[node name="Vine19" type="Node2D" parent="Vines" unique_id=531481501 instance=ExtResource("4_owkwv")]
+position = Vector2(227.93504, -4388.131)
+script = ExtResource("5_f8ne3")
+length = 225.21634
+color = Color(0.4302042, 0.5943969, 0.31640077, 1)
+
+[node name="Vine20" type="Node2D" parent="Vines" unique_id=1715591525 instance=ExtResource("4_owkwv")]
+position = Vector2(-16.882233, -4595.942)
+script = ExtResource("5_f8ne3")
+length = 213.07884
+color = Color(0.43692753, 0.5895072, 0.3176232, 1)
+
+[node name="Vine21" type="Node2D" parent="Vines" unique_id=242936812 instance=ExtResource("4_owkwv")]
+position = Vector2(220.26814, -4804.478)
+script = ExtResource("5_f8ne3")
+length = 242.31586
+color = Color(0.44367427, 0.5846005, 0.31884986, 1)
+
+[node name="Vine22" type="Node2D" parent="Vines" unique_id=1896455943 instance=ExtResource("4_owkwv")]
+position = Vector2(-41.303635, -5034.658)
+script = ExtResource("5_f8ne3")
+length = 201.15929
+color = Color(0.4504852, 0.58027726, 0.32083178, 1)
+
+[node name="Vine23" type="Node2D" parent="Vines" unique_id=868973356 instance=ExtResource("4_owkwv")]
+position = Vector2(174.98746, -5258.224)
+script = ExtResource("5_f8ne3")
+length = 238.94817
+color = Color(0.45361513, 0.58206576, 0.3261974, 1)
+
+[node name="Vine24" type="Node2D" parent="Vines" unique_id=1181414428 instance=ExtResource("4_owkwv")]
+position = Vector2(-124.72809, -5473.9155)
+script = ExtResource("5_f8ne3")
+length = 243.85492
+color = Color(0.45663482, 0.5837913, 0.33137396, 1)
+
+[node name="Vine25" type="Node2D" parent="Vines" unique_id=2145726128 instance=ExtResource("4_owkwv")]
+position = Vector2(109.30585, -5689.358)
+script = ExtResource("5_f8ne3")
+length = 252.41232
+color = Color(0.459651, 0.58551484, 0.33654457, 1)
+
+[node name="Vine26" type="Node2D" parent="Vines" unique_id=1776590701 instance=ExtResource("4_owkwv")]
+position = Vector2(-188.84338, -5939.819)
+script = ExtResource("5_f8ne3")
+length = 235.0962
+color = Color(0.46315745, 0.5875185, 0.34255564, 1)
+
+[node name="Vine27" type="Node2D" parent="Vines" unique_id=927129910 instance=ExtResource("4_owkwv")]
+position = Vector2(71.23355, -6191.942)
+script = ExtResource("5_f8ne3")
+length = 208.40012
+color = Color(0.46668717, 0.58953553, 0.3486066, 1)
+
+[node name="Vine28" type="Node2D" parent="Vines" unique_id=1890914165 instance=ExtResource("4_owkwv")]
+position = Vector2(-191.57504, -6436.6475)
+script = ExtResource("5_f8ne3")
+length = 198.34096
+color = Color(0.47011304, 0.5914932, 0.35447952, 1)
+
+[node name="Vine29" type="Node2D" parent="Vines" unique_id=1299580212 instance=ExtResource("4_owkwv")]
+position = Vector2(61.895554, -6674.3955)
+script = ExtResource("5_f8ne3")
+length = 184.46938
+color = Color(0.4734415, 0.5933952, 0.36018547, 1)
+
+[node name="Vine30" type="Node2D" parent="Vines" unique_id=307150461 instance=ExtResource("4_owkwv")]
+position = Vector2(-227.3769, -6905.0146)
+script = ExtResource("5_f8ne3")
+length = 257.3175
+color = Color(0.4766702, 0.5952401, 0.36572033, 1)
+
+[node name="Vine31" type="Node2D" parent="Vines" unique_id=1229977016 instance=ExtResource("4_owkwv")]
+position = Vector2(66.46593, -7109.4697)
+script = ExtResource("5_f8ne3")
+length = 212.41058
+color = Color(0.47953257, 0.5968757, 0.37062728, 1)
+
+[node name="Vine32" type="Node2D" parent="Vines" unique_id=192796445 instance=ExtResource("4_owkwv")]
+position = Vector2(-198.33534, -7351.8574)
+script = ExtResource("5_f8ne3")
+length = 174.41481
+color = Color(0.48292598, 0.59881485, 0.37644458, 1)
+
+[node name="Ledges" type="Node2D" parent="." unique_id=1421281408]
+
+[node name="Ledge0" type="StaticBody2D" parent="Ledges" unique_id=418209515 instance=ExtResource("6_uq6gp")]
+position = Vector2(-349.85526, -543.93994)
+collision_mask = 0
+script = ExtResource("7_lk4cq")
+width = 219.09985
+height = 30.0
+color = Color(0.287197, 0.26379737, 0.21699813, 1)
+
+[node name="Ledge1" type="StaticBody2D" parent="Ledges" unique_id=1523201635 instance=ExtResource("6_uq6gp")]
+position = Vector2(302.62637, -503.7801)
+collision_mask = 0
+script = ExtResource("7_lk4cq")
+width = 200.42224
+height = 30.0
+color = Color(0.285189, 0.26204038, 0.21574312, 1)
+
+[node name="Ledge2" type="StaticBody2D" parent="Ledges" unique_id=751590288 instance=ExtResource("6_uq6gp")]
+position = Vector2(-557.0988, -1033.6045)
+collision_mask = 0
+script = ExtResource("7_lk4cq")
+width = 268.2211
+height = 30.0
+color = Color(0.31168023, 0.2852202, 0.23230015, 1)
+
+[node name="Ledge3" type="StaticBody2D" parent="Ledges" unique_id=685404614 instance=ExtResource("6_uq6gp")]
+position = Vector2(-102.2532, -1058.2263)
+collision_mask = 0
+script = ExtResource("7_lk4cq")
+width = 190.8811
+height = 30.0
+color = Color(0.3129113, 0.2862974, 0.23306957, 1)
+
+[node name="Ledge4" type="StaticBody2D" parent="Ledges" unique_id=1438420472 instance=ExtResource("6_uq6gp")]
+position = Vector2(398.2906, -1018.6243)
+collision_mask = 0
+script = ExtResource("7_lk4cq")
+width = 259.1296
+height = 30.0
+color = Color(0.3109312, 0.28456482, 0.23183201, 1)
+
+[node name="Ledge5" type="StaticBody2D" parent="Ledges" unique_id=1551229974 instance=ExtResource("6_uq6gp")]
+position = Vector2(-425.25784, -1544.3185)
+collision_mask = 0
+script = ExtResource("7_lk4cq")
+width = 252.93863
+height = 30.0
+color = Color(0.33721593, 0.30756393, 0.24825996, 1)
+
+[node name="Ledge6" type="StaticBody2D" parent="Ledges" unique_id=1622759392 instance=ExtResource("6_uq6gp")]
+position = Vector2(623.633, -1589.242)
+collision_mask = 0
+script = ExtResource("7_lk4cq")
+width = 218.33118
+height = 30.0
+color = Color(0.3394621, 0.30952933, 0.24966381, 1)
+
+[node name="Bough7" type="StaticBody2D" parent="Ledges" unique_id=1818975308 instance=ExtResource("6_uq6gp")]
+position = Vector2(-447.8301, -2080)
+collision_mask = 0
+script = ExtResource("7_lk4cq")
+width = 624.3398083496094
+height = 40.0
+is_bough = true
+color = Color(0.35411766, 0.3227059, 0.26552942, 1)
+
+[node name="Bough8" type="StaticBody2D" parent="Ledges" unique_id=1107442916 instance=ExtResource("6_uq6gp")]
+position = Vector2(440.28992, -2080)
+collision_mask = 0
+script = ExtResource("7_lk4cq")
+width = 639.4201916503906
+height = 40.0
+is_bough = true
+color = Color(0.35411766, 0.3227059, 0.26552942, 1)
+
+[node name="Ledge9" type="StaticBody2D" parent="Ledges" unique_id=218600249 instance=ExtResource("6_uq6gp")]
+position = Vector2(-502.53442, -2596.1152)
+collision_mask = 0
+script = ExtResource("7_lk4cq")
+width = 260.9729
+height = 30.0
+color = Color(0.3692975, 0.33636776, 0.28222728, 1)
+
+[node name="Ledge10" type="StaticBody2D" parent="Ledges" unique_id=1348477750 instance=ExtResource("6_uq6gp")]
+position = Vector2(54.347702, -2625.3574)
+collision_mask = 0
+script = ExtResource("7_lk4cq")
+width = 204.78278
+height = 30.0
+color = Color(0.37015757, 0.3371418, 0.28317332, 1)
+
+[node name="Ledge11" type="StaticBody2D" parent="Ledges" unique_id=448898708 instance=ExtResource("6_uq6gp")]
+position = Vector2(464.02286, -2609.1133)
+collision_mask = 0
+script = ExtResource("7_lk4cq")
+width = 192.08961
+height = 30.0
+color = Color(0.3696798, 0.33671182, 0.2826478, 1)
+
+[node name="Ledge12" type="StaticBody2D" parent="Ledges" unique_id=303034412 instance=ExtResource("6_uq6gp")]
+position = Vector2(-382.84613, -3156.9104)
+collision_mask = 0
+script = ExtResource("7_lk4cq")
+width = 184.15854
+height = 30.0
+color = Color(0.38579148, 0.35121232, 0.30037063, 1)
+
+[node name="Ledge13" type="StaticBody2D" parent="Ledges" unique_id=330442176 instance=ExtResource("6_uq6gp")]
+position = Vector2(568.0334, -3134.5999)
+collision_mask = 0
+script = ExtResource("7_lk4cq")
+width = 257.3138
+height = 30.0
+color = Color(0.3851353, 0.35062176, 0.29964882, 1)
+
+[node name="Ledge14" type="StaticBody2D" parent="Ledges" unique_id=1394121526 instance=ExtResource("6_uq6gp")]
+position = Vector2(-585.95776, -3635.0313)
+collision_mask = 0
+script = ExtResource("7_lk4cq")
+width = 190.43578
+height = 30.0
+color = Color(0.39985386, 0.36386847, 0.31583926, 1)
+
+[node name="Ledge15" type="StaticBody2D" parent="Ledges" unique_id=1763057125 instance=ExtResource("6_uq6gp")]
+position = Vector2(571.7743, -3644.2136)
+collision_mask = 0
+script = ExtResource("7_lk4cq")
+width = 204.43799
+height = 30.0
+color = Color(0.40012392, 0.36411154, 0.31613633, 1)
+
+[node name="Bough16" type="StaticBody2D" parent="Ledges" unique_id=1320546219 instance=ExtResource("6_uq6gp")]
+position = Vector2(-453.75873, -4160)
+collision_mask = 0
+script = ExtResource("7_lk4cq")
+width = 612.4825646972656
+height = 40.0
+is_bough = true
+color = Color(0.4152941, 0.3777647, 0.33282354, 1)
+
+[node name="Bough17" type="StaticBody2D" parent="Ledges" unique_id=1864853910 instance=ExtResource("6_uq6gp")]
+position = Vector2(437.4813, -4160)
+collision_mask = 0
+script = ExtResource("7_lk4cq")
+width = 645.0374353027344
+height = 40.0
+is_bough = true
+color = Color(0.4152941, 0.3777647, 0.33282354, 1)
+
+[node name="Ledge18" type="StaticBody2D" parent="Ledges" unique_id=1140854655 instance=ExtResource("6_uq6gp")]
+position = Vector2(-524.37573, -4689.1904)
+collision_mask = 0
+script = ExtResource("7_lk4cq")
+width = 184.17358
+height = 30.0
+color = Color(0.43085855, 0.3917727, 0.3499444, 1)
+
+[node name="Ledge19" type="StaticBody2D" parent="Ledges" unique_id=573471040 instance=ExtResource("6_uq6gp")]
+position = Vector2(135.52391, -4717.6875)
+collision_mask = 0
+script = ExtResource("7_lk4cq")
+width = 221.88757
+height = 30.0
+color = Color(0.43169668, 0.39252704, 0.35086638, 1)
+
+[node name="Ledge20" type="StaticBody2D" parent="Ledges" unique_id=1949124487 instance=ExtResource("6_uq6gp")]
+position = Vector2(495.35275, -4656.45)
+collision_mask = 0
+script = ExtResource("7_lk4cq")
+width = 198.32613
+height = 30.0
+color = Color(0.42989558, 0.39090604, 0.34888518, 1)
+
+[node name="Ledge21" type="StaticBody2D" parent="Ledges" unique_id=2068712468 instance=ExtResource("6_uq6gp")]
+position = Vector2(-615.5446, -5165.045)
+collision_mask = 0
+script = ExtResource("7_lk4cq")
+width = 247.31076
+height = 30.0
+color = Color(0.44396108, 0.40594164, 0.36858234, 1)
+
+[node name="Ledge22" type="StaticBody2D" parent="Ledges" unique_id=822884100 instance=ExtResource("6_uq6gp")]
+position = Vector2(369.7559, -5185.13)
+collision_mask = 0
+script = ExtResource("7_lk4cq")
+width = 257.63403
+height = 30.0
+color = Color(0.4444431, 0.40666467, 0.36962676, 1)
+
+[node name="Ledge23" type="StaticBody2D" parent="Ledges" unique_id=1321356854 instance=ExtResource("6_uq6gp")]
+position = Vector2(-352.67175, -5752.896)
+collision_mask = 0
+script = ExtResource("7_lk4cq")
+width = 178.30293
+height = 30.0
+color = Color(0.4580695, 0.42710426, 0.3991506, 1)
+
+[node name="Ledge24" type="StaticBody2D" parent="Ledges" unique_id=1691303434 instance=ExtResource("6_uq6gp")]
+position = Vector2(-114.450386, -5751.341)
+collision_mask = 0
+script = ExtResource("7_lk4cq")
+width = 186.40536
+height = 30.0
+color = Color(0.4580322, 0.42704827, 0.39906973, 1)
+
+[node name="Ledge25" type="StaticBody2D" parent="Ledges" unique_id=2088465635 instance=ExtResource("6_uq6gp")]
+position = Vector2(624.0123, -5734.684)
+collision_mask = 0
+script = ExtResource("7_lk4cq")
+width = 202.16864
+height = 30.0
+color = Color(0.45763242, 0.42644864, 0.39820358, 1)
+
+[node name="Bough26" type="StaticBody2D" parent="Ledges" unique_id=1785638109 instance=ExtResource("6_uq6gp")]
+position = Vector2(-672.48376, -6240)
+collision_mask = 0
+script = ExtResource("7_lk4cq")
+width = 175.0324560546875
+height = 40.0
+is_bough = true
+color = Color(0.46976, 0.44464, 0.42448002, 1)
+
+[node name="Bough27" type="StaticBody2D" parent="Ledges" unique_id=1643105362 instance=ExtResource("6_uq6gp")]
+position = Vector2(221.87622, -6240)
+collision_mask = 0
+script = ExtResource("7_lk4cq")
+width = 1076.2475439453124
+height = 40.0
+is_bough = true
+color = Color(0.46976, 0.44464, 0.42448002, 1)
+
+[node name="Ledge28" type="StaticBody2D" parent="Ledges" unique_id=124689058 instance=ExtResource("6_uq6gp")]
+position = Vector2(-311.7532, -6756.5166)
+collision_mask = 0
+script = ExtResource("7_lk4cq")
+width = 214.0907
+height = 30.0
+color = Color(0.4821564, 0.4632346, 0.4513389, 1)
+
+[node name="Ledge29" type="StaticBody2D" parent="Ledges" unique_id=629538747 instance=ExtResource("6_uq6gp")]
+position = Vector2(259.35184, -6728.8047)
+collision_mask = 0
+script = ExtResource("7_lk4cq")
+width = 222.35088
+height = 30.0
+color = Color(0.48149133, 0.46223697, 0.44989786, 1)
+
+[node name="StartPoint" type="Marker2D" parent="." unique_id=1318170643]
+position = Vector2(0, -60)
+
+[node name="Summit" type="Area2D" parent="." unique_id=789272341 instance=ExtResource("8_m0goe")]
+position = Vector2(0, -7540)
+collision_layer = 4
+collision_mask = 2
+script = ExtResource("9_ca7v1")
+width = 1520.0

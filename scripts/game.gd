@@ -9,11 +9,17 @@ extends Node2D
 
 const PX_PER_M := 64.0
 
+## The level to climb. Point this at any scene whose root is a Level -- a
+## hand-authored tower, or the procedural TowerGenerator. The game only ever
+## uses the three methods on Level, so the two are interchangeable.
+@export var level_scene: PackedScene = preload("res://scenes/levels/tower_01.tscn")
+
 @onready var player: Player = $Player
-@onready var tower: TowerGenerator = $TowerGenerator
 @onready var camera: FollowCamera = $FollowCamera
 @onready var hud: HUD = $UI/HUD
 @onready var background = $Background/Sky
+
+var level: Level
 
 var height: float = 0.0        ## metres above the floor, current
 var best_height: float = 0.0   ## metres, high-water mark for the session
@@ -21,18 +27,25 @@ var last_fall: float = 0.0     ## metres lost in the most recent landing
 
 
 func _ready() -> void:
+	# The level goes in below the player so hand-placed geometry never draws
+	# over them.
+	level = level_scene.instantiate() as Level
+	add_child(level)
+	move_child(level, 0)
+	level.summit_reached.connect(_on_summit)
+
 	camera.set_target(player)
 	background.set_camera(camera)
 	player.landed.connect(_on_landed)
 	player.knocked_off.connect(_on_knocked_off)
 	player.grabbed.connect(_on_grabbed)
 	player.bounced.connect(_on_bounced)
-	player.reset_at(Vector2(0.0, -60.0))
+	player.reset_at(level.start_position())
 	camera.snap_to_target()
 
 
 func _process(_delta: float) -> void:
-	tower.update_window(camera.global_position.y)
+	level.update_window(camera.global_position.y)
 
 	height = maxf(0.0, -player.global_position.y / PX_PER_M)
 	best_height = maxf(best_height, height)
@@ -41,10 +54,14 @@ func _process(_delta: float) -> void:
 	hud.update_climb(
 		height,
 		best_height,
-		-tower.bough_below(player.global_position.y) / PX_PER_M,
+		-level.bough_below(player.global_position.y) / PX_PER_M,
 		biome["name"],
 		player.state == Player.State.SWINGING
 	)
+
+
+func _on_summit() -> void:
+	hud.flash_summit(best_height)
 
 
 ## The only feedback the game gives about failure: how far you just fell.

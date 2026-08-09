@@ -60,12 +60,80 @@ freed. This is a hard requirement, not laziness: a fall has to be able to
 traverse the whole tower, so every ledge below you must still exist. Node counts
 stay trivial — a 200-tier climb is a few hundred static bodies.
 
+## Building levels
+
+Open **`scenes/levels/tower_01.tscn`** and edit it. It is an ordinary scene:
+
+```
+Tower                 (HandBuiltLevel)
+  Shaft               walls + floor, resize with width / height
+  Vines/              drag in scenes/vine.tscn, set length per vine
+  Ledges/             drag in scenes/ledge.tscn, tick is_bough for a checkpoint
+  StartPoint          where the player spawns
+  Summit              win trigger
+```
+
+Everything is discovery, not configuration. Add a bough by placing a `Ledge`
+and ticking `is_bough` — the level finds its own boughs, and the HUD's "what a
+fall costs" picks them up. `game.gd` has a `level_scene` export, so point it at
+a different level and that is the whole switch.
+
+Vines and ledges are `@tool` scripts, so they draw in the editor rather than
+being invisible boxes you place by faith. Each vine also draws the gizmos you
+place *by*:
+
+- a faint circle at **grab reach** — the player must be inside it to grab;
+- a circle at **rope length** — the arc they will actually travel;
+- two **launch markers** at `(anchor.x ± length, anchor.y)` with an arrow one
+  rope length tall.
+
+Those markers are the important ones. A release at a horizontal rope throws you
+straight up from exactly there, so they show where the next anchor upward wants
+to be. `Vine.EDITOR_GRAB_REACH` mirrors `Player.grab_reach`; change both together.
+
+### Check a level before you play it
+
+```bash
+godot --headless --path . --script res://tools/check_level.gd -- res://scenes/levels/tower_01.tscn
+```
+
+A reachability linter. It answers the question you actually have — *which vine
+is a dead end* — rather than "a bot stalled somewhere":
+
+```
+33 vines, grab reach 225, rope 70-320
+start: can reach 1 vine(s) from a standing jump
+reachable: 33 of 33 vines
+highest reachable anchor: Vine32 at 115 m
+summit at 118 m : REACHABLE
+no dead ends
+```
+
+It flags an unreachable start, vines nothing can climb past, stranded vines and
+a summit above the top of the climb. It is a guide, not a proof: it ignores
+bounces, wall rebounds and grabbing on the way down, all of which make more
+things reachable, so it errs towards warning you.
+
+### Starting from something
+
+```bash
+godot --headless --path . --script res://tools/bake_level.gd -- --tiers 14 --out res://scenes/levels/tower_02.tscn
+```
+
+Runs the tuned generator once and dumps it to an editable scene, so you never
+start from an empty canvas. Everything it emits is a plain node with plain
+exports. Nothing in the game depends on this tool — delete it once you have a
+tower you like.
+
 ## Layout
 
 | File | Role |
 |---|---|
 | `scripts/player.gd` | FREE/SWINGING state machine + pendulum. **Most of the feel is here.** |
-| `scripts/tower_generator.gd` | The shaft: vine chain, tiers, ledges, boughs, walls. |
+| `scripts/level.gd` | The three methods `game.gd` needs from a level. Keep it small — every method added is one more thing a hand-built level must provide. |
+| `scripts/hand_built_level.gd` | A level you author in the editor. |
+| `scripts/shaft.gd` | Walls and floor as one resizable node. |
+| `scripts/tower_generator.gd` | The procedural shaft. Still a `Level`, so it drops straight into `level_scene`. |
 | `scripts/ledge.gd` | Physical checkpoint. One-way. |
 | `scripts/biome.gd` | Height-keyed palette, so altitude is legible without reading the number. |
 | `scripts/follow_camera.gd` | Vertical chase; follows falls harder than climbs. |
