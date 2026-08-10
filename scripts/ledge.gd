@@ -1,6 +1,6 @@
 @tool
 class_name Ledge
-extends StaticBody2D
+extends AnimatableBody2D
 
 ## A physical checkpoint, and a one-way platform.
 ##

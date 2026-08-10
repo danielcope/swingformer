@@ -1,6 +1,6 @@
 @tool
 class_name Block
-extends StaticBody2D
+extends AnimatableBody2D
 
 ## A solid slab of rock. Nothing passes through it, from any direction.
 ##

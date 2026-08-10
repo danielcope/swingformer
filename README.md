@@ -85,7 +85,7 @@ a different level and that is the whole switch.
 | `vine.tscn` | A grab point. `length` is how far the rope hangs. |
 | `ledge.tscn` | **One-way.** You rise straight through it and land on top. A place to end up. Tick `is_bough` to make it a checkpoint. |
 | `block.tscn` | **Solid from every side.** Stops falls, blocks jumps, and knocks you off a vine you swing into. A thing to work around. |
-| `moving_platform.tscn` | Ping-pongs between two points. `solid` picks whether it behaves like a `Block` (a route that opens and closes) or a `Ledge` (a moving foothold). |
+| `mover.tscn` | Drop it **under** any node to animate that node. See below. |
 | `shaft.tscn` | The walls and floor, sized by `width` / `height`. |
 | `summit.tscn` | Win trigger. Put it where the climb ends. |
 
@@ -102,12 +102,36 @@ size exports of its own, and a node copy keeps pointing at the *same*
 `RectangleShape2D` as the wall it came from, so resizing one resizes the other.
 Use `block.tscn`.
 
-`MovingPlatform` is an `AnimatableBody2D`, not a `StaticBody2D`, which is what
-makes the physics server track its velocity so a standing player is *carried*
-rather than left behind. Set the range with `travel` — the editor draws the
-whole path and a ghost of the far end, so you can see the sweep without pressing
-play. `dwell` is the pause at each end and is what makes a moving obstacle
-readable; `phase_offset` desynchronises a row of them.
+### Making things move
+
+`Mover` is a **component, not a node type**. Add it as a child of anything and
+it animates its parent:
+
+| Mode | Does |
+|---|---|
+| `PING_PONG` | Back and forth along `travel`, pausing at each end. |
+| `ORBIT` | Circles a centre placed at `travel`; the node you placed sits on the rim. |
+| `SPIN` | Rotates in place. Leaves position alone. |
+
+The alternative was a `MovingBlock`, `MovingLedge`, `MovingVine` and so on, each
+carrying a copy of the same motion code and slowly drifting apart. This way
+anything you can place, you can move — **including a vine**, whose anchor the
+player is attached to, so a moving anchor drags the swing along with it.
+
+The parent keeps its own identity: a moving `Ledge` is still one-way, a moving
+`Block` is still solid. `Mover` only supplies motion.
+
+`PING_PONG` and `ORBIT` write the parent's **position**; `SPIN` writes its
+**rotation** — so one of each can safely sit on the same node.
+
+`Block` and `Ledge` are `AnimatableBody2D` rather than `StaticBody2D`. That
+costs nothing while they are still, and it is what makes the physics server
+track their motion so a standing player is *carried* instead of left behind.
+Put a `Mover` on a plain `StaticBody2D` and it warns you about exactly this.
+
+`dwell` is the pause at each end, and it does more work than it looks: a
+platform in constant motion is hard to commit to. `phase_offset` desynchronises
+a row of movers so they do not all travel as one.
 
 **Resize the shaft with the `width` and `height` exports on the Shaft node, not
 by dragging its children.** The walls and floor are script-owned: their
