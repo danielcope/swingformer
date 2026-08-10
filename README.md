@@ -8,12 +8,13 @@ can be tuned before anything gets locked into sprites.
 godot --path .
 ```
 
-**Controls** — `Space`/`Click` jump, grab & release · `A`/`D` pump the swing ·
-`W`/`S` reel the rope in/out
+**Controls** — `Left click` grab & release · `Space` jump · `A`/`D` pump the
+swing · `W`/`S` reel the rope in/out
 
-`Space` is the only action button. It means "get me back into play": grab a vine
-if one is in reach, jump if you are standing, and if you are about to hit
-something, time the press to land a **boosted bounce**.
+The **timed bounce** is on `Space`: press it just as you land for a bigger
+rebound. "Push off as you land" is what jump already means on the ground, so the
+airborne version needs no explaining — and it leaves the click meaning only
+"reach".
 
 ## The one thing to understand
 
@@ -86,6 +87,7 @@ a different level and that is the whole switch.
 | `ledge.tscn` | **One-way.** You rise straight through it and land on top. A place to end up. Tick `is_bough` to make it a checkpoint. |
 | `block.tscn` | **Solid from every side.** Stops falls, blocks jumps, and knocks you off a vine you swing into. A thing to work around. |
 | `mover.tscn` | Drop it **under** any node to animate that node. See below. |
+| `slippery.tscn` | Drop it **under** a block or ledge and its surface stops gripping. See below. |
 | `shaft.tscn` | The walls and floor, sized by `width` / `height`. |
 | `summit.tscn` | Win trigger. Put it where the climb ends. |
 
@@ -170,6 +172,32 @@ the anchor spends most of its cycle out of play.
 costs nothing while they are still, and it is what makes the physics server
 track their motion so a standing player is *carried* instead of left behind.
 Put a `Mover` on a plain `StaticBody2D` and it warns you about exactly this.
+
+### Ice
+
+`Slippery` is a component like `Mover`, so a block can be icy, moving, or both
+without a `SlipperyBlock` or a `SlipperyMovingLedge` ever existing. Drop it under
+the piece and set `grip` — 0 is frictionless, 1 does nothing.
+
+It changes three things for anything standing on it: no braking, almost no push,
+and **gravity keeps pulling while you are on it**. That third one is what makes
+a slope actually slide. Normally the player has no gravity applied while
+grounded, which is exactly why they can stand on a steep block like a shelf; an
+icy floor takes the airborne branch instead, so any tilt becomes a slide that
+accelerates.
+
+**So tilt the block.** On a perfectly flat icy surface there is nothing for
+gravity to pull you along — you keep your momentum and cannot brake, but you
+will not start moving on your own. Measured on a 22° block:
+
+| surface | travelled after landing | final speed |
+|---|---|---|
+| grippy | 154px | **0 px/s** (came to rest) |
+| slippery | 1577px | **1915 px/s** (still accelerating) |
+
+It tints the parent at runtime so ice reads as ice in play, and draws streaks in
+the editor so you can spot icy pieces while building. The tint is runtime-only —
+doing it in the editor would overwrite the colour you picked and save it.
 
 ### Pace
 

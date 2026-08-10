@@ -243,11 +243,19 @@ func _process_free(delta: float) -> void:
 		velocity.y = -jump_velocity
 		_jump_buffer = 0.0
 
-	if on_floor:
+	# Ice takes the airborne branch on purpose. Grounded movement applies no
+	# gravity, which is exactly why the player can stand on a steep block like
+	# a shelf; treating a slippery floor as air keeps gravity running, so any
+	# tilt becomes a slide that accelerates.
+	var grip := _floor_grip()
+
+	if on_floor and grip > 0.0:
 		if dir != 0.0:
-			velocity.x = move_toward(velocity.x, dir * ground_speed, ground_accel * delta)
+			velocity.x = move_toward(
+				velocity.x, dir * ground_speed, ground_accel * grip * delta
+			)
 		else:
-			velocity.x = move_toward(velocity.x, 0.0, ground_friction * delta)
+			velocity.x = move_toward(velocity.x, 0.0, ground_friction * grip * delta)
 	else:
 		# Air control cannot push you past max_air_speed, but it also never
 		# slows you below it -- a fast launch stays fast.
@@ -272,6 +280,20 @@ func _process_free(delta: float) -> void:
 
 	if wanted and is_instance_valid(wanted):
 		attach_to(wanted)
+
+
+## How much the surface underfoot grips: 1 normally, 0 on ice. Read from the
+## body actually being stood on, so a single icy ledge in a level of ordinary
+## ones behaves differently without the player knowing anything about levels.
+func _floor_grip() -> float:
+	for i in get_slide_collision_count():
+		var collision := get_slide_collision(i)
+		if collision.get_normal().y > -0.4:
+			continue  # a wall or a ceiling, not something being stood on
+		var collider := collision.get_collider()
+		if collider is Object and (collider as Object).has_meta("slippery_grip"):
+			return float((collider as Object).get_meta("slippery_grip"))
+	return 1.0
 
 
 ## Reflects off whatever move_and_slide just hit, if it was hit hard enough.
