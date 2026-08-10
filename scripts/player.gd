@@ -237,17 +237,24 @@ func _process_free(delta: float) -> void:
 	if _grab_buffer > 0.0:
 		wanted = _find_best_vine()
 
-	# Resolved here, before move_and_slide, so the jump lands on the same frame
-	# as the press rather than one frame late.
-	if on_floor and _jump_buffer > 0.0:
-		velocity.y = -jump_velocity
-		_jump_buffer = 0.0
-
 	# Ice takes the airborne branch on purpose. Grounded movement applies no
 	# gravity, which is exactly why the player can stand on a steep block like
 	# a shelf; treating a slippery floor as air keeps gravity running, so any
 	# tilt becomes a slide that accelerates.
 	var grip := _floor_grip()
+
+	# Resolved here, before move_and_slide, so the jump lands on the same frame
+	# as the press rather than one frame late.
+	#
+	# Jumping is deliberately NOT blocked on ice. It looks like it should be --
+	# you cannot walk up a frictionless slope, so hopping up it sounds like a
+	# hole -- but measured, jumping up a 22 degree slippery slope still loses
+	# 154,000px of height: you slide back down between hops faster than you
+	# gain. Blocking it would only have meant a player standing on a flat icy
+	# ledge could not jump at all.
+	if on_floor and _jump_buffer > 0.0:
+		velocity.y = -jump_velocity
+		_jump_buffer = 0.0
 
 	if on_floor and grip > 0.0:
 		if dir != 0.0:
@@ -308,10 +315,11 @@ func _apply_bounce(pre_velocity: Vector2) -> void:
 	# A corner produces several contacts at once; bounce off whichever one you
 	# actually drove into, or the reflection fights itself.
 	for i in get_slide_collision_count():
-		var into: float = -pre_velocity.dot(get_slide_collision(i).get_normal())
+		var collision := get_slide_collision(i)
+		var into: float = -pre_velocity.dot(collision.get_normal())
 		if into > hardest:
 			hardest = into
-			normal = get_slide_collision(i).get_normal()
+			normal = collision.get_normal()
 
 	if hardest < bounce_threshold or normal == Vector2.ZERO:
 		return

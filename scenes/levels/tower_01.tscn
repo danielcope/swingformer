@@ -4,6 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://bxk6b8126tnct" path="res://scenes/shaft.tscn" id="2_jo613"]
 [ext_resource type="PackedScene" path="res://scenes/vine.tscn" id="4_owkwv"]
 [ext_resource type="PackedScene" path="res://scenes/ledge.tscn" id="6_uq6gp"]
+[ext_resource type="PackedScene" path="res://scenes/slippery.tscn" id="8_m0d6n"]
 [ext_resource type="PackedScene" path="res://scenes/summit.tscn" id="8_m0goe"]
 [ext_resource type="PackedScene" path="res://scenes/block.tscn" id="9_block"]
 [ext_resource type="PackedScene" path="res://scenes/mover.tscn" id="10_mover"]
@@ -313,9 +314,7 @@ height = 44.0
 [node name="Mover" parent="Blockers/SweepingGate" unique_id=1348081151 instance=ExtResource("10_mover")]
 travel = Vector2(460, 0)
 duration = 2.0
-speed = null
 dwell = 0.7
-path_loops = null
 
 [node name="StartPoint" type="Marker2D" parent="." unique_id=1318170643]
 position = Vector2(-4086, -239)
@@ -323,3 +322,15 @@ position = Vector2(-4086, -239)
 [node name="Summit" parent="." unique_id=789272341 instance=ExtResource("8_m0goe")]
 position = Vector2(0, -7540)
 width = 1520.0
+
+[node name="Block" parent="." unique_id=2053733470 instance=ExtResource("9_block")]
+position = Vector2(-2586, -534)
+
+[node name="Block2" parent="." unique_id=206904696 instance=ExtResource("9_block")]
+position = Vector2(-1601, -150.00002)
+rotation = -1.865757
+height = 1600.0
+metadata/slippery_grip = 0.0
+
+[node name="Slippery" parent="Block2" unique_id=634667224 instance=ExtResource("8_m0d6n")]
+position = Vector2(-2.289032, -2.7857666)

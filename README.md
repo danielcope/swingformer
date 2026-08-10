@@ -186,6 +186,12 @@ grounded, which is exactly why they can stand on a steep block like a shelf; an
 icy floor takes the airborne branch instead, so any tilt becomes a slide that
 accelerates.
 
+Jumping still works on ice, which looks like a hole — if you cannot walk up a
+frictionless slope, surely you can hop up it? Measured, no: jumping up a 22°
+slippery slope still loses **154,000px** of height, because you slide back down
+between hops faster than you gain. Blocking it would only have meant a player on
+a flat icy ledge could not jump at all.
+
 **So tilt the block.** On a perfectly flat icy surface there is nothing for
 gravity to pull you along — you keep your momentum and cannot brake, but you
 will not start moving on your own. Measured on a 22° block:
