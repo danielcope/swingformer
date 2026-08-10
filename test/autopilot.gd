@@ -93,7 +93,7 @@ func _physics_process(_delta: float) -> void:
 	if player == null:
 		return
 	_frames += 1
-	for a in ["swing", "move_left", "move_right", "reel_in", "reel_out"]:
+	for a in ["swing", "jump", "move_left", "move_right", "reel_in", "reel_out"]:
 		Input.action_release(a)
 
 	_peak_m = maxf(_peak_m, -player.global_position.y / 64.0)
@@ -210,9 +210,7 @@ func _drive_air() -> void:
 	if absf(dx) > 40.0:
 		Input.action_press("move_right" if dx > 0.0 else "move_left")
 	else:
-		# Same button as the grab: on the ground it falls through to a jump
-		# when nothing is in reach.
-		Input.action_press("swing")
+		Input.action_press("jump")
 
 
 ## Nearest anchor ABOVE the player -- the way back into the climb. Targeting

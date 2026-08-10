@@ -71,11 +71,11 @@ func _physics_process(_delta: float) -> void:
 		for c in _cases:
 			_track(c)
 
-	# Each timed drop has to run genuinely alone. Input is global, so a press
-	# meant for one is also seen by any player still in the scene -- and a
-	# settled player reads that press as a jump, which shows up as phantom
-	# extra bounces. Retire the previous phase first; recorded apexes live in
-	# the dictionaries, not the nodes.
+	# Each timed drop has to run genuinely alone. Input is global, so the jump
+	# press meant for one is also seen by any player still in the scene -- and
+	# a settled player just jumps, which shows up as phantom extra bounces.
+	# Retire the previous phase first; recorded apexes live in the
+	# dictionaries, not the nodes.
 	if _frames == BOOST_START_FRAME:
 		_retire(_cases)
 		_boost = _spawn(4200.0, BOOST_DROP)
@@ -118,14 +118,14 @@ func _track(c: Dictionary) -> void:
 
 ## Press once, at a given height above the surface, before the first impact.
 func _drive_press(c: Dictionary, at_height: float) -> void:
-	Input.action_release("swing")
+	Input.action_release("jump")
 	if _pressed or c.is_empty():
 		return
 	var p: Player = c["player"]
 	if not is_instance_valid(p):
 		return
 	if p.velocity.y > 0.0 and -p.global_position.y < at_height:
-		Input.action_press("swing")
+		Input.action_press("jump")
 		_pressed = true
 
 

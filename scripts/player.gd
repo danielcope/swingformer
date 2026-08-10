@@ -141,6 +141,9 @@ signal grab_missed
 ## distinction that matters in a precision climber: you still have to be in
 ## range, you just do not have to be frame-perfect about asking.
 @export var grab_buffer_time: float = 0.20
+## The same forgiveness for jump, and the window the timed bounce is judged
+## against: press jump just before you land and the press is still waiting.
+@export var jump_buffer_time: float = 0.20
 ## How much of your arrival speed survives the grab. 0 is a physically exact
 ## rope (and a dead stop on any vertical catch); 1 keeps everything.
 @export_range(0.0, 1.0) var grab_momentum_retention: float = 0.65
@@ -161,6 +164,7 @@ var target_vine: Vine = null
 var _last_vine: Vine = null
 var _lockout_timer: float = 0.0
 var _grab_buffer: float = 0.0
+var _jump_buffer: float = 0.0
 var _was_on_floor: bool = false
 var _fall_start_y: float = 0.0
 var _whiff: float = 0.0
@@ -186,11 +190,17 @@ func _physics_process(delta: float) -> void:
 		_whiff = 1.0
 		grab_missed.emit()
 
+	_jump_buffer = maxf(0.0, _jump_buffer - delta)
+
+	# Grab and release are the click; jump is its own button. Keeping them
+	# apart means a click never means "hop" and a jump never means "reach".
 	if Input.is_action_just_pressed("swing"):
 		if state == State.SWINGING:
 			release()
 		else:
 			_grab_buffer = grab_buffer_time
+	if Input.is_action_just_pressed("jump"):
+		_jump_buffer = jump_buffer_time
 
 	match state:
 		State.FREE:
@@ -223,16 +233,15 @@ func _process_free(delta: float) -> void:
 	# bounce does not get ground friction applied to the speed it just gained.
 	var on_floor := is_on_floor() and velocity.y >= -1.0
 
-	# One button does both. A press means "get me onto a vine": if one is in
-	# reach that is a grab, and if not it becomes a jump -- which is usually
-	# the first half of reaching a vine anyway. Resolving it here, before
-	# move_and_slide, keeps the jump on the same frame as the press.
 	var wanted: Vine = null
 	if _grab_buffer > 0.0:
 		wanted = _find_best_vine()
-		if wanted == null and on_floor:
-			velocity.y = -jump_velocity
-			_grab_buffer = 0.0
+
+	# Resolved here, before move_and_slide, so the jump lands on the same frame
+	# as the press rather than one frame late.
+	if on_floor and _jump_buffer > 0.0:
+		velocity.y = -jump_velocity
+		_jump_buffer = 0.0
 
 	if on_floor:
 		if dir != 0.0:
@@ -285,20 +294,20 @@ func _apply_bounce(pre_velocity: Vector2) -> void:
 	if hardest < bounce_threshold or normal == Vector2.ZERO:
 		return
 
-	# A buffered press that found no vine becomes a timed bounce, so the button
-	# always means the same thing -- "get me back into play" -- and a press that
-	# would otherwise have been a whiff still does something.
+	# The timed bounce rides on JUMP, not grab. "Push off as you land" is what
+	# the button already means on the ground, so the airborne version of it
+	# needs no explaining -- and it leaves the click meaning only "reach".
 	#
-	# _grab_buffer counts down from grab_buffer_time, so what is left of it is
+	# _jump_buffer counts down from jump_buffer_time, so what is left of it is
 	# how recently you pressed: a full buffer means you pressed on this very
 	# frame, which is a press timed to the landing.
 	var quality := BounceQuality.PLAIN
-	if _grab_buffer > 0.0:
-		var press_age: float = grab_buffer_time - _grab_buffer
+	if _jump_buffer > 0.0:
+		var press_age: float = jump_buffer_time - _jump_buffer
 		quality = BounceQuality.TIMED
 		if hardest >= perfect_bounce_speed and press_age <= perfect_bounce_window:
 			quality = BounceQuality.PERFECT
-		_grab_buffer = 0.0
+		_jump_buffer = 0.0
 
 	var restitution := wall_bounciness if absf(normal.x) > 0.7 else bounciness
 	var rebound: float
@@ -578,6 +587,7 @@ func reset_at(pos: Vector2) -> void:
 	_last_vine = null
 	_lockout_timer = 0.0
 	_grab_buffer = 0.0
+	_jump_buffer = 0.0
 	_was_on_floor = false
 	velocity = Vector2.ZERO
 	rotation = 0.0
