@@ -401,7 +401,9 @@ func _process_swinging(delta: float) -> void:
 	var target := anchor + Vector2(sin(angle), cos(angle)) * rope_length
 	var hit := move_and_collide(target - global_position)
 
-	velocity = _tangent() * angular_velocity * rope_length
+	# Keep the anchor's own motion in velocity, so a knock-off, the camera and
+	# anything else reading velocity see where the player is actually going.
+	velocity = _tangent() * angular_velocity * rope_length + current_vine.anchor_velocity
 	rotation = angle
 
 	if hit:
@@ -437,8 +439,11 @@ func attach_to(vine: Vine) -> void:
 	rope_length = clampf(offset.length(), min_rope_length, max_rope_length)
 	angle = atan2(offset.x, offset.y)
 
-	var speed := velocity.length()
-	var tangential := velocity.dot(_tangent())
+	# Everything about the grab is relative to the anchor. Catching a vine that
+	# is already sweeping sideways should not read as arriving at it that fast.
+	var relative := velocity - vine.anchor_velocity
+	var speed := relative.length()
+	var tangential := relative.dot(_tangent())
 
 	# Which way round the anchor to start swinging. The sign of the tangential
 	# component is the honest answer, but when you arrive moving almost along
@@ -449,8 +454,8 @@ func attach_to(vine: Vine) -> void:
 		var aim := Input.get_axis("move_left", "move_right")
 		if aim != 0.0:
 			dir = signf(aim)
-		elif absf(velocity.x) > 25.0:
-			dir = signf(velocity.x)
+		elif absf(relative.x) > 25.0:
+			dir = signf(relative.x)
 		elif angle != 0.0:
 			dir = signf(angle)
 		else:
@@ -485,7 +490,14 @@ func release() -> void:
 	if state != State.SWINGING:
 		return
 
-	velocity = _tangent() * angular_velocity * rope_length * release_boost
+	# The swing's own contribution gets the arcade boost; the anchor's motion is
+	# added raw. Drop it and letting go of a moving vine flings you as though it
+	# had been still, which reads as the release being broken.
+	var anchor_velocity := Vector2.ZERO
+	if is_instance_valid(current_vine):
+		anchor_velocity = current_vine.anchor_velocity
+
+	velocity = _tangent() * angular_velocity * rope_length * release_boost + anchor_velocity
 	velocity.y -= release_lift
 	_fall_start_y = global_position.y
 

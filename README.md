@@ -121,6 +121,13 @@ player is attached to, so a moving anchor drags the swing along with it.
 The parent keeps its own identity: a moving `Ledge` is still one-way, a moving
 `Block` is still solid. `Mover` only supplies motion.
 
+**On a vine**, the anchor sweeps and drags your swing with it. The rope stays
+taut, and releasing carries the anchor's motion on top of the swing's own — an
+`ORBIT` mover on a vine is a slingshot. That last part needed fixing: the swing
+built velocity purely from the tangent, so letting go of a vine that was
+carrying you sideways at 333px/s flung you at nothing and you simply dropped.
+`test/moving_vine.gd` guards it.
+
 `PING_PONG` and `ORBIT` write the parent's **position**; `SPIN` writes its
 **rotation** — so one of each can safely sit on the same node.
 
