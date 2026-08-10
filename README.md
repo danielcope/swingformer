@@ -85,6 +85,7 @@ a different level and that is the whole switch.
 | `vine.tscn` | A grab point. `length` is how far the rope hangs. |
 | `ledge.tscn` | **One-way.** You rise straight through it and land on top. A place to end up. Tick `is_bough` to make it a checkpoint. |
 | `block.tscn` | **Solid from every side.** Stops falls, blocks jumps, and knocks you off a vine you swing into. A thing to work around. |
+| `moving_platform.tscn` | Ping-pongs between two points. `solid` picks whether it behaves like a `Block` (a route that opens and closes) or a `Ledge` (a moving foothold). |
 | `shaft.tscn` | The walls and floor, sized by `width` / `height`. |
 | `summit.tscn` | Win trigger. Put it where the climb ends. |
 
@@ -100,6 +101,13 @@ shaft's `LeftWall`** to make a pillar: it is script-owned by `Shaft`, it has no
 size exports of its own, and a node copy keeps pointing at the *same*
 `RectangleShape2D` as the wall it came from, so resizing one resizes the other.
 Use `block.tscn`.
+
+`MovingPlatform` is an `AnimatableBody2D`, not a `StaticBody2D`, which is what
+makes the physics server track its velocity so a standing player is *carried*
+rather than left behind. Set the range with `travel` — the editor draws the
+whole path and a ghost of the far end, so you can see the sweep without pressing
+play. `dwell` is the pause at each end and is what makes a moving obstacle
+readable; `phase_offset` desynchronises a row of them.
 
 **Resize the shaft with the `width` and `height` exports on the Shaft node, not
 by dragging its children.** The walls and floor are script-owned: their
