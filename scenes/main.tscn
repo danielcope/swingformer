@@ -1,18 +1,19 @@
-[gd_scene load_steps=6 format=3]
+[gd_scene format=3 uid="uid://bf6w2le4i2y50"]
 
-[ext_resource type="Script" path="res://scripts/game.gd" id="1_game"]
-[ext_resource type="Script" path="res://scripts/background.gd" id="2_bg"]
+[ext_resource type="Script" uid="uid://bvqbc8skk8isa" path="res://scripts/game.gd" id="1_game"]
+[ext_resource type="Script" uid="uid://dlbscipi70jos" path="res://scripts/background.gd" id="2_bg"]
 [ext_resource type="PackedScene" path="res://scenes/player.tscn" id="4_player"]
-[ext_resource type="Script" path="res://scripts/follow_camera.gd" id="5_cam"]
-[ext_resource type="Script" path="res://scripts/hud.gd" id="6_hud"]
+[ext_resource type="Script" uid="uid://cuxuh2i2udgkb" path="res://scripts/follow_camera.gd" id="5_cam"]
+[ext_resource type="Script" uid="uid://cf4xfex12qoch" path="res://scripts/hud.gd" id="6_hud"]
 
-[node name="Main" type="Node2D"]
+[node name="Main" type="Node2D" unique_id=587116338]
 script = ExtResource("1_game")
 
-[node name="Background" type="CanvasLayer" parent="."]
+[node name="Background" type="CanvasLayer" parent="." unique_id=42470872]
 layer = -10
 
-[node name="Sky" type="Control" parent="Background"]
+[node name="Sky" type="Control" parent="Background" unique_id=1547875273]
+layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -21,14 +22,15 @@ grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("2_bg")
 
-[node name="Player" parent="." instance=ExtResource("4_player")]
+[node name="Player" parent="." unique_id=2123081050 instance=ExtResource("4_player")]
 
-[node name="FollowCamera" type="Camera2D" parent="."]
+[node name="FollowCamera" type="Camera2D" parent="." unique_id=1119478931]
 script = ExtResource("5_cam")
 
-[node name="UI" type="CanvasLayer" parent="."]
+[node name="UI" type="CanvasLayer" parent="." unique_id=672060296]
 
-[node name="HUD" type="Control" parent="UI"]
+[node name="HUD" type="Control" parent="UI" unique_id=999513874]
+layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -37,14 +39,16 @@ grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("6_hud")
 
-[node name="Stats" type="VBoxContainer" parent="UI/HUD"]
+[node name="Stats" type="VBoxContainer" parent="UI/HUD" unique_id=329777348]
+layout_mode = 0
 offset_left = 26.0
 offset_top = 20.0
 offset_right = 460.0
 offset_bottom = 170.0
 theme_override_constants/separation = 1
 
-[node name="Height" type="Label" parent="UI/HUD/Stats"]
+[node name="Height" type="Label" parent="UI/HUD/Stats" unique_id=1053312872]
+layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.7)
 theme_override_constants/shadow_offset_x = 2
@@ -52,7 +56,8 @@ theme_override_constants/shadow_offset_y = 2
 theme_override_font_sizes/font_size = 52
 text = "0 m"
 
-[node name="Best" type="Label" parent="UI/HUD/Stats"]
+[node name="Best" type="Label" parent="UI/HUD/Stats" unique_id=782043773]
+layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.93, 0.7, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.7)
 theme_override_constants/shadow_offset_x = 2
@@ -60,16 +65,17 @@ theme_override_constants/shadow_offset_y = 2
 theme_override_font_sizes/font_size = 22
 text = "best  0 m"
 
-[node name="Stake" type="Label" parent="UI/HUD/Stats"]
+[node name="Stake" type="Label" parent="UI/HUD/Stats" unique_id=1190960161]
 modulate = Color(1, 1, 1, 0)
+layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.72, 0.62, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.7)
 theme_override_constants/shadow_offset_x = 2
 theme_override_constants/shadow_offset_y = 2
 theme_override_font_sizes/font_size = 17
-text = ""
 
-[node name="BiomeName" type="Label" parent="UI/HUD/Stats"]
+[node name="BiomeName" type="Label" parent="UI/HUD/Stats" unique_id=1823291521]
+layout_mode = 2
 theme_override_colors/font_color = Color(0.75, 0.85, 0.9, 0.55)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.6)
 theme_override_constants/shadow_offset_x = 2
@@ -77,9 +83,9 @@ theme_override_constants/shadow_offset_y = 2
 theme_override_font_sizes/font_size = 15
 text = "UNDERGROWTH"
 
-[node name="Fall" type="Label" parent="UI/HUD"]
+[node name="Fall" type="Label" parent="UI/HUD" unique_id=587314014]
 modulate = Color(1, 1, 1, 0)
-anchors_preset = 8
+layout_mode = 0
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
@@ -99,8 +105,8 @@ text = "-0 m"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Hint" type="Label" parent="UI/HUD"]
-anchors_preset = 7
+[node name="Hint" type="Label" parent="UI/HUD" unique_id=813527158]
+layout_mode = 0
 anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5

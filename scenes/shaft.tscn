@@ -1,12 +1,11 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=2 format=3 uid="uid://bxk6b8126tnct"]
 
-[ext_resource type="Script" path="res://scripts/shaft.gd" id="1_shaft"]
+[ext_resource type="Script" uid="uid://d256vqkedmviy" path="res://scripts/shaft.gd" id="1_shaft"]
 
 [node name="Shaft" type="Node2D"]
 script = ExtResource("1_shaft")
 
 [node name="LeftWall" type="StaticBody2D" parent="."]
-collision_layer = 1
 collision_mask = 0
 
 [node name="Polygon2D" type="Polygon2D" parent="LeftWall"]
@@ -14,7 +13,6 @@ collision_mask = 0
 [node name="CollisionShape2D" type="CollisionShape2D" parent="LeftWall"]
 
 [node name="RightWall" type="StaticBody2D" parent="."]
-collision_layer = 1
 collision_mask = 0
 
 [node name="Polygon2D" type="Polygon2D" parent="RightWall"]
@@ -22,7 +20,6 @@ collision_mask = 0
 [node name="CollisionShape2D" type="CollisionShape2D" parent="RightWall"]
 
 [node name="Floor" type="StaticBody2D" parent="."]
-collision_layer = 1
 collision_mask = 0
 
 [node name="Polygon2D" type="Polygon2D" parent="Floor"]

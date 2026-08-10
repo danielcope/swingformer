@@ -78,6 +78,12 @@ and ticking `is_bough` — the level finds its own boughs, and the HUD's "what a
 fall costs" picks them up. `game.gd` has a `level_scene` export, so point it at
 a different level and that is the whole switch.
 
+**Resize the shaft with the `width` and `height` exports on the Shaft node, not
+by dragging its children.** The walls and floor are script-owned: their
+positions, collision shapes and polygons are all derived from those two numbers,
+and a dragged child is put straight back. Change the Shaft *inside your level*
+to size that level; change `shaft.tscn` only to change the default for new ones.
+
 Vines and ledges are `@tool` scripts, so they draw in the editor rather than
 being invisible boxes you place by faith. Each vine also draws the gizmos you
 place *by*:
