@@ -128,6 +128,19 @@ built velocity purely from the tangent, so letting go of a vine that was
 carrying you sideways at 333px/s flung you at nothing and you simply dropped.
 `test/moving_vine.gd` guards it.
 
+Two worked examples live in `tower_01.tscn`:
+
+- **`Blockers/SweepingGate`** — a `Block` with a `PING_PONG` mover, sweeping
+  across the launch corridor between two vines. Open 73% of its cycle.
+- **`Vines/Vine6`** — an ordinary chain vine with an `ORBIT` mover, radius 120,
+  3s period. Small enough that it stays catchable throughout its sweep, so it
+  adds a slingshot without removing a rung from the ladder.
+
+Keep an orbit radius well under `grab_reach` if the vine is load-bearing.
+`check_level` reports what fraction of a moving vine's sweep is catchable, which
+is the number to watch: 100% means the movement is flavour, a low number means
+the anchor spends most of its cycle out of play.
+
 `PING_PONG` and `ORBIT` write the parent's **position**; `SPIN` writes its
 **rotation** — so one of each can safely sit on the same node.
 
@@ -191,6 +204,10 @@ no dead ends
 
 It flags an unreachable start, vines nothing can climb past, stranded vines and
 a summit above the top of the climb.
+
+It understands `Mover`: a moving vine is sampled around its whole path rather
+than judged on where you placed it, and it reports how much of that path is
+catchable.
 
 It is a guide, not a proof, and it errs in both directions. It ignores bounces,
 wall rebounds and grabbing on the way down, all of which make *more* things

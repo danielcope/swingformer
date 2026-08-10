@@ -50,7 +50,11 @@ func _initialize() -> void:
 	var vines: Array = []
 	for node in level.find_children("*", "Vine", true, false):
 		var v := node as Vine
-		vines.append({"pos": v.position, "len": v.length, "name": v.name})
+		var spots := _spots(v)
+		vines.append({
+			"pos": v.position, "len": v.length, "name": v.name,
+			"spots": spots, "moving": spots.size() > 1,
+		})
 	vines.sort_custom(func(a, b): return a["pos"].y > b["pos"].y)  # lowest first
 
 	print("--- %s ---" % path)
@@ -69,19 +73,21 @@ func _initialize() -> void:
 	var apex := start.y - jump_rise
 	var entry: Array = []
 	for i in range(vines.size()):
-		var d: float = Vector2(vines[i]["pos"].x - start.x, vines[i]["pos"].y - apex).length()
-		if d <= reach and vines[i]["pos"].y < apex:
-			entry.append(i)
+		for spot in vines[i]["spots"]:
+			var d: float = Vector2(spot.x - start.x, spot.y - apex).length()
+			if d <= reach and spot.y < apex:
+				entry.append(i)
+				break
 	if entry.is_empty():
 		var nearest := INF
 		for v in vines:
-			nearest = minf(nearest, Vector2(v["pos"].x - start.x, v["pos"].y - apex).length())
+			for spot in v["spots"]:
+				nearest = minf(nearest, Vector2(spot.x - start.x, spot.y - apex).length())
 		print("*** UNREACHABLE START: nothing within %.0f of a standing jump" % reach)
 		print("    nearest anchor is %.0f away. Lower a vine or move StartPoint.\n" % nearest)
 	else:
 		print("start: can reach %d vine(s) from a standing jump\n" % entry.size())
 
-	# Edges.
 	var edges: Array = []
 	for i in range(vines.size()):
 		var out: Array = []
@@ -144,14 +150,85 @@ func _initialize() -> void:
 	if stranded > 0:
 		print("\n%d vine(s) unreachable from the start (stranded)" % stranded)
 
+	# Moving vines, and which of them are only catchable at certain moments.
+	# Not a problem -- it is the point of a moving anchor -- but it is the
+	# difference between a route and a trick, so it is worth stating.
+	var movers: Array = []
+	for i in range(vines.size()):
+		if vines[i]["moving"]:
+			movers.append(i)
+	if not movers.is_empty():
+		print("\n%d moving vine(s):" % movers.size())
+		for i in movers:
+			# How much of its sweep is catchable from anywhere at all. 100%
+			# means it is always an option and the movement is pure flavour;
+			# a low number means the anchor spends most of its cycle out of
+			# play, which is a trick rather than a route.
+			var caught := 0
+			for spot in vines[i]["spots"]:
+				for j in range(vines.size()):
+					if j == i:
+						continue
+					var ok := false
+					for from in vines[j]["spots"]:
+						if _reachable_between(from, spot, reach, min_rope, max_rope):
+							ok = true
+							break
+					if ok:
+						caught += 1
+						break
+			var pct := 100.0 * float(caught) / float(vines[i]["spots"].size())
+			print("  %-10s at %6.0f m  %.0f%% of its sweep is catchable  %s"
+				% [vines[i]["name"], -vines[i]["pos"].y / 64.0, pct,
+					("(always an option)" if pct > 99.0
+					else "(timing matters)" if pct > 40.0
+					else "*** mostly out of play ***")])
+
 	level.free()
 	p.free()
 	quit()
 
 
+## Every position a vine occupies. A vine with a Mover sweeps, so reasoning
+## about its placed position alone would quietly mislead: a moving anchor can be
+## in reach for part of its cycle and nowhere near for the rest.
+func _spots(v: Vine) -> Array:
+	var home: Vector2 = v.position
+	var movers := v.find_children("*", "Mover", true, false)
+	if movers.is_empty():
+		return [home]
+
+	var m := movers[0] as Mover
+	if not m.enabled or m.travel == Vector2.ZERO or m.mode == Mover.Mode.SPIN:
+		return [home]  # SPIN turns the vine without moving the anchor
+
+	var out: Array = []
+	var samples := 12
+	for i in range(samples):
+		var t := float(i) / float(samples)
+		if m.mode == Mover.Mode.PING_PONG:
+			out.append(home + m.travel * t)
+		else:
+			var centre: Vector2 = home + m.travel
+			var start: float = (home - centre).angle()
+			out.append(centre + Vector2.from_angle(start + TAU * t) * m.travel.length())
+	return out
+
+
 ## Can the player get from vine A to vine B?
 func _reachable(a: Dictionary, b: Dictionary, reach: float, min_rope: float,
 		max_rope: float) -> bool:
+	for from in a["spots"]:
+		for to in b["spots"]:
+			if _reachable_between(from, to, reach, min_rope, max_rope):
+				return true
+	return false
+
+
+func _reachable_between(a_pos: Vector2, b_pos: Vector2, reach: float, min_rope: float,
+		max_rope: float) -> bool:
+	var a := {"pos": a_pos}
+	var b := {"pos": b_pos}
 	var rise: float = a["pos"].y - b["pos"].y
 	if rise <= 0.0:
 		return false  # not above us; nothing to climb to
