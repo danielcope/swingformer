@@ -5,6 +5,8 @@
 [ext_resource type="PackedScene" path="res://scenes/vine.tscn" id="4_owkwv"]
 [ext_resource type="PackedScene" path="res://scenes/ledge.tscn" id="6_uq6gp"]
 [ext_resource type="PackedScene" path="res://scenes/summit.tscn" id="8_m0goe"]
+[ext_resource type="PackedScene" path="res://scenes/block.tscn" id="9_block"]
+[ext_resource type="PackedScene" path="res://scenes/mover.tscn" id="10_mover"]
 
 [node name="Tower" type="Node2D" unique_id=1747310486]
 script = ExtResource("1_f5dit")
@@ -367,6 +369,18 @@ position = Vector2(259.35184, -6728.8047)
 width = 222.35088
 height = 30.0
 color = Color(0.48149133, 0.46223697, 0.44989786, 1)
+
+[node name="Blockers" type="Node2D" parent="."]
+
+[node name="SweepingGate" parent="Blockers" instance=ExtResource("9_block")]
+position = Vector2(-330, -1080)
+width = 200.0
+height = 44.0
+
+[node name="Mover" parent="Blockers/SweepingGate" instance=ExtResource("10_mover")]
+travel = Vector2(460, 0)
+duration = 2.0
+dwell = 0.7
 
 [node name="StartPoint" type="Marker2D" parent="." unique_id=1318170643]
 position = Vector2(-4086, -239)
