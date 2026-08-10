@@ -192,6 +192,20 @@ slippery slope still loses **154,000px** of height, because you slide back down
 between hops faster than you gain. Blocking it would only have meant a player on
 a flat icy ledge could not jump at all.
 
+Nor is there a shallow angle that becomes walkable (`test/ice_climb.gd`):
+
+| tilt | net height, holding up-slope |
+|---|---|
+| 6° | −6,308px |
+| 10° | −5,447px |
+| 16° | −4,805px |
+| 22° | −12,098px |
+
+If an icy slope *looks* like it is being climbed, the likely culprit is the
+landing: a rebound off a slope throws you into one arc well above the contact
+point before you start descending. That arc is around 140px on a 22° face and it
+reads exactly like going up.
+
 **So tilt the block.** On a perfectly flat icy surface there is nothing for
 gravity to pull you along — you keep your momentum and cannot brake, but you
 will not start moving on your own. Measured on a 22° block:

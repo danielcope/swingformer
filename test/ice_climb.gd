@@ -20,22 +20,30 @@ const SlipperyScene := preload("res://scenes/slippery.tscn")
 const TILT_DEGREES := 22.0
 const PUSH_START := 60
 const JUMP_START := 500
+## Air control is 260 px/s^2 and gravity pulls 1500*sin(t) down a slope, so
+## they balance near 10 degrees. Below that a frictionless slope should be
+## walkable UP, which is worth knowing before you build one.
+const SWEEP := [6.0, 10.0, 16.0, 22.0]
 
 var _push: Dictionary = {}
 var _jump: Dictionary = {}
+var _sweep: Array = []
 var _frames: int = 0
 
 
 func _ready() -> void:
 	_push = _build(0.0)
+	# All of these only ever hold the same direction, so they can run at once.
+	for i in range(SWEEP.size()):
+		_sweep.append(_build(-6000.0 - float(i) * 3000.0, SWEEP[i]))
 
 
-func _build(x: float) -> Dictionary:
+func _build(x: float, tilt: float = TILT_DEGREES) -> Dictionary:
 	var block: Block = BlockScene.instantiate()
 	block.position = Vector2(x, 0.0)
 	block.width = 1400.0
 	block.height = 60.0
-	block.rotation = deg_to_rad(TILT_DEGREES)
+	block.rotation = deg_to_rad(tilt)
 	add_child(block)
 	block.add_child(SlipperyScene.instantiate())
 
@@ -43,7 +51,10 @@ func _build(x: float) -> Dictionary:
 	add_child(p)
 	# Land near the low end, so there is slope above to climb.
 	p.reset_at(Vector2(x + 300.0, -80.0))
-	return {"player": p, "block": block, "best": INF, "landed": INF, "final": INF}
+	return {
+		"player": p, "block": block, "tilt": tilt,
+		"best": INF, "landed": INF, "final": INF,
+	}
 
 
 func _physics_process(_delta: float) -> void:
@@ -53,6 +64,8 @@ func _physics_process(_delta: float) -> void:
 
 	if _frames < JUMP_START:
 		_track(_push)
+		for c in _sweep:
+			_track(c)
 		# Down-slope is +x for a positive rotation, so up-slope is left.
 		if _frames > PUSH_START:
 			Input.action_press("move_left")
@@ -61,6 +74,8 @@ func _physics_process(_delta: float) -> void:
 	if _frames == JUMP_START:
 		(_push["player"] as Player).queue_free()
 		(_push["block"] as Block).queue_free()
+		for c in _sweep:
+			(c["player"] as Player).queue_free()
 		_jump = _build(4000.0)
 		return
 
@@ -107,3 +122,12 @@ func _report() -> void:
 		print("  %s: net %+6.0f px, highest transient arc %.0f px  %s"
 			% [entry[0], net, arc,
 				("OK, ended up lower" if net < 80.0 else "*** CLIMBED THE ICE ***")])
+
+	print("\n  walking up, by slope angle (air control 260 vs gravity 1500*sin):")
+	for c in _sweep:
+		if c["landed"] == INF:
+			continue
+		var net: float = c["landed"] - c["final"]
+		print("    %4.0f degrees: net %+7.0f px  %s"
+			% [c["tilt"], net,
+				("climbable" if net > 80.0 else "slides off")])
