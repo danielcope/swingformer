@@ -107,11 +107,21 @@ Use `block.tscn`.
 `Mover` is a **component, not a node type**. Add it as a child of anything and
 it animates its parent:
 
-| Mode | Does |
+| Mode | What `travel` means |
 |---|---|
-| `PING_PONG` | Back and forth along `travel`, pausing at each end. |
-| `ORBIT` | Circles a centre placed at `travel`; the node you placed sits on the rim. |
-| `SPIN` | Rotates in place. Leaves position alone. |
+| `PING_PONG` | Offset to the **far end**. It goes there and back, pausing at each end. |
+| `ORBIT` | Offset to the **centre** of the circle. The node you placed sits on the rim, so the radius is `travel.length()`. |
+| `SPIN` | Ignored. Rotates in place and leaves position alone. |
+
+`travel` is always an **offset from where you placed the node**, never an
+absolute position, and it lives in the parent's local space — so rotating the
+parent rotates the path with it.
+
+**To set it by dragging rather than typing:** add a `Marker2D` as a child of the
+`Mover` and move it in the viewport. Its position takes over and `travel`
+follows, so the handle you drag *is* the far end (or the orbit centre). The
+gizmo rings it to make clear which node shapes the path. Delete the marker and
+the typed value takes over again.
 
 The alternative was a `MovingBlock`, `MovingLedge`, `MovingVine` and so on, each
 carrying a copy of the same motion code and slowly drifting apart. This way

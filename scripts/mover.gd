@@ -32,6 +32,10 @@ enum Mode {
 ## For PING_PONG this is the offset to the far end. For ORBIT it is the offset
 ## to the centre of the circle, so the node you placed sits on the rim. Either
 ## way it is the one vector that defines the path, and the editor draws it.
+##
+## Typing coordinates in blind is a poor way to place a path, so add a Marker2D
+## as a child of this Mover and drag it instead: its position takes over and
+## this field follows it. Delete the marker to go back to typing.
 @export var travel: Vector2 = Vector2(400.0, 0.0):
 	set(value):
 		travel = value
@@ -56,8 +60,25 @@ var _home_rotation: float = 0.0
 var _elapsed: float = 0.0
 
 
+## A Marker2D child, if there is one. Dragging it in the viewport is far easier
+## than typing an offset, and it sits in the parent's space because this node is
+## pinned to the parent's origin.
+func _handle() -> Marker2D:
+	for child in get_children():
+		if child is Marker2D:
+			return child as Marker2D
+	return null
+
+
+func _resolve_travel() -> void:
+	var handle := _handle()
+	if handle and travel != handle.position:
+		travel = handle.position
+
+
 func _ready() -> void:
 	_target = get_parent() as Node2D
+	_resolve_travel()
 	update_configuration_warnings()
 	if Engine.is_editor_hint():
 		return
@@ -77,6 +98,7 @@ func _physics_process(delta: float) -> void:
 		# this node sits at the parent's origin.
 		if position != Vector2.ZERO:
 			position = Vector2.ZERO
+		_resolve_travel()
 		queue_redraw()
 		return
 
@@ -151,6 +173,11 @@ func _draw() -> void:
 		return
 
 	var tint := Color(1.0, 0.85, 0.35, 0.4)
+	# Drag-handle hint: a ring around the marker, so it is obvious which node
+	# in the viewport is the one that shapes the path.
+	if _handle() and mode != Mode.SPIN:
+		draw_arc(travel, 13.0, 0.0, TAU, 20, Color(1.0, 0.95, 0.6, 0.55), 2.0, true)
+
 	match mode:
 		Mode.PING_PONG:
 			if travel == Vector2.ZERO:

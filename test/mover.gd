@@ -16,11 +16,15 @@ const MoverScene := preload("res://scenes/mover.tscn")
 
 const TRAVEL := 500.0
 const ORBIT := 300.0
+const HANDLE_TRAVEL := 350.0
 
 var _deck: Ledge
 var _rider: Player
 var _orbiter: Block
 var _spinner: Block
+var _handled: Block
+var _handle_min := INF
+var _handle_max := -INF
 
 var _frames: int = 0
 var _min_x := INF
@@ -60,6 +64,22 @@ func _ready() -> void:
 	add_child(_spinner)
 	_attach(_spinner, Mover.Mode.SPIN, Vector2.ZERO)
 
+	# Travel taken from a dragged Marker2D rather than typed coordinates. The
+	# mover is given a deliberately wrong `travel`, so if the marker is not
+	# honoured this lands nowhere near HANDLE_TRAVEL.
+	_handled = BlockScene.instantiate()
+	_handled.position = Vector2(9000.0, 0.0)
+	add_child(_handled)
+	var mover: Mover = MoverScene.instantiate()
+	mover.mode = Mover.Mode.PING_PONG
+	mover.travel = Vector2(-999.0, 0.0)
+	mover.duration = 2.0
+	mover.dwell = 0.3
+	var marker := Marker2D.new()
+	marker.position = Vector2(HANDLE_TRAVEL, 0.0)
+	mover.add_child(marker)
+	_handled.add_child(mover)
+
 
 func _attach(target: Node2D, mode: Mover.Mode, travel: Vector2) -> void:
 	var mover: Mover = MoverScene.instantiate()
@@ -78,6 +98,9 @@ func _physics_process(_delta: float) -> void:
 	_orbit_min = _orbit_min.min(_orbiter.position)
 	_orbit_max = _orbit_max.max(_orbiter.position)
 	_spin_max = maxf(_spin_max, absf(_spinner.rotation))
+	var handled_offset: float = _handled.position.x - 9000.0
+	_handle_min = minf(_handle_min, handled_offset)
+	_handle_max = maxf(_handle_max, handled_offset)
 
 	# True slip: movement RELATIVE to the deck, counted only across frames
 	# where the rider was grounded both before and after.
@@ -120,3 +143,8 @@ func _report() -> void:
 
 	print("SPIN: rotated %.2f rad  %s"
 		% [_spin_max, ("OK" if _spin_max > 1.0 else "*** DID NOT ROTATE ***")])
+
+	print("MARKER: travel from a dragged handle, swept %.0f -> %.0f (want 0 -> %.0f)  %s"
+		% [_handle_min, _handle_max, HANDLE_TRAVEL,
+			("OK" if absf(_handle_max - HANDLE_TRAVEL) < 12.0 and absf(_handle_min) < 12.0
+			else "*** MARKER IGNORED ***")])
