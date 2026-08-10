@@ -58,7 +58,36 @@ func _initialize() -> void:
 	vines.sort_custom(func(a, b): return a["pos"].y > b["pos"].y)  # lowest first
 
 	print("--- %s ---" % path)
-	print("%d vines, grab reach %.0f, rope %.0f-%.0f\n" % [vines.size(), reach, min_rope, max_rope])
+	print("%d vines, grab reach %.0f, rope %.0f-%.0f" % [vines.size(), reach, min_rope, max_rope])
+
+	# Detached scripts. A physics body that is not one of our types has lost its
+	# script, which happens if a scene's script changes base class while the
+	# level is open in the editor -- Godot drops the script from every instance
+	# and writes `script = null`. The node then never runs _ready, so it builds
+	# no collision shape and draws nothing. It is still in the tree, still
+	# selectable, and completely inert, which makes it very hard to spot.
+	var orphans: Array = []
+	for node in level.find_children("*", "PhysicsBody2D", true, false):
+		if node is Ledge or node is Block or node is Shaft:
+			continue
+		if node.get_parent() is Shaft:
+			continue  # the shaft's own walls and floor
+		orphans.append(node)
+	if orphans.is_empty():
+		var ledges := level.find_children("*", "Ledge", true, false)
+		var boughs := 0
+		for l in ledges:
+			if (l as Ledge).is_bough:
+				boughs += 1
+		print("%d ledges (%d boughs), %d blocks\n"
+			% [ledges.size(), boughs, level.find_children("*", "Block", true, false).size()])
+	else:
+		print("\n*** %d NODE(S) WITH NO SCRIPT ***" % orphans.size())
+		print("    They build no collision and draw nothing -- inert but still in the tree.")
+		print("    Delete the `script = null` line under each in the .tscn:")
+		for o in orphans:
+			print("      %s" % level.get_path_to(o))
+		print("")
 
 	if vines.is_empty():
 		print("no vines in this level")

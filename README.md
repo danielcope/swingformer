@@ -305,6 +305,13 @@ It understands `Mover`: a moving vine is sampled around its whole path rather
 than judged on where you placed it, and it reports how much of that path is
 catchable.
 
+It also flags **detached scripts** — nodes carrying `script = null`. Godot writes
+that if a scene's script changes base class while a level using it is open in
+the editor: it drops the script from every instance in that level. The node stays
+in the tree and stays selectable, but never runs `_ready`, so it builds no
+collision and draws nothing. Inert and invisible, with no error anywhere. The fix
+is to delete the `script = null` line under each affected node in the `.tscn`.
+
 It is a guide, not a proof, and it errs in both directions. It ignores bounces,
 wall rebounds and grabbing on the way down, all of which make *more* things
 reachable. It also ignores solid geometry, so it will happily call a route open

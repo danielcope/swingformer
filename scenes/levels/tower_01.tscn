@@ -24,158 +24,39 @@ length = 200.0
 color = Color(0.2935, 0.55149996, 0.269, 1)
 
 [node name="Vine1" parent="Vines" unique_id=522808869 instance=ExtResource("4_owkwv")]
-position = Vector2(-2910.373, -541.91797)
+position = Vector2(-2996, -665)
 length = 188.38391
 color = Color(0.30161455, 0.5704339, 0.27440968, 1)
 
 [node name="Vine2" parent="Vines" unique_id=464757068 instance=ExtResource("4_owkwv")]
-position = Vector2(-3188.4048, -760.5725)
+position = Vector2(-3403, -749)
 length = 210.0188
 color = Color(0.3098141, 0.58956623, 0.27987605, 1)
 
 [node name="Vine3" parent="Vines" unique_id=1338176661 instance=ExtResource("4_owkwv")]
-position = Vector2(-2968.089, -938.1161)
+position = Vector2(-2666, -1125)
 length = 197.3075
 color = Color(0.31647196, 0.6051013, 0.28431463, 1)
 
 [node name="Vine4" parent="Vines" unique_id=150246801 instance=ExtResource("4_owkwv")]
-position = Vector2(-3252.266, -1145.2798)
+position = Vector2(-3356, -1301)
+length = 208.35393
+color = Color(0.32424062, 0.6232281, 0.28949374, 1)
+
+[node name="Vine6" parent="Vines" unique_id=2013427001 instance=ExtResource("4_owkwv")]
+position = Vector2(-6504.532, -2290.5596)
 length = 208.35393
 color = Color(0.32424062, 0.6232281, 0.28949374, 1)
 
 [node name="Vine5" parent="Vines" unique_id=247843272 instance=ExtResource("4_owkwv")]
-position = Vector2(-3485.205, -1341.9613)
+position = Vector2(-3703, -1336)
 length = 242.46289
 color = Color(0.33161616, 0.6404377, 0.2944108, 1)
 
-[node name="Vine6" parent="Vines" unique_id=228604470 instance=ExtResource("4_owkwv")]
-position = Vector2(-3187.5042, -1527.1631)
-length = 179.41924
-
-[node name="Vine7" parent="Vines" unique_id=1602549797 instance=ExtResource("4_owkwv")]
-position = Vector2(-2943.9343, -1755.2048)
-length = 224.845
-color = Color(0.34613654, 0.65553707, 0.30111575, 1)
-
-[node name="Vine8" parent="Vines" unique_id=649577867 instance=ExtResource("4_owkwv")]
-position = Vector2(-3152.6426, -1992.883)
-length = 214.74495
-color = Color(0.35382614, 0.64994466, 0.30251384, 1)
-
-[node name="Vine9" parent="Vines" unique_id=711679957 instance=ExtResource("4_owkwv")]
-position = Vector2(-2884.5127, -2224.7483)
-length = 208.24377
-color = Color(0.36132765, 0.644489, 0.30387777, 1)
-
-[node name="Vine10" parent="Vines" unique_id=494344289 instance=ExtResource("4_owkwv")]
-position = Vector2(-1463.9729, -1574.5708)
-length = 203.75931
-color = Color(0.36850426, 0.63926965, 0.3051826, 1)
-
-[node name="Vine11" parent="Vines" unique_id=2093407985 instance=ExtResource("4_owkwv")]
-position = Vector2(-1220.8687, -1755.4751)
-length = 184.46242
-color = Color(0.37435704, 0.6350131, 0.30624673, 1)
-
-[node name="Vine12" parent="Vines" unique_id=928335252 instance=ExtResource("4_owkwv")]
-position = Vector2(-1502.5986, -1994.7908)
-length = 190.00354
-color = Color(0.3820996, 0.62938213, 0.30765447, 1)
-
-[node name="Vine13" parent="Vines" unique_id=659470523 instance=ExtResource("4_owkwv")]
-position = Vector2(-1255.0149, -2209.762)
-length = 258.59314
-color = Color(0.38905454, 0.62432396, 0.308919, 1)
-
-[node name="Vine14" parent="Vines" unique_id=325447880 instance=ExtResource("4_owkwv")]
-position = Vector2(-1507.3325, -2438.8472)
-length = 199.85954
-color = Color(0.39646614, 0.61893374, 0.31026658, 1)
-
-[node name="Vine15" parent="Vines" unique_id=1884591297 instance=ExtResource("4_owkwv")]
-position = Vector2(-1271.7761, -2654.394)
-length = 238.81586
-color = Color(0.4034397, 0.61386204, 0.3115345, 1)
-
-[node name="Vine16" parent="Vines" unique_id=881971614 instance=ExtResource("4_owkwv")]
-position = Vector2(-1484.2969, -2857.3225)
-length = 195.15479
-color = Color(0.41000503, 0.6090872, 0.3127282, 1)
-
-[node name="Vine17" parent="Vines" unique_id=960693257 instance=ExtResource("4_owkwv")]
-position = Vector2(199.31567, -3027.0657)
-length = 208.41898
-color = Color(0.41604674, 0.6046933, 0.31382668, 1)
-
-[node name="Vine18" parent="Vines" unique_id=743796371 instance=ExtResource("4_owkwv")]
-position = Vector2(-48.879395, -3254.8481)
-length = 243.26425
-color = Color(0.42341617, 0.5993337, 0.31516656, 1)
-
-[node name="Vine19" parent="Vines" unique_id=531481501 instance=ExtResource("4_owkwv")]
-position = Vector2(175.41895, -3464.6611)
-length = 225.21634
-color = Color(0.4302042, 0.5943969, 0.31640077, 1)
-
-[node name="Vine20" parent="Vines" unique_id=1715591525 instance=ExtResource("4_owkwv")]
-position = Vector2(-69.39844, -3672.4722)
-length = 213.07884
-color = Color(0.43692753, 0.5895072, 0.3176232, 1)
-
-[node name="Vine21" parent="Vines" unique_id=242936812 instance=ExtResource("4_owkwv")]
-position = Vector2(167.75195, -3881.0083)
-length = 242.31586
-color = Color(0.44367427, 0.5846005, 0.31884986, 1)
-
-[node name="Vine22" parent="Vines" unique_id=1896455943 instance=ExtResource("4_owkwv")]
-position = Vector2(-93.819824, -4111.1885)
-length = 201.15929
-color = Color(0.4504852, 0.58027726, 0.32083178, 1)
-
-[node name="Vine23" parent="Vines" unique_id=868973356 instance=ExtResource("4_owkwv")]
-position = Vector2(1553.4714, -1560.7544)
-length = 238.94817
-color = Color(0.45361513, 0.58206576, 0.3261974, 1)
-
-[node name="Vine24" parent="Vines" unique_id=1181414428 instance=ExtResource("4_owkwv")]
-position = Vector2(1253.7559, -1776.4458)
-length = 243.85492
-color = Color(0.45663482, 0.5837913, 0.33137396, 1)
-
-[node name="Vine25" parent="Vines" unique_id=2145726128 instance=ExtResource("4_owkwv")]
-position = Vector2(1487.7898, -1991.8882)
-length = 252.41232
-color = Color(0.459651, 0.58551484, 0.33654457, 1)
-
-[node name="Vine26" parent="Vines" unique_id=1776590701 instance=ExtResource("4_owkwv")]
-position = Vector2(1189.6406, -2242.349)
-length = 235.0962
-color = Color(0.46315745, 0.5875185, 0.34255564, 1)
-
-[node name="Vine27" parent="Vines" unique_id=927129910 instance=ExtResource("4_owkwv")]
-position = Vector2(1449.7175, -2494.4722)
-length = 208.40012
-color = Color(0.46668717, 0.58953553, 0.3486066, 1)
-
-[node name="Vine28" parent="Vines" unique_id=1890914165 instance=ExtResource("4_owkwv")]
-position = Vector2(1186.9089, -2739.1777)
-length = 198.34096
-color = Color(0.47011304, 0.5914932, 0.35447952, 1)
-
-[node name="Vine29" parent="Vines" unique_id=1299580212 instance=ExtResource("4_owkwv")]
-position = Vector2(1440.3794, -2976.9258)
-length = 184.46938
-color = Color(0.4734415, 0.5933952, 0.36018547, 1)
-
-[node name="Vine30" parent="Vines" unique_id=307150461 instance=ExtResource("4_owkwv")]
-position = Vector2(1151.1069, -3207.545)
-length = 257.3175
-color = Color(0.4766702, 0.5952401, 0.36572033, 1)
-
-[node name="Vine31" parent="Vines" unique_id=1229977016 instance=ExtResource("4_owkwv")]
-position = Vector2(1444.9497, -3412)
-length = 212.41058
-color = Color(0.47953257, 0.5968757, 0.37062728, 1)
+[node name="Vine7" parent="Vines" unique_id=1839946601 instance=ExtResource("4_owkwv")]
+position = Vector2(-6970.41, -2683.9226)
+length = 242.46289
+color = Color(0.33161616, 0.6404377, 0.2944108, 1)
 
 [node name="Vine32" parent="Vines" unique_id=192796445 instance=ExtResource("4_owkwv")]
 position = Vector2(-198.33534, -7351.8574)
@@ -186,123 +67,18 @@ color = Color(0.48292598, 0.59881485, 0.37644458, 1)
 
 [node name="Ledge0" parent="Ledges" unique_id=418209515 instance=ExtResource("6_uq6gp")]
 position = Vector2(-3508.3713, -509.4702)
-script = null
 
 [node name="Ledge1" parent="Ledges" unique_id=1523201635 instance=ExtResource("6_uq6gp")]
 position = Vector2(-2855.8896, -469.31036)
-script = null
 
 [node name="Ledge2" parent="Ledges" unique_id=751590288 instance=ExtResource("6_uq6gp")]
 position = Vector2(-3715.615, -999.13477)
-script = null
 
 [node name="Ledge3" parent="Ledges" unique_id=685404614 instance=ExtResource("6_uq6gp")]
 position = Vector2(-3260.7693, -1023.7566)
-script = null
 
 [node name="Ledge4" parent="Ledges" unique_id=1438420472 instance=ExtResource("6_uq6gp")]
 position = Vector2(-2760.2256, -984.1546)
-script = null
-
-[node name="Ledge5" parent="Ledges" unique_id=1551229974 instance=ExtResource("6_uq6gp")]
-position = Vector2(-3583.774, -1509.8488)
-script = null
-
-[node name="Ledge6" parent="Ledges" unique_id=1622759392 instance=ExtResource("6_uq6gp")]
-position = Vector2(-2534.883, -1554.7722)
-script = null
-
-[node name="Bough7" parent="Ledges" unique_id=1818975308 instance=ExtResource("6_uq6gp")]
-position = Vector2(-3606.3462, -2045.5303)
-script = null
-
-[node name="Bough8" parent="Ledges" unique_id=1107442916 instance=ExtResource("6_uq6gp")]
-position = Vector2(-2718.226, -2045.5303)
-script = null
-
-[node name="Ledge9" parent="Ledges" unique_id=218600249 instance=ExtResource("6_uq6gp")]
-position = Vector2(-2038.0505, -1689.6455)
-script = null
-
-[node name="Ledge10" parent="Ledges" unique_id=1348477750 instance=ExtResource("6_uq6gp")]
-position = Vector2(-1481.1685, -1718.8877)
-script = null
-
-[node name="Ledge11" parent="Ledges" unique_id=448898708 instance=ExtResource("6_uq6gp")]
-position = Vector2(-1071.4932, -1702.6436)
-script = null
-
-[node name="Ledge12" parent="Ledges" unique_id=303034412 instance=ExtResource("6_uq6gp")]
-position = Vector2(-1918.3623, -2250.4407)
-script = null
-
-[node name="Ledge13" parent="Ledges" unique_id=330442176 instance=ExtResource("6_uq6gp")]
-position = Vector2(-967.48267, -2228.1301)
-script = null
-
-[node name="Ledge14" parent="Ledges" unique_id=1394121526 instance=ExtResource("6_uq6gp")]
-position = Vector2(-2121.4739, -2728.5615)
-script = null
-
-[node name="Ledge15" parent="Ledges" unique_id=1763057125 instance=ExtResource("6_uq6gp")]
-position = Vector2(-963.7417, -2737.744)
-script = null
-
-[node name="Bough16" parent="Ledges" unique_id=1320546219 instance=ExtResource("6_uq6gp")]
-position = Vector2(-506.2749, -3236.5303)
-script = null
-
-[node name="Bough17" parent="Ledges" unique_id=1864853910 instance=ExtResource("6_uq6gp")]
-position = Vector2(384.9651, -3236.5303)
-script = null
-
-[node name="Ledge18" parent="Ledges" unique_id=1140854655 instance=ExtResource("6_uq6gp")]
-position = Vector2(-576.89185, -3765.7207)
-script = null
-
-[node name="Ledge19" parent="Ledges" unique_id=573471040 instance=ExtResource("6_uq6gp")]
-position = Vector2(83.00781, -3794.2178)
-script = null
-
-[node name="Ledge20" parent="Ledges" unique_id=1949124487 instance=ExtResource("6_uq6gp")]
-position = Vector2(442.83667, -3732.9805)
-script = null
-
-[node name="Ledge21" parent="Ledges" unique_id=2068712468 instance=ExtResource("6_uq6gp")]
-position = Vector2(762.9392, -1467.5752)
-script = null
-
-[node name="Ledge22" parent="Ledges" unique_id=822884100 instance=ExtResource("6_uq6gp")]
-position = Vector2(1748.2397, -1487.6602)
-script = null
-
-[node name="Ledge23" parent="Ledges" unique_id=1321356854 instance=ExtResource("6_uq6gp")]
-position = Vector2(1025.812, -2055.4263)
-script = null
-
-[node name="Ledge24" parent="Ledges" unique_id=1691303434 instance=ExtResource("6_uq6gp")]
-position = Vector2(1264.0334, -2053.871)
-script = null
-
-[node name="Ledge25" parent="Ledges" unique_id=2088465635 instance=ExtResource("6_uq6gp")]
-position = Vector2(2002.4961, -2037.2144)
-script = null
-
-[node name="Bough26" parent="Ledges" unique_id=1785638109 instance=ExtResource("6_uq6gp")]
-position = Vector2(706, -2542.5303)
-script = null
-
-[node name="Bough27" parent="Ledges" unique_id=1643105362 instance=ExtResource("6_uq6gp")]
-position = Vector2(1600.3601, -2542.5303)
-script = null
-
-[node name="Ledge28" parent="Ledges" unique_id=124689058 instance=ExtResource("6_uq6gp")]
-position = Vector2(1066.7307, -3059.0469)
-script = null
-
-[node name="Ledge29" parent="Ledges" unique_id=629538747 instance=ExtResource("6_uq6gp")]
-position = Vector2(1637.8357, -3031.335)
-script = null
 
 [node name="Blockers" type="Node2D" parent="." unique_id=66330808]
 
@@ -316,21 +92,56 @@ travel = Vector2(460, 0)
 duration = 2.0
 dwell = 0.7
 
+[node name="Block" parent="Blockers" unique_id=2053733470 instance=ExtResource("9_block")]
+position = Vector2(-2356, -3275)
+height = 5600.0
+
+[node name="Block6" parent="Blockers" unique_id=1566967771 instance=ExtResource("9_block")]
+position = Vector2(-1458, -6378)
+rotation = 1.5707964
+height = 5600.0
+
+[node name="Block2" parent="Blockers" unique_id=206904696 instance=ExtResource("9_block")]
+position = Vector2(-1601, -150.00002)
+rotation = -1.865757
+height = 1600.0
+metadata/slippery_grip = 0.0
+
+[node name="Slippery" parent="Blockers/Block2" unique_id=634667224 instance=ExtResource("8_m0d6n")]
+position = Vector2(-2.289032, -2.7857666)
+
+[node name="Block3" parent="Blockers" unique_id=607517695 instance=ExtResource("9_block")]
+position = Vector2(-54, -413)
+rotation = -1.6161749
+height = 1600.0
+metadata/slippery_grip = 0.0
+
+[node name="Slippery" parent="Blockers/Block3" unique_id=2105982502 instance=ExtResource("8_m0d6n")]
+position = Vector2(-2.289032, -2.7857666)
+
+[node name="Block4" parent="Blockers" unique_id=2082280442 instance=ExtResource("9_block")]
+position = Vector2(1517.9998, -555)
+rotation = 1.4329153
+scale = Vector2(0.99999994, 0.99999994)
+height = 1600.0
+metadata/slippery_grip = 0.0
+
+[node name="Slippery" parent="Blockers/Block4" unique_id=605851980 instance=ExtResource("8_m0d6n")]
+position = Vector2(-2.289032, -2.7857666)
+
+[node name="Block5" parent="Blockers" unique_id=1213648489 instance=ExtResource("9_block")]
+position = Vector2(3074.0002, -847)
+rotation = -1.8011798
+scale = Vector2(0.99999994, 0.99999994)
+height = 1600.0
+metadata/slippery_grip = 0.0
+
+[node name="Slippery" parent="Blockers/Block5" unique_id=1383629636 instance=ExtResource("8_m0d6n")]
+position = Vector2(-2.289032, -2.7857666)
+
 [node name="StartPoint" type="Marker2D" parent="." unique_id=1318170643]
 position = Vector2(-4086, -239)
 
 [node name="Summit" parent="." unique_id=789272341 instance=ExtResource("8_m0goe")]
 position = Vector2(0, -7540)
 width = 1520.0
-
-[node name="Block" parent="." unique_id=2053733470 instance=ExtResource("9_block")]
-position = Vector2(-2586, -534)
-
-[node name="Block2" parent="." unique_id=206904696 instance=ExtResource("9_block")]
-position = Vector2(-1601, -150.00002)
-rotation = -1.865757
-height = 1600.0
-metadata/slippery_grip = 0.0
-
-[node name="Slippery" parent="Block2" unique_id=634667224 instance=ExtResource("8_m0d6n")]
-position = Vector2(-2.289032, -2.7857666)
