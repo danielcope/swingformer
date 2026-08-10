@@ -35,12 +35,29 @@ func _ready() -> void:
 	_rebuild()
 
 
-## Re-assert in the editor so the collision cannot be dragged away from the
-## shape you can see. Every write is equality-guarded, so this dirties nothing
-## when the node has not been touched.
+## Re-assert in the editor so the collision cannot be dragged away from the rock
+## you can see. Only the block's INTERNALS are owned; the block itself is yours
+## to place anywhere.
+##
+## Rebuild only on actual drift: _rebuild ends in a queue_redraw, so calling it
+## every frame would repaint every block in the level continuously.
 func _process(_delta: float) -> void:
-	if Engine.is_editor_hint():
+	if Engine.is_editor_hint() and _drifted():
 		_rebuild()
+
+
+func _drifted() -> bool:
+	var shape := get_node_or_null("CollisionShape2D") as CollisionShape2D
+	if shape == null:
+		return false
+	if shape.position != Vector2.ZERO or shape.rotation != 0.0:
+		return true
+	if shape.scale != Vector2.ONE:
+		return true
+	var rect := shape.shape as RectangleShape2D
+	if rect == null or not rect.resource_local_to_scene:
+		return true
+	return rect.size != Vector2(width, height)
 
 
 func _rebuild() -> void:

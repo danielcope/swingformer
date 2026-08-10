@@ -44,18 +44,54 @@ func _ready() -> void:
 	add_to_group("ledges")
 
 
+## Re-assert in the editor so a dragged collision shape cannot drift away from
+## the rock you can see -- that desync is invisible at runtime and is the same
+## failure the shaft had. Only the ledge's INTERNALS are owned; the ledge itself
+## is yours to place anywhere.
+func _process(_delta: float) -> void:
+	# Only rebuild when something has actually moved. _rebuild ends in a
+	# queue_redraw, so calling it unconditionally would repaint every ledge in
+	# the level every frame while you are trying to lay one out.
+	if Engine.is_editor_hint() and _drifted():
+		_rebuild()
+
+
+func _drifted() -> bool:
+	var shape := get_node_or_null("CollisionShape2D") as CollisionShape2D
+	if shape == null:
+		return false
+	if shape.position != Vector2.ZERO or shape.rotation != 0.0:
+		return true
+	if shape.scale != Vector2.ONE:
+		return true
+	var rect := shape.shape as RectangleShape2D
+	if rect == null or not rect.resource_local_to_scene:
+		return true
+	return rect.size != Vector2(width, height) or not shape.one_way_collision
+
+
 func _rebuild() -> void:
 	if not is_inside_tree():
 		return
 	var shape := get_node_or_null("CollisionShape2D") as CollisionShape2D
 	if shape == null:
 		return
+	if shape.position != Vector2.ZERO:
+		shape.position = Vector2.ZERO
+	if shape.rotation != 0.0:
+		shape.rotation = 0.0
+	if shape.scale != Vector2.ONE:
+		shape.scale = Vector2.ONE
+
 	var rect := shape.shape as RectangleShape2D
-	# Never share the resource between ledges: resizing one would resize all.
-	if rect == null:
+	# Must be local to this instance. A shared RectangleShape2D means resizing
+	# one ledge silently resizes every other one duplicated from it.
+	if rect == null or not rect.resource_local_to_scene:
 		rect = RectangleShape2D.new()
+		rect.resource_local_to_scene = true
 		shape.shape = rect
-	rect.size = Vector2(width, height)
+	if rect.size != Vector2(width, height):
+		rect.size = Vector2(width, height)
 
 	# One-way, and this is load-bearing rather than cosmetic. A solid ledge
 	# parked inside a vine's swing arc knocks the player off before they can

@@ -133,11 +133,23 @@ Put a `Mover` on a plain `StaticBody2D` and it warns you about exactly this.
 platform in constant motion is hard to commit to. `phase_offset` desynchronises
 a row of movers so they do not all travel as one.
 
-**Resize the shaft with the `width` and `height` exports on the Shaft node, not
-by dragging its children.** The walls and floor are script-owned: their
-positions, collision shapes and polygons are all derived from those two numbers,
-and a dragged child is put straight back. Change the Shaft *inside your level*
-to size that level; change `shaft.tscn` only to change the default for new ones.
+### What is yours and what the scripts own
+
+Every piece you place — vine, ledge, block, shaft, summit — is **yours to move,
+rotate and duplicate freely**. Nothing repositions a piece you have placed.
+
+What the scripts do own is the **inside** of a piece: its `CollisionShape2D`
+and, for the shaft, its walls and floor. Those are derived from the exports and
+are put back if dragged. That is deliberate: a collision shape sitting somewhere
+other than the rock you can see is invisible at runtime and produces a level
+that plays nothing like it looks. Every shape is also local to its instance, so
+duplicating a piece and resizing the copy never reaches back into the original.
+
+So: **resize with `width` / `height`, position by moving the node itself.**
+Dragging a piece's internals is the one thing that will not stick.
+
+For the shaft specifically, change the Shaft *inside your level* to size that
+level; change `shaft.tscn` only to move the default for new ones.
 
 Vines and ledges are `@tool` scripts, so they draw in the editor rather than
 being invisible boxes you place by faith. Each vine also draws the gizmos you
