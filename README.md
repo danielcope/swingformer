@@ -171,6 +171,22 @@ costs nothing while they are still, and it is what makes the physics server
 track their motion so a standing player is *carried* instead of left behind.
 Put a `Mover` on a plain `StaticBody2D` and it warns you about exactly this.
 
+### Pace
+
+Two ways to time a mover, and the second is usually the one you want:
+
+- **`duration`** — seconds per leg (or per revolution / lap). A *time*.
+- **`speed`** — pixels per second. Set it above 0 and it takes over, deriving
+  the duration from however far the thing actually travels.
+
+Prefer `speed` while laying out. `duration` being a time means lengthening a
+gate's travel or redrawing its track silently makes it *faster*, and a row of
+platforms sharing a duration but spanning different distances all move at
+different speeds. With a speed set, the timing follows the geometry.
+
+`SPIN` has no distance to cover, so it always uses `duration` — seconds per
+revolution.
+
 `dwell` is the pause at each end, and it does more work than it looks: a
 platform in constant motion is hard to commit to. `phase_offset` desynchronises
 a row of movers so they do not all travel as one.

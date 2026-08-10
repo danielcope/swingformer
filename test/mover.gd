@@ -28,8 +28,16 @@ var _handle_max := -INF
 var _tracked: Block
 var _corner_error := INF
 var _track_end_error := INF
+var _paced: Block
+var _paced_prev := 0.0
+var _paced_speed_sum := 0.0
+var _paced_samples := 0
+
+const PACED_TRAVEL := 400.0
+const PACED_SPEED := 200.0
 
 var _frames: int = 0
+var _delta: float = 1.0 / 60.0
 var _min_x := INF
 var _max_x := -INF
 var _slip := 0.0
@@ -103,6 +111,20 @@ func _ready() -> void:
 	path_mover.add_child(path)
 	_tracked.add_child(path_mover)
 
+	# Timed by speed rather than duration. `duration` is left at a value that
+	# would give a wildly different answer, so it cannot pass by coincidence.
+	_paced = BlockScene.instantiate()
+	_paced.position = Vector2(15000.0, 0.0)
+	add_child(_paced)
+	var paced_mover: Mover = MoverScene.instantiate()
+	paced_mover.mode = Mover.Mode.PING_PONG
+	paced_mover.travel = Vector2(PACED_TRAVEL, 0.0)
+	paced_mover.duration = 25.0
+	paced_mover.speed = PACED_SPEED
+	paced_mover.dwell = 0.0
+	paced_mover.smooth = false  # constant speed, so the measurement is clean
+	_paced.add_child(paced_mover)
+
 
 func _attach(target: Node2D, mode: Mover.Mode, travel: Vector2) -> void:
 	var mover: Mover = MoverScene.instantiate()
@@ -113,8 +135,9 @@ func _attach(target: Node2D, mode: Mover.Mode, travel: Vector2) -> void:
 	target.add_child(mover)
 
 
-func _physics_process(_delta: float) -> void:
+func _physics_process(delta: float) -> void:
 	_frames += 1
+	_delta = delta
 
 	_min_x = minf(_min_x, _deck.position.x)
 	_max_x = maxf(_max_x, _deck.position.x)
@@ -128,6 +151,14 @@ func _physics_process(_delta: float) -> void:
 	var tracked: Vector2 = _tracked.position - Vector2(12000.0, 0.0)
 	_corner_error = minf(_corner_error, tracked.distance_to(Vector2(300.0, 0.0)))
 	_track_end_error = minf(_track_end_error, tracked.distance_to(Vector2(300.0, -200.0)))
+
+	# Measure the actual px/s, skipping the frames where it turns around.
+	var paced_x: float = _paced.position.x
+	var moved: float = absf(paced_x - _paced_prev)
+	if _paced_prev != 0.0 and moved > 0.5:
+		_paced_speed_sum += moved / _delta
+		_paced_samples += 1
+	_paced_prev = paced_x
 
 	# True slip: movement RELATIVE to the deck, counted only across frames
 	# where the rider was grounded both before and after.
@@ -180,3 +211,8 @@ func _report() -> void:
 		% [_corner_error, _track_end_error,
 			("OK" if _corner_error < 20.0 and _track_end_error < 20.0
 			else "*** DID NOT FOLLOW THE TRACK ***")])
+
+	var measured := _paced_speed_sum / maxf(float(_paced_samples), 1.0)
+	print("SPEED: asked for %.0f px/s (duration deliberately wrong at 25s), measured %.0f px/s  %s"
+		% [PACED_SPEED, measured,
+			("OK" if absf(measured - PACED_SPEED) < 12.0 else "*** SPEED IGNORED ***")])

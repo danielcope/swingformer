@@ -42,8 +42,19 @@ enum Mode {
 		travel = value
 		queue_redraw()
 
-## Seconds for one leg (PING_PONG) or one full revolution (ORBIT, SPIN).
+## Seconds for one leg (PING_PONG, PATH) or one full revolution (ORBIT, SPIN).
+## Ignored when `speed` is set.
 @export var duration: float = 3.0
+## Pixels per second. Leave at 0 to time the motion with `duration` instead.
+##
+## Worth preferring while laying out a level: `duration` is a TIME, so
+## lengthening a gate's travel or redrawing its track silently makes it faster,
+## and a row of platforms with matching durations but different spans all move
+## at different speeds. Set a speed and the timing follows the geometry.
+##
+## Does not apply to SPIN, which has no distance to travel -- use `duration`
+## there, as seconds per revolution.
+@export var speed: float = 0.0
 ## PING_PONG only: seconds stopped at each end. A pause is what makes a moving
 ## obstacle readable -- it gives the player a moment to commit.
 @export var dwell: float = 0.6
@@ -135,7 +146,7 @@ func _along_path(path: Path2D, t: float) -> Vector2:
 	var length: float = path.curve.get_baked_length()
 	var distance: float
 	if path_loops:
-		distance = fposmod(t / maxf(duration, 0.001), 1.0) * length
+		distance = fposmod(t / _leg_seconds(), 1.0) * length
 		if not clockwise:
 			distance = length - distance
 	else:
@@ -154,22 +165,46 @@ func _path() -> Path2D:
 	return null
 
 
+## How far the parent travels in one leg or one lap. Used to turn a speed into
+## a duration.
+func _span() -> float:
+	match mode:
+		Mode.PING_PONG:
+			return travel.length()
+		Mode.ORBIT:
+			return TAU * travel.length()
+		Mode.PATH:
+			var path := _path()
+			if path and path.curve:
+				return path.curve.get_baked_length()
+	return 0.0
+
+
+## Seconds per leg or lap, derived from `speed` when one is set.
+func _leg_seconds() -> float:
+	if speed > 0.0 and mode != Mode.SPIN:
+		var span := _span()
+		if span > 0.0:
+			return maxf(span / speed, 0.001)
+	return maxf(duration, 0.001)
+
+
 func _cycle_length() -> float:
 	if mode == Mode.PING_PONG or (mode == Mode.PATH and not path_loops):
-		return (maxf(duration, 0.001) + maxf(dwell, 0.0)) * 2.0
-	return maxf(duration, 0.001)
+		return (_leg_seconds() + maxf(dwell, 0.0)) * 2.0
+	return _leg_seconds()
 
 
 ## Radians turned by time t, signed by direction. Screen space is y-down, so a
 ## positive angle reads as clockwise.
 func _spun(t: float) -> float:
 	var dir := 1.0 if clockwise else -1.0
-	return dir * TAU * (t / maxf(duration, 0.001))
+	return dir * TAU * (t / _leg_seconds())
 
 
 ## Position along `travel` as 0..1, with a dwell at each end.
 func _ping_pong(t: float) -> float:
-	var leg := maxf(duration, 0.001)
+	var leg := _leg_seconds()
 	var hold := maxf(dwell, 0.0)
 	var u := fmod(t, _cycle_length())
 

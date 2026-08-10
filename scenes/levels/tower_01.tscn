@@ -8,6 +8,12 @@
 [ext_resource type="PackedScene" path="res://scenes/block.tscn" id="9_block"]
 [ext_resource type="PackedScene" path="res://scenes/mover.tscn" id="10_mover"]
 
+[sub_resource type="Curve2D" id="Curve2D_kvg81"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 924, -102, 0, 0, 0, 0, 5, -1, 0, 0, 0, 0, -80, -234)
+}
+point_count = 3
+
 [node name="Tower" type="Node2D" unique_id=1747310486]
 script = ExtResource("1_f5dit")
 
@@ -18,9 +24,18 @@ height = 10180.0
 [node name="Vines" type="Node2D" parent="." unique_id=706151572]
 
 [node name="Vine0" parent="Vines" unique_id=1625348594 instance=ExtResource("4_owkwv")]
-position = Vector2(0, -360)
+position = Vector2(-3745, -298)
 length = 200.0
 color = Color(0.2935, 0.55149996, 0.269, 1)
+
+[node name="Mover" parent="Vines/Vine0" unique_id=617854298 instance=ExtResource("10_mover")]
+mode = 3
+travel = Vector2(460, 0)
+duration = 2.0
+dwell = 0.7
+
+[node name="Path2D" type="Path2D" parent="Vines/Vine0/Mover" unique_id=1701948760]
+curve = SubResource("Curve2D_kvg81")
 
 [node name="Vine1" parent="Vines" unique_id=522808869 instance=ExtResource("4_owkwv")]
 position = Vector2(248.1431, -576.3877)
@@ -50,12 +65,6 @@ color = Color(0.33161616, 0.6404377, 0.2944108, 1)
 [node name="Vine6" parent="Vines" unique_id=228604470 instance=ExtResource("4_owkwv")]
 position = Vector2(-28.988068, -1561.6328)
 length = 179.41924
-
-[node name="Mover" parent="Vines/Vine6" instance=ExtResource("10_mover")]
-mode = 1
-travel = Vector2(0, -120)
-duration = 3.0
-color = Color(0.33856124, 0.6566429, 0.29904082, 1)
 
 [node name="Vine7" parent="Vines" unique_id=1602549797 instance=ExtResource("4_owkwv")]
 position = Vector2(214.58183, -1789.6746)
@@ -191,201 +200,136 @@ color = Color(0.48292598, 0.59881485, 0.37644458, 1)
 
 [node name="Ledge0" parent="Ledges" unique_id=418209515 instance=ExtResource("6_uq6gp")]
 position = Vector2(-349.85526, -543.93994)
-width = 219.09985
-height = 30.0
-color = Color(0.287197, 0.26379737, 0.21699813, 1)
+script = null
 
 [node name="Ledge1" parent="Ledges" unique_id=1523201635 instance=ExtResource("6_uq6gp")]
 position = Vector2(302.62637, -503.7801)
-width = 200.42224
-height = 30.0
-color = Color(0.285189, 0.26204038, 0.21574312, 1)
+script = null
 
 [node name="Ledge2" parent="Ledges" unique_id=751590288 instance=ExtResource("6_uq6gp")]
 position = Vector2(-557.0988, -1033.6045)
-width = 268.2211
-height = 30.0
-color = Color(0.31168023, 0.2852202, 0.23230015, 1)
+script = null
 
 [node name="Ledge3" parent="Ledges" unique_id=685404614 instance=ExtResource("6_uq6gp")]
 position = Vector2(-102.2532, -1058.2263)
-width = 190.8811
-height = 30.0
-color = Color(0.3129113, 0.2862974, 0.23306957, 1)
+script = null
 
 [node name="Ledge4" parent="Ledges" unique_id=1438420472 instance=ExtResource("6_uq6gp")]
 position = Vector2(398.2906, -1018.6243)
-width = 259.1296
-height = 30.0
-color = Color(0.3109312, 0.28456482, 0.23183201, 1)
+script = null
 
 [node name="Ledge5" parent="Ledges" unique_id=1551229974 instance=ExtResource("6_uq6gp")]
 position = Vector2(-425.25784, -1544.3185)
-width = 252.93863
-height = 30.0
-color = Color(0.33721593, 0.30756393, 0.24825996, 1)
+script = null
 
 [node name="Ledge6" parent="Ledges" unique_id=1622759392 instance=ExtResource("6_uq6gp")]
 position = Vector2(623.633, -1589.242)
-width = 218.33118
-height = 30.0
-color = Color(0.3394621, 0.30952933, 0.24966381, 1)
+script = null
 
 [node name="Bough7" parent="Ledges" unique_id=1818975308 instance=ExtResource("6_uq6gp")]
 position = Vector2(-447.8301, -2080)
-width = 624.3398083496094
-height = 40.0
-is_bough = true
-color = Color(0.35411766, 0.3227059, 0.26552942, 1)
+script = null
 
 [node name="Bough8" parent="Ledges" unique_id=1107442916 instance=ExtResource("6_uq6gp")]
 position = Vector2(440.28992, -2080)
-width = 639.4201916503906
-height = 40.0
-is_bough = true
-color = Color(0.35411766, 0.3227059, 0.26552942, 1)
+script = null
 
 [node name="Ledge9" parent="Ledges" unique_id=218600249 instance=ExtResource("6_uq6gp")]
 position = Vector2(-502.53442, -2596.1152)
-width = 260.9729
-height = 30.0
-color = Color(0.3692975, 0.33636776, 0.28222728, 1)
+script = null
 
 [node name="Ledge10" parent="Ledges" unique_id=1348477750 instance=ExtResource("6_uq6gp")]
 position = Vector2(54.347702, -2625.3574)
-width = 204.78278
-height = 30.0
-color = Color(0.37015757, 0.3371418, 0.28317332, 1)
+script = null
 
 [node name="Ledge11" parent="Ledges" unique_id=448898708 instance=ExtResource("6_uq6gp")]
 position = Vector2(464.02286, -2609.1133)
-width = 192.08961
-height = 30.0
-color = Color(0.3696798, 0.33671182, 0.2826478, 1)
+script = null
 
 [node name="Ledge12" parent="Ledges" unique_id=303034412 instance=ExtResource("6_uq6gp")]
 position = Vector2(-382.84613, -3156.9104)
-width = 184.15854
-height = 30.0
-color = Color(0.38579148, 0.35121232, 0.30037063, 1)
+script = null
 
 [node name="Ledge13" parent="Ledges" unique_id=330442176 instance=ExtResource("6_uq6gp")]
 position = Vector2(568.0334, -3134.5999)
-width = 257.3138
-height = 30.0
-color = Color(0.3851353, 0.35062176, 0.29964882, 1)
+script = null
 
 [node name="Ledge14" parent="Ledges" unique_id=1394121526 instance=ExtResource("6_uq6gp")]
 position = Vector2(-585.95776, -3635.0313)
-width = 190.43578
-height = 30.0
-color = Color(0.39985386, 0.36386847, 0.31583926, 1)
+script = null
 
 [node name="Ledge15" parent="Ledges" unique_id=1763057125 instance=ExtResource("6_uq6gp")]
 position = Vector2(571.7743, -3644.2136)
-width = 204.43799
-height = 30.0
-color = Color(0.40012392, 0.36411154, 0.31613633, 1)
+script = null
 
 [node name="Bough16" parent="Ledges" unique_id=1320546219 instance=ExtResource("6_uq6gp")]
 position = Vector2(-453.75873, -4160)
-width = 612.4825646972656
-height = 40.0
-is_bough = true
-color = Color(0.4152941, 0.3777647, 0.33282354, 1)
+script = null
 
 [node name="Bough17" parent="Ledges" unique_id=1864853910 instance=ExtResource("6_uq6gp")]
 position = Vector2(437.4813, -4160)
-width = 645.0374353027344
-height = 40.0
-is_bough = true
-color = Color(0.4152941, 0.3777647, 0.33282354, 1)
+script = null
 
 [node name="Ledge18" parent="Ledges" unique_id=1140854655 instance=ExtResource("6_uq6gp")]
 position = Vector2(-524.37573, -4689.1904)
-width = 184.17358
-height = 30.0
-color = Color(0.43085855, 0.3917727, 0.3499444, 1)
+script = null
 
 [node name="Ledge19" parent="Ledges" unique_id=573471040 instance=ExtResource("6_uq6gp")]
 position = Vector2(135.52391, -4717.6875)
-width = 221.88757
-height = 30.0
-color = Color(0.43169668, 0.39252704, 0.35086638, 1)
+script = null
 
 [node name="Ledge20" parent="Ledges" unique_id=1949124487 instance=ExtResource("6_uq6gp")]
 position = Vector2(495.35275, -4656.45)
-width = 198.32613
-height = 30.0
-color = Color(0.42989558, 0.39090604, 0.34888518, 1)
+script = null
 
 [node name="Ledge21" parent="Ledges" unique_id=2068712468 instance=ExtResource("6_uq6gp")]
 position = Vector2(-615.5446, -5165.045)
-width = 247.31076
-height = 30.0
-color = Color(0.44396108, 0.40594164, 0.36858234, 1)
+script = null
 
 [node name="Ledge22" parent="Ledges" unique_id=822884100 instance=ExtResource("6_uq6gp")]
 position = Vector2(369.7559, -5185.13)
-width = 257.63403
-height = 30.0
-color = Color(0.4444431, 0.40666467, 0.36962676, 1)
+script = null
 
 [node name="Ledge23" parent="Ledges" unique_id=1321356854 instance=ExtResource("6_uq6gp")]
 position = Vector2(-352.67175, -5752.896)
-width = 178.30293
-height = 30.0
-color = Color(0.4580695, 0.42710426, 0.3991506, 1)
+script = null
 
 [node name="Ledge24" parent="Ledges" unique_id=1691303434 instance=ExtResource("6_uq6gp")]
 position = Vector2(-114.450386, -5751.341)
-width = 186.40536
-height = 30.0
-color = Color(0.4580322, 0.42704827, 0.39906973, 1)
+script = null
 
 [node name="Ledge25" parent="Ledges" unique_id=2088465635 instance=ExtResource("6_uq6gp")]
 position = Vector2(624.0123, -5734.684)
-width = 202.16864
-height = 30.0
-color = Color(0.45763242, 0.42644864, 0.39820358, 1)
+script = null
 
 [node name="Bough26" parent="Ledges" unique_id=1785638109 instance=ExtResource("6_uq6gp")]
 position = Vector2(-672.48376, -6240)
-width = 175.0324560546875
-height = 40.0
-is_bough = true
-color = Color(0.46976, 0.44464, 0.42448002, 1)
+script = null
 
 [node name="Bough27" parent="Ledges" unique_id=1643105362 instance=ExtResource("6_uq6gp")]
 position = Vector2(221.87622, -6240)
-width = 1076.2475439453124
-height = 40.0
-is_bough = true
-color = Color(0.46976, 0.44464, 0.42448002, 1)
+script = null
 
 [node name="Ledge28" parent="Ledges" unique_id=124689058 instance=ExtResource("6_uq6gp")]
 position = Vector2(-311.7532, -6756.5166)
-width = 214.0907
-height = 30.0
-color = Color(0.4821564, 0.4632346, 0.4513389, 1)
+script = null
 
 [node name="Ledge29" parent="Ledges" unique_id=629538747 instance=ExtResource("6_uq6gp")]
 position = Vector2(259.35184, -6728.8047)
-width = 222.35088
-height = 30.0
-color = Color(0.48149133, 0.46223697, 0.44989786, 1)
+script = null
 
-[node name="Blockers" type="Node2D" parent="."]
+[node name="Blockers" type="Node2D" parent="." unique_id=66330808]
 
-[node name="SweepingGate" parent="Blockers" instance=ExtResource("9_block")]
+[node name="SweepingGate" parent="Blockers" unique_id=1688631863 instance=ExtResource("9_block")]
 position = Vector2(-330, -1080)
 width = 200.0
 height = 44.0
 
-[node name="Mover" parent="Blockers/SweepingGate" instance=ExtResource("10_mover")]
+[node name="Mover" parent="Blockers/SweepingGate" unique_id=1348081151 instance=ExtResource("10_mover")]
 travel = Vector2(460, 0)
 duration = 2.0
 dwell = 0.7
+path_loops = null
 
 [node name="StartPoint" type="Marker2D" parent="." unique_id=1318170643]
 position = Vector2(-4086, -239)
