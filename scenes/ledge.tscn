@@ -7,4 +7,13 @@ collision_layer = 1
 collision_mask = 0
 script = ExtResource("1_ledge")
 
+[node name="Body" type="Polygon2D" parent="."]
+color = Color(0.34, 0.31, 0.25, 1)
+
+[node name="TopEdge" type="Polygon2D" parent="."]
+color = Color(0.44, 0.4, 0.33, 1)
+
+[node name="Moss" type="Polygon2D" parent="."]
+color = Color(0.3, 0.44, 0.26, 1)
+
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]

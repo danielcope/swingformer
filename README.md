@@ -91,6 +91,31 @@ a different level and that is the whole switch.
 | `shaft.tscn` | The walls and floor, sized by `width` / `height`. |
 | `summit.tscn` | Win trigger. Put it where the climb ends. |
 
+### Changing how a ledge looks
+
+A `Ledge`'s visuals are **real child nodes**, not `_draw()` calls:
+
+```
+Ledge
+  Body        the slab
+  TopEdge     the lit lip
+  Moss        the growth on the lip
+  CollisionShape2D
+```
+
+Restyle them however you like — colour, texture, material, z-order — or delete
+them and drop a `Sprite2D` in instead. The script only ever sets their **shape**,
+so they keep matching the collision box; it never touches their colour. Anything
+missing is skipped, so a ledge stripped back to nothing still works as a
+platform.
+
+The `tint` export is a shortcut that recolours `Body` and `TopEdge` together,
+and it only applies **when you change it** — so editing the `Polygon2D` colours
+directly is not undone on the next rebuild. `Slippery` and the generator both go
+through it, so an icy ledge still reads as icy whatever you have done to the art.
+
+`Block` still paints itself in `_draw()`. Same treatment on request.
+
 `Ledge` versus `Block` is the distinction worth internalising, because in the
 editor they are both just rock. One-way means a ledge never walls off the route
 above it; solid means a block genuinely can. That is a legitimate design tool —

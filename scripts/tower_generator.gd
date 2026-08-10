@@ -208,7 +208,7 @@ func _spawn_ledge(pos: Vector2, width: float, is_bough: bool) -> void:
 	ledge.width = width
 	ledge.height = 40.0 if is_bough else 30.0
 	ledge.is_bough = is_bough
-	ledge.color = Biome.at(pos.y)["rock"]
+	ledge.tint = Biome.at(pos.y)["rock"]
 	add_child(ledge)
 
 

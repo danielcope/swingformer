@@ -104,7 +104,7 @@ func _bake() -> void:
 			l.width = source_ledge.width
 			l.height = source_ledge.height
 			l.is_bough = source_ledge.is_bough
-			l.color = source_ledge.color
+			l.tint = source_ledge.tint
 			l.name = ("Bough%d" if source_ledge.is_bough else "Ledge%d") % ledge_count
 			ledges.add_child(l)
 			l.owner = level

@@ -42,8 +42,15 @@ func _ready() -> void:
 	if Engine.is_editor_hint():
 		return
 	if tint:
+		# `tint` on pieces whose look lives in child nodes, `color` on those
+		# that still paint themselves. Either way, ask the piece rather than
+		# reaching into how it is built.
 		var parent := get_parent()
-		if parent and parent.get("color") != null:
+		if parent == null:
+			return
+		if parent.has_method("set_visual_color"):
+			parent.call("set_visual_color", Color(parent.call("get_visual_color")).lerp(ice, 0.75))
+		elif parent.get("color") != null:
 			parent.set("color", Color(parent.get("color")).lerp(ice, 0.75))
 
 

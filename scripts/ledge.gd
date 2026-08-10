@@ -9,9 +9,21 @@ extends AnimatableBody2D
 ##
 ## There is no save state anywhere in this game. A "checkpoint" is just a slab
 ## of rock wide enough that a fall is likely to land on it. Narrow ledges are a
-## coin flip; a bough (every Nth tier) spans most of the shaft and will almost
-## always catch you. That is the entire checkpoint system -- geometry doing the
-## work that a save file would normally do.
+## coin flip; a bough spans most of the shaft and will almost always catch you.
+## That is the entire checkpoint system -- geometry doing the work that a save
+## file would normally do.
+##
+## THE LOOK IS EDITABLE. The visuals are real child nodes, not _draw() calls:
+##
+##   Body     the slab
+##   TopEdge  the lit lip along the top
+##   Moss     the growth on the lip
+##
+## Restyle them freely -- colour, texture, material, z-order -- or delete them
+## and put a Sprite2D in instead. The script only ever sets their SHAPE so they
+## keep matching the collision; it never touches their colour, except when you
+## change the `tint` export, which is there as a shortcut. Anything missing is
+## simply skipped, so a ledge with no children at all still works as a platform.
 
 @export var width: float = 200.0:
 	set(value):
@@ -28,10 +40,14 @@ extends AnimatableBody2D
 	set(value):
 		is_bough = value
 		_rebuild()
-@export var color: Color = Color(0.34, 0.31, 0.25):
+
+## A shortcut for recolouring the slab and its lip together. Applied only when
+## you change it, so editing the Polygon2D colours directly is not undone on the
+## next rebuild.
+@export var tint: Color = Color(0.34, 0.31, 0.25):
 	set(value):
-		color = value
-		_rebuild()
+		tint = value
+		_apply_tint()
 
 var _moss_seed: float = 0.0
 
@@ -44,14 +60,9 @@ func _ready() -> void:
 	add_to_group("ledges")
 
 
-## Re-assert in the editor so a dragged collision shape cannot drift away from
-## the rock you can see -- that desync is invisible at runtime and is the same
-## failure the shaft had. Only the ledge's INTERNALS are owned; the ledge itself
-## is yours to place anywhere.
+## Only rebuild when something has actually moved, so laying out a level does
+## not rewrite every ledge in it on every frame.
 func _process(_delta: float) -> void:
-	# Only rebuild when something has actually moved. _rebuild ends in a
-	# queue_redraw, so calling it unconditionally would repaint every ledge in
-	# the level every frame while you are trying to lay one out.
 	if Engine.is_editor_hint() and _drifted():
 		_rebuild()
 
@@ -73,9 +84,15 @@ func _drifted() -> bool:
 func _rebuild() -> void:
 	if not is_inside_tree():
 		return
+	_rebuild_collision()
+	_rebuild_visuals()
+
+
+func _rebuild_collision() -> void:
 	var shape := get_node_or_null("CollisionShape2D") as CollisionShape2D
 	if shape == null:
 		return
+
 	if shape.position != Vector2.ZERO:
 		shape.position = Vector2.ZERO
 	if shape.rotation != 0.0:
@@ -102,26 +119,68 @@ func _rebuild() -> void:
 	# The shaft walls stay solid, so swinging into rock is still punished.
 	shape.one_way_collision = true
 
-	queue_redraw()
 
-
-func _draw() -> void:
+## Shape only. Colours belong to the nodes themselves so your edits survive.
+func _rebuild_visuals() -> void:
 	var half := Vector2(width, height) * 0.5
-	var body := Rect2(-half, Vector2(width, height))
+	_set_rect("Body", Rect2(-half, Vector2(width, height)))
+	_set_rect("TopEdge", Rect2(-half, Vector2(width, 5.0)))
 
-	draw_rect(body, color)
-	# Lit top edge, so ledges read as landable surfaces from a distance.
-	draw_rect(Rect2(-half, Vector2(width, 6.0)), color.lightened(0.28))
-	draw_rect(
-		Rect2(Vector2(-half.x, half.y - 5.0), Vector2(width, 5.0)), color.darkened(0.35)
-	)
-
-	# Moss tufts along the lip. Boughs get denser growth so they read as the
-	# safe, restful thing they are.
-	var tuft_color := Color(0.30, 0.52, 0.26) if is_bough else Color(0.30, 0.44, 0.26)
+	var moss := get_node_or_null("Moss") as Polygon2D
+	if moss == null:
+		return
+	if moss.position != Vector2.ZERO:
+		moss.position = Vector2.ZERO
+	# Tufts rather than a strip, denser on a bough so the safe rock reads as
+	# safe from a distance. One polygon with disjoint loops, which Polygon2D
+	# handles via `polygons`.
+	var points := PackedVector2Array()
+	var loops: Array = []
 	var step := 26.0 if is_bough else 40.0
 	var x := -half.x + 10.0
 	while x < half.x - 6.0:
-		var h := 5.0 + fmod(x * 0.37 + _moss_seed, 7.0)
-		draw_rect(Rect2(Vector2(x, -half.y - h), Vector2(7.0, h)), tuft_color)
+		var tuft := 5.0 + fmod(x * 0.37 + _moss_seed, 7.0)
+		var base := points.size()
+		points.append(Vector2(x, -half.y))
+		points.append(Vector2(x + 7.0, -half.y))
+		points.append(Vector2(x + 7.0, -half.y - tuft))
+		points.append(Vector2(x, -half.y - tuft))
+		loops.append(PackedInt32Array([base, base + 1, base + 2, base + 3]))
 		x += step
+	moss.polygon = points
+	moss.polygons = loops
+
+
+func _set_rect(node_name: String, rect: Rect2) -> void:
+	var poly := get_node_or_null(node_name) as Polygon2D
+	if poly == null:
+		return
+	if poly.position != Vector2.ZERO:
+		poly.position = Vector2.ZERO
+	poly.polygon = PackedVector2Array([
+		rect.position,
+		rect.position + Vector2(rect.size.x, 0.0),
+		rect.position + rect.size,
+		rect.position + Vector2(0.0, rect.size.y),
+	])
+
+
+func _apply_tint() -> void:
+	if not is_inside_tree():
+		return
+	var body := get_node_or_null("Body") as Polygon2D
+	if body:
+		body.color = tint
+	var edge := get_node_or_null("TopEdge") as Polygon2D
+	if edge:
+		edge.color = tint.lightened(0.28)
+
+
+## Kept so the generator, the bake tool and Slippery can recolour a ledge
+## without knowing how it is put together.
+func set_visual_color(value: Color) -> void:
+	tint = value
+
+
+func get_visual_color() -> Color:
+	return tint
