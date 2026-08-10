@@ -25,9 +25,19 @@ const JUMP_START := 500
 ## walkable UP, which is worth knowing before you build one.
 const SWEEP := [6.0, 10.0, 16.0, 22.0]
 
+## Arriving WITH speed is the case that matters. Starting from rest on the slope
+## only ever tested whether you can accelerate up it; a player who swings in or
+## comes off a bounce hits the face already moving, and frictionless means
+## nothing takes that away. Ballistically, speed v buys v^2/2g of height, so
+## these are checked against that ceiling -- climbing further than it means
+## energy is being created somewhere.
+const ARRIVALS := [600.0, 1200.0, 1800.0]
+const MOMENTUM_START := 900
+
 var _push: Dictionary = {}
 var _jump: Dictionary = {}
 var _sweep: Array = []
+var _rollers: Array = []
 var _frames: int = 0
 
 
@@ -79,10 +89,34 @@ func _physics_process(_delta: float) -> void:
 		_jump = _build(4000.0)
 		return
 
-	_track(_jump)
-	if _frames % 6 == 0:
-		Input.action_press("jump")
-	Input.action_press("move_left")
+	if _frames < MOMENTUM_START:
+		_track(_jump)
+		if _frames % 6 == 0:
+			Input.action_press("jump")
+		Input.action_press("move_left")
+		return
+
+	# No input at all from here: pure momentum, so nothing can be blamed on the
+	# player pushing.
+	if _frames == MOMENTUM_START:
+		(_jump["player"] as Player).queue_free()
+		(_jump["block"] as Block).queue_free()
+		for i in range(ARRIVALS.size()):
+			var c := _build(-30000.0 - float(i) * 4000.0)
+			var p: Player = c["player"]
+			var up := Vector2(-cos(deg_to_rad(TILT_DEGREES)), -sin(deg_to_rad(TILT_DEGREES)))
+			# Placed low on the face, sent up it.
+			p.reset_at(Vector2(-30000.0 - float(i) * 4000.0 + 560.0, 170.0))
+			p.velocity = up * ARRIVALS[i]
+			c["speed"] = ARRIVALS[i]
+			c["start_y"] = p.global_position.y
+			_rollers.append(c)
+		return
+
+	for c in _rollers:
+		var p: Player = c["player"]
+		c["best"] = minf(c["best"], p.global_position.y)
+		c["final"] = p.global_position.y
 
 
 
@@ -131,3 +165,13 @@ func _report() -> void:
 		print("    %4.0f degrees: net %+7.0f px  %s"
 			% [c["tilt"], net,
 				("climbable" if net > 80.0 else "slides off")])
+
+	print("\n  ROLLING up with arrival speed, no input (ballistic ceiling is v^2/2g):")
+	for c in _rollers:
+		var climbed: float = c["start_y"] - c["best"]
+		var ceiling: float = c["speed"] * c["speed"] / (2.0 * 1500.0)
+		var came_back: bool = c["final"] > c["start_y"]
+		print("    %5.0f px/s: climbed %6.0f px (ceiling %.0f), ended %s  %s"
+			% [c["speed"], climbed, ceiling,
+				("below where it started" if came_back else "*** STILL UP THERE ***"),
+				("OK" if climbed <= ceiling * 1.15 else "*** GAINED FREE ENERGY ***")])

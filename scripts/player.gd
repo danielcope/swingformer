@@ -243,6 +243,26 @@ func _process_free(delta: float) -> void:
 	# tilt becomes a slide that accelerates.
 	var grip := _floor_grip()
 
+	# Ice has no floors. While is_on_floor() is true, CharacterBody2D forces the
+	# up-axis velocity to zero every frame -- deliberately, so gravity cannot
+	# accumulate under a standing body. On a slope that means gravity is applied
+	# and erased every frame while horizontal speed carries you up the ramp
+	# through ordinary slide resolution: the trace showed a pinned (-556, 0)
+	# climbing 400px at constant speed, forever.
+	#
+	# Neither floor_stop_on_slope nor floor_snap_length touches that; the
+	# grounded branch has to not run at all, and FLOATING is how you say so.
+	# (Godot 3 spelled this `up_direction = Vector2.ZERO`. In Godot 4 that
+	# assignment is silently ignored -- it reads back as (0, -1) on the very
+	# next line, which is exactly how this hid for so long.)
+	#
+	# Only for full ice. Anything with grip left keeps normal floor handling,
+	# because without it you cannot stand, walk, or jump anywhere.
+	motion_mode = (
+		CharacterBody2D.MOTION_MODE_FLOATING if grip <= 0.0
+		else CharacterBody2D.MOTION_MODE_GROUNDED
+	)
+
 	# Resolved here, before move_and_slide, so the jump lands on the same frame
 	# as the press rather than one frame late.
 	#

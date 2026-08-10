@@ -186,25 +186,35 @@ grounded, which is exactly why they can stand on a steep block like a shelf; an
 icy floor takes the airborne branch instead, so any tilt becomes a slide that
 accelerates.
 
-Jumping still works on ice, which looks like a hole — if you cannot walk up a
-frictionless slope, surely you can hop up it? Measured, no: jumping up a 22°
-slippery slope still loses **154,000px** of height, because you slide back down
-between hops faster than you gain. Blocking it would only have meant a player on
-a flat icy ledge could not jump at all.
+Mechanically, ice switches the player to `MOTION_MODE_FLOATING`, so nothing is
+a floor while you are on it. That is not a detail — it is the whole fix. While
+`is_on_floor()` is true, `CharacterBody2D` zeroes the up-axis velocity every
+frame so gravity cannot build up under a standing body, and on a slope that
+means gravity gets applied and erased every frame while your horizontal speed
+carries you *up* the ramp. Arrive with momentum and you glide up it at constant
+speed, forever. Neither `floor_stop_on_slope` nor `floor_snap_length` touches
+that; the grounded branch has to not run at all.
 
-Nor is there a shallow angle that becomes walkable (`test/ice_climb.gd`):
+The consequence worth knowing: **you cannot jump while on ice**, because there
+is no floor to be standing on. That falls out of the fix rather than being a
+rule, and it happens to be the behaviour you want anyway.
 
-| tilt | net height, holding up-slope |
-|---|---|
-| 6° | −6,308px |
-| 10° | −5,447px |
-| 16° | −4,805px |
-| 22° | −12,098px |
+Rolling up with arrival speed now costs what it should — the ballistic ceiling
+is `v²/2g` and nothing exceeds it (`test/ice_climb.gd`):
 
-If an icy slope *looks* like it is being climbed, the likely culprit is the
-landing: a rebound off a slope throws you into one arc well above the contact
-point before you start descending. That arc is around 140px on a 22° face and it
-reads exactly like going up.
+| arrival | climbed | ceiling |
+|---|---|---|
+| 600 px/s | 111px | 120px |
+| 1200 px/s | 341px | 480px |
+| 1800 px/s | 522px | 1080px |
+
+Keep icy slopes **steeper than about 12°**. Air control is 260px/s² and gravity
+pulls `1500·sin θ` down the face, so they balance near 10° — at exactly 10° a
+player holds station rather than sliding off.
+
+One more thing to expect: landing on a slope rebounds you into a single arc well
+above the contact point (about 140px on a 22° face) before you start descending.
+It looks like climbing and is not.
 
 **So tilt the block.** On a perfectly flat icy surface there is nothing for
 gravity to pull you along — you keep your momentum and cannot brake, but you
