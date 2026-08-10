@@ -2,7 +2,10 @@
 class_name Ledge
 extends StaticBody2D
 
-## A physical checkpoint.
+## A physical checkpoint, and a one-way platform.
+##
+## The solid counterpart is Block: this is a place to end up, that is a thing to
+## work around. See test/solidity.gd, which asserts the difference.
 ##
 ## There is no save state anywhere in this game. A "checkpoint" is just a slab
 ## of rock wide enough that a fall is likely to land on it. Narrow ledges are a

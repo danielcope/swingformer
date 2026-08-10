@@ -78,6 +78,29 @@ and ticking `is_bough` — the level finds its own boughs, and the HUD's "what a
 fall costs" picks them up. `game.gd` has a `level_scene` export, so point it at
 a different level and that is the whole switch.
 
+### The pieces
+
+| Scene | What it does |
+|---|---|
+| `vine.tscn` | A grab point. `length` is how far the rope hangs. |
+| `ledge.tscn` | **One-way.** You rise straight through it and land on top. A place to end up. Tick `is_bough` to make it a checkpoint. |
+| `block.tscn` | **Solid from every side.** Stops falls, blocks jumps, and knocks you off a vine you swing into. A thing to work around. |
+| `shaft.tscn` | The walls and floor, sized by `width` / `height`. |
+| `summit.tscn` | Win trigger. Put it where the climb ends. |
+
+`Ledge` versus `Block` is the distinction worth internalising, because in the
+editor they are both just rock. One-way means a ledge never walls off the route
+above it; solid means a block genuinely can. That is a legitimate design tool —
+a block parked inside a vine's arc makes that vine unusable on purpose — but
+check the arc gizmo before you place one. `test/solidity.tscn` asserts both
+behave that way.
+
+Size a block with its `width` / `height` exports. **Do not duplicate the
+shaft's `LeftWall`** to make a pillar: it is script-owned by `Shaft`, it has no
+size exports of its own, and a node copy keeps pointing at the *same*
+`RectangleShape2D` as the wall it came from, so resizing one resizes the other.
+Use `block.tscn`.
+
 **Resize the shaft with the `width` and `height` exports on the Shaft node, not
 by dragging its children.** The walls and floor are script-owned: their
 positions, collision shapes and polygons are all derived from those two numbers,
@@ -116,9 +139,13 @@ no dead ends
 ```
 
 It flags an unreachable start, vines nothing can climb past, stranded vines and
-a summit above the top of the climb. It is a guide, not a proof: it ignores
-bounces, wall rebounds and grabbing on the way down, all of which make more
-things reachable, so it errs towards warning you.
+a summit above the top of the climb.
+
+It is a guide, not a proof, and it errs in both directions. It ignores bounces,
+wall rebounds and grabbing on the way down, all of which make *more* things
+reachable. It also ignores solid geometry, so it will happily call a route open
+when a `Block` sits across it — if you build with blocks, the autopilot is the
+better check.
 
 ### Starting from something
 

@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://test/solidity.gd" id="1_solidity"]
+
+[node name="SolidityTest" type="Node2D"]
+
+[node name="Runner" type="Node" parent="."]
+script = ExtResource("1_solidity")

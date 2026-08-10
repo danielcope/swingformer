@@ -1,27 +1,51 @@
-[gd_scene load_steps=2 format=3 uid="uid://bxk6b8126tnct"]
+[gd_scene format=3 uid="uid://bxk6b8126tnct"]
 
 [ext_resource type="Script" uid="uid://d256vqkedmviy" path="res://scripts/shaft.gd" id="1_shaft"]
 
-[node name="Shaft" type="Node2D"]
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_hk0ro"]
+resource_local_to_scene = true
+size = Vector2(120, 6000)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_k577w"]
+resource_local_to_scene = true
+size = Vector2(120, 6000)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_17mqp"]
+resource_local_to_scene = true
+size = Vector2(1760, 160)
+
+[node name="Shaft" type="Node2D" unique_id=1601434007]
 script = ExtResource("1_shaft")
 
-[node name="LeftWall" type="StaticBody2D" parent="."]
+[node name="LeftWall" type="StaticBody2D" parent="." unique_id=584140836]
+position = Vector2(-820, -3000)
 collision_mask = 0
 
-[node name="Polygon2D" type="Polygon2D" parent="LeftWall"]
+[node name="Polygon2D" type="Polygon2D" parent="LeftWall" unique_id=952636824]
+color = Color(0.238, 0.217, 0.175, 1)
+polygon = PackedVector2Array(-60, -3000, 60, -3000, 60, 3000, -60, 3000)
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="LeftWall"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="LeftWall" unique_id=657189590]
+shape = SubResource("RectangleShape2D_hk0ro")
 
-[node name="RightWall" type="StaticBody2D" parent="."]
+[node name="RightWall" type="StaticBody2D" parent="." unique_id=1958320248]
+position = Vector2(820, -3000)
 collision_mask = 0
 
-[node name="Polygon2D" type="Polygon2D" parent="RightWall"]
+[node name="Polygon2D" type="Polygon2D" parent="RightWall" unique_id=737619667]
+color = Color(0.238, 0.217, 0.175, 1)
+polygon = PackedVector2Array(-60, -3000, 60, -3000, 60, 3000, -60, 3000)
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="RightWall"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="RightWall" unique_id=1225247112]
+shape = SubResource("RectangleShape2D_k577w")
 
-[node name="Floor" type="StaticBody2D" parent="."]
+[node name="Floor" type="StaticBody2D" parent="." unique_id=1274744231]
+position = Vector2(0, 80)
 collision_mask = 0
 
-[node name="Polygon2D" type="Polygon2D" parent="Floor"]
+[node name="Polygon2D" type="Polygon2D" parent="Floor" unique_id=1712177391]
+color = Color(0.289, 0.2635, 0.2125, 1)
+polygon = PackedVector2Array(-880, -80, 880, -80, 880, 80, -880, 80)
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Floor"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Floor" unique_id=2062835929]
+shape = SubResource("RectangleShape2D_17mqp")
