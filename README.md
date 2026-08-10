@@ -107,11 +107,23 @@ Use `block.tscn`.
 `Mover` is a **component, not a node type**. Add it as a child of anything and
 it animates its parent:
 
-| Mode | What `travel` means |
+| Mode | What defines the path |
 |---|---|
-| `PING_PONG` | Offset to the **far end**. It goes there and back, pausing at each end. |
-| `ORBIT` | Offset to the **centre** of the circle. The node you placed sits on the rim, so the radius is `travel.length()`. |
-| `SPIN` | Ignored. Rotates in place and leaves position alone. |
+| `PING_PONG` | `travel` — offset to the **far end**. There and back, pausing at each end. |
+| `ORBIT` | `travel` — offset to the **centre** of the circle. The node sits on the rim, so the radius is `travel.length()`. |
+| `SPIN` | Nothing. Rotates in place and leaves position alone. |
+| `PATH` | A **`Path2D` child**. Draw any track you like and it walks it. |
+
+**For an arbitrary track, use `PATH`:** add a `Path2D` as a child of the `Mover`,
+draw the curve with Godot's own path tools, and set the mode. `path_loops` picks
+whether it runs laps or retraces its steps — a closed loop usually wants laps on,
+an open track wants it off. `clockwise` reverses a looping track.
+
+Curve points are offsets from where you placed the parent, so a track whose
+first point is at `(0, 0)` starts exactly where the node sits. The `Mover` traces
+the curve in the viewport itself, because Godot only draws a `Path2D` while that
+node is selected — otherwise your track would vanish the moment you clicked
+anything else.
 
 `travel` is always an **offset from where you placed the node**, never an
 absolute position, and it lives in the parent's local space — so rotating the

@@ -20,6 +20,7 @@ enum Mode {
 	PING_PONG,  ## Back and forth along `travel`, pausing at each end.
 	ORBIT,      ## Circles a centre placed at `travel`, starting where it sits.
 	SPIN,       ## Rotates in place. Leaves position alone.
+	PATH,       ## Follows a Path2D child. Draw the track, it walks it.
 }
 
 @export var mode: Mode = Mode.PING_PONG:
@@ -48,8 +49,11 @@ enum Mode {
 @export var dwell: float = 0.6
 ## PING_PONG only: ease in and out rather than snapping to full speed.
 @export var smooth: bool = true
-## ORBIT and SPIN direction.
+## ORBIT and SPIN direction, and which way round a looping PATH is walked.
 @export var clockwise: bool = true
+## PATH only: run laps instead of retracing your steps. An open track usually
+## wants this off; a closed loop usually wants it on.
+@export var path_loops: bool = false
 ## Fraction of a cycle to start into. Use it to desynchronise a row of movers
 ## so they do not all travel as one.
 @export_range(0.0, 1.0) var phase_offset: float = 0.0
@@ -118,10 +122,40 @@ func _physics_process(delta: float) -> void:
 			_target.position = centre + Vector2.from_angle(start + _spun(t)) * radius
 		Mode.SPIN:
 			_target.rotation = _home_rotation + _spun(t)
+		Mode.PATH:
+			var path := _path()
+			if path and path.curve and path.curve.get_baked_length() > 0.0:
+				_target.position = _home + _along_path(path, t)
+
+
+## Where on the drawn track the parent should be at time t. Curve points are
+## offsets from where the parent was placed, so a track whose first point is at
+## (0, 0) begins exactly where you left the node.
+func _along_path(path: Path2D, t: float) -> Vector2:
+	var length: float = path.curve.get_baked_length()
+	var distance: float
+	if path_loops:
+		distance = fposmod(t / maxf(duration, 0.001), 1.0) * length
+		if not clockwise:
+			distance = length - distance
+	else:
+		distance = _ping_pong(t) * length
+
+	# Through the Path2D's own transform, so the track can be nudged as a whole
+	# without redrawing every point.
+	return path.transform * path.curve.sample_baked(distance, true)
+
+
+## The Path2D child that defines the track, if there is one.
+func _path() -> Path2D:
+	for child in get_children():
+		if child is Path2D:
+			return child as Path2D
+	return null
 
 
 func _cycle_length() -> float:
-	if mode == Mode.PING_PONG:
+	if mode == Mode.PING_PONG or (mode == Mode.PATH and not path_loops):
 		return (maxf(duration, 0.001) + maxf(dwell, 0.0)) * 2.0
 	return maxf(duration, 0.001)
 
@@ -165,6 +199,14 @@ func _get_configuration_warnings() -> PackedStringArray:
 			"Parent is a StaticBody2D. It will move, but will not carry a "
 			+ "standing player. Use AnimatableBody2D for platforms."
 		])
+	if mode == Mode.PATH:
+		var path := _path()
+		if path == null:
+			return PackedStringArray([
+				"PATH mode needs a Path2D child to follow. Add one and draw the track."
+			])
+		if path.curve == null or path.curve.point_count < 2:
+			return PackedStringArray(["The Path2D needs at least two points."])
 	return PackedStringArray()
 
 
@@ -193,6 +235,19 @@ func _draw() -> void:
 			draw_line(Vector2.ZERO, travel, Color(1.0, 0.85, 0.35, 0.18), 1.0)
 		Mode.SPIN:
 			draw_arc(Vector2.ZERO, 46.0, 0.0, TAU * 0.8, 32, tint, 2.0)
+		Mode.PATH:
+			# Godot only draws a Path2D's curve while that node is selected, so
+			# trace it here too -- otherwise the track vanishes the moment you
+			# click anything else.
+			var path := _path()
+			if path == null or path.curve == null or path.curve.point_count < 2:
+				return
+			var points := path.curve.tessellate()
+			for i in range(points.size() - 1):
+				draw_line(path.transform * points[i], path.transform * points[i + 1],
+					tint, 2.0)
+			draw_circle(path.transform * points[0], 6.0, Color(0.6, 1.0, 0.7, 0.7))
+			_ghost(path.transform * points[points.size() - 1])
 
 
 ## Outline of where the parent ends up, if it is something with a size.

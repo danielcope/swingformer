@@ -25,6 +25,9 @@ var _spinner: Block
 var _handled: Block
 var _handle_min := INF
 var _handle_max := -INF
+var _tracked: Block
+var _corner_error := INF
+var _track_end_error := INF
 
 var _frames: int = 0
 var _min_x := INF
@@ -80,6 +83,26 @@ func _ready() -> void:
 	mover.add_child(marker)
 	_handled.add_child(mover)
 
+	# An L-shaped track. Deliberately not a straight line: something that
+	# shortcut from start to end would still sweep a 300x200 box, so the corner
+	# is also checked for.
+	_tracked = BlockScene.instantiate()
+	_tracked.position = Vector2(12000.0, 0.0)
+	add_child(_tracked)
+	var path_mover: Mover = MoverScene.instantiate()
+	path_mover.mode = Mover.Mode.PATH
+	path_mover.duration = 2.0
+	path_mover.dwell = 0.0
+	path_mover.smooth = false
+	var path := Path2D.new()
+	var curve := Curve2D.new()
+	curve.add_point(Vector2.ZERO)
+	curve.add_point(Vector2(300.0, 0.0))
+	curve.add_point(Vector2(300.0, -200.0))
+	path.curve = curve
+	path_mover.add_child(path)
+	_tracked.add_child(path_mover)
+
 
 func _attach(target: Node2D, mode: Mover.Mode, travel: Vector2) -> void:
 	var mover: Mover = MoverScene.instantiate()
@@ -101,6 +124,10 @@ func _physics_process(_delta: float) -> void:
 	var handled_offset: float = _handled.position.x - 9000.0
 	_handle_min = minf(_handle_min, handled_offset)
 	_handle_max = maxf(_handle_max, handled_offset)
+
+	var tracked: Vector2 = _tracked.position - Vector2(12000.0, 0.0)
+	_corner_error = minf(_corner_error, tracked.distance_to(Vector2(300.0, 0.0)))
+	_track_end_error = minf(_track_end_error, tracked.distance_to(Vector2(300.0, -200.0)))
 
 	# True slip: movement RELATIVE to the deck, counted only across frames
 	# where the rider was grounded both before and after.
@@ -148,3 +175,8 @@ func _report() -> void:
 		% [_handle_min, _handle_max, HANDLE_TRAVEL,
 			("OK" if absf(_handle_max - HANDLE_TRAVEL) < 12.0 and absf(_handle_min) < 12.0
 			else "*** MARKER IGNORED ***")])
+
+	print("PATH: L-track, closest approach to corner %.0f px, to end %.0f px  %s"
+		% [_corner_error, _track_end_error,
+			("OK" if _corner_error < 20.0 and _track_end_error < 20.0
+			else "*** DID NOT FOLLOW THE TRACK ***")])

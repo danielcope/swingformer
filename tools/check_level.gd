@@ -199,11 +199,29 @@ func _spots(v: Vine) -> Array:
 		return [home]
 
 	var m := movers[0] as Mover
-	if not m.enabled or m.travel == Vector2.ZERO or m.mode == Mover.Mode.SPIN:
+	if not m.enabled or m.mode == Mover.Mode.SPIN:
 		return [home]  # SPIN turns the vine without moving the anchor
 
-	var out: Array = []
 	var samples := 12
+	var out: Array = []
+
+	if m.mode == Mover.Mode.PATH:
+		var path: Path2D = null
+		for child in m.get_children():
+			if child is Path2D:
+				path = child as Path2D
+				break
+		if path == null or path.curve == null or path.curve.get_baked_length() <= 0.0:
+			return [home]
+		var length: float = path.curve.get_baked_length()
+		for i in range(samples):
+			var d: float = length * float(i) / float(samples)
+			out.append(home + path.transform * path.curve.sample_baked(d, true))
+		return out
+
+	if m.travel == Vector2.ZERO:
+		return [home]
+
 	for i in range(samples):
 		var t := float(i) / float(samples)
 		if m.mode == Mover.Mode.PING_PONG:
