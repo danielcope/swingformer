@@ -13,6 +13,17 @@ extends AnimatableBody2D
 ## That is the entire checkpoint system -- geometry doing the work that a save
 ## file would normally do.
 ##
+## THE SCENE STANDS ON ITS OWN. ledge.tscn ships with a real collision shape and
+## real polygons for the default 200x34, so a ledge is a visible, solid platform
+## with the script removed entirely. The script only RESIZES it.
+##
+## That is deliberate. Godot detaches a script from every instance in an open
+## level if the script's base class changes under it, writing `script = null`
+## into the scene -- and when the scene carried no shape and no polygons of its
+## own, that turned every ledge in the level into nothing at all: invisible,
+## non-colliding, still in the tree, no error anywhere. Nothing that has to
+## exist should depend on a script running.
+##
 ## THE LOOK IS EDITABLE. The visuals are real child nodes, not _draw() calls:
 ##
 ##   Body     the slab

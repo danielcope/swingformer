@@ -332,10 +332,21 @@ catchable.
 
 It also flags **detached scripts** — nodes carrying `script = null`. Godot writes
 that if a scene's script changes base class while a level using it is open in
-the editor: it drops the script from every instance in that level. The node stays
-in the tree and stays selectable, but never runs `_ready`, so it builds no
-collision and draws nothing. Inert and invisible, with no error anywhere. The fix
-is to delete the `script = null` line under each affected node in the `.tscn`.
+the editor: it drops the script from every instance in that level.
+
+`Ledge` and `Block` now survive it — their scenes carry a real collision shape
+and, for ledges, real polygons, so a scriptless one is still a visible, solid
+platform at its default size. Only resizing stops working. **Nothing that has to
+exist should depend on a script running**, and these did: the scene shipped an
+empty `CollisionShape2D` and empty `Polygon2D`s for the script to fill in, so a
+detached script left literally nothing behind — invisible, non-colliding, still
+in the tree, no error anywhere.
+
+If the linter reports it, delete the `script = null` line under each node in the
+`.tscn`. Note that editing the file will not stick while that level is open in
+the editor: the editor holds its own copy and writes it back on the next save.
+Clear it in the editor instead — revert the Script property on each node, or
+reload the scene.
 
 It is a guide, not a proof, and it errs in both directions. It ignores bounces,
 wall rebounds and grabbing on the way down, all of which make *more* things

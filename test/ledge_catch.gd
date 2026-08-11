@@ -36,7 +36,27 @@ func _ready() -> void:
 		p.velocity = Vector2(0.0, SPEEDS[i])
 		# Neutralise input-driven behaviour; we only want ballistics here.
 		p.set_physics_process(false)
-		_cases.append({"player": p, "speed": SPEEDS[i], "caught": false})
+		_cases.append({"player": p, "speed": SPEEDS[i], "caught": false, "label": "%.0f px/s" % SPEEDS[i]})
+
+	# A ledge whose script has been stripped. Godot does this to every instance
+	# in an open level if the script's base class changes under it, and it must
+	# not turn a platform into nothing -- so the scene carries its own collision
+	# shape and polygons rather than having the script build them at load.
+	var bare_x := float(SPEEDS.size()) * 900.0
+	var bare: Ledge = LedgeScene.instantiate()
+	bare.set_script(null)
+	bare.position = Vector2(bare_x, LEDGE_Y)
+	add_child(bare)
+
+	var bare_player: Player = PlayerScene.instantiate()
+	add_child(bare_player)
+	bare_player.reset_at(Vector2(bare_x, DROP_Y))
+	bare_player.velocity = Vector2(0.0, 1200.0)
+	bare_player.set_physics_process(false)
+	_cases.append({
+		"player": bare_player, "speed": 1200.0, "caught": false,
+		"label": "1200 px/s, SCRIPTLESS ledge",
+	})
 
 
 func _physics_process(delta: float) -> void:
@@ -61,7 +81,7 @@ func _report() -> void:
 	for c in _cases:
 		var p: Player = c["player"]
 		if c["caught"]:
-			print("  %6.0f px/s  CAUGHT at y=%.0f" % [c["speed"], c["stop_y"]])
+			print("  %-28s CAUGHT at y=%.0f" % [c["label"], c["stop_y"]])
 		else:
-			print("  %6.0f px/s  *** FELL THROUGH *** (now at y=%.0f)"
-				% [c["speed"], p.global_position.y])
+			print("  %-28s *** FELL THROUGH *** (now at y=%.0f)"
+				% [c["label"], p.global_position.y])
