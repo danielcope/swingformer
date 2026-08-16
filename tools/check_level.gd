@@ -24,6 +24,9 @@ extends SceneTree
 
 const PlayerScene := preload("res://scenes/player.tscn")
 
+var _gravity: float = 1500.0
+var _max_omega: float = 6.0
+
 
 func _initialize() -> void:
 	var args := OS.get_cmdline_user_args()
@@ -45,6 +48,8 @@ func _initialize() -> void:
 	var min_rope: float = p.min_rope_length
 	var max_rope: float = p.max_rope_length
 	var jump_rise: float = p.jump_velocity * p.jump_velocity / (2.0 * p.gravity)
+	_gravity = p.gravity
+	_max_omega = p.max_angular_speed
 
 	# Gather anchors.
 	var vines: Array = []
@@ -99,14 +104,34 @@ func _initialize() -> void:
 	var marker := level.get_node_or_null("StartPoint") as Node2D
 	if marker:
 		start = marker.position
-	var apex := start.y - jump_rise
+	# You do not jump from the spawn marker -- you fall to whatever is beneath it
+	# first, and jump from there. Testing only the marker's own height reports a
+	# perfectly good start as unreachable whenever the marker floats above the
+	# floor, which is the loudest thing this tool says and the worst thing for it
+	# to be wrong about. So consider both.
+	var stands: Array = [start.y]
+	var shafts := level.find_children("*", "Shaft", true, false)
+	if not shafts.is_empty():
+		stands.append((shafts[0] as Node2D).position.y - 14.0)
+
+	var apex: float = start.y - jump_rise
+	for s in stands:
+		apex = maxf(apex, float(s) - jump_rise)
+
 	var entry: Array = []
 	for i in range(vines.size()):
-		for spot in vines[i]["spots"]:
-			var d: float = Vector2(spot.x - start.x, spot.y - apex).length()
-			if d <= reach and spot.y < apex:
-				entry.append(i)
+		var found := false
+		for stand in stands:
+			var from_y: float = float(stand) - jump_rise
+			for spot in vines[i]["spots"]:
+				var d: float = Vector2(spot.x - start.x, spot.y - from_y).length()
+				if d <= reach and spot.y < from_y:
+					found = true
+					break
+			if found:
 				break
+		if found:
+			entry.append(i)
 	if entry.is_empty():
 		var nearest := INF
 		for v in vines:
@@ -297,4 +322,23 @@ func _reachable_between(a_pos: Vector2, b_pos: Vector2, reach: float, min_rope: 
 			# A good swing climbs about one rope length; grab reach adds a bit.
 			if rise <= rope + reach:
 				return true
+
+	# Flat hop. The check above only models a release at a HORIZONTAL rope,
+	# which throws you straight up -- best possible height, worst possible
+	# distance. Let go lower on the arc instead and you trade height for a fast,
+	# flat trajectory, which is how a long sideways gap is actually crossed.
+	#
+	# Bounded by the projectile safety parabola: at launch speed v, the highest
+	# reachable point at horizontal distance d is v^2/2g - g*d^2/2v^2. Speed
+	# comes from the swing, so it scales with rope length.
+	var across: float = absf(b["pos"].x - a["pos"].x)
+	for rope in [min_rope, (min_rope + max_rope) * 0.5, max_rope]:
+		var v: float = _max_omega * rope
+		# You leave the arc up to a rope length nearer the target already.
+		var span: float = maxf(0.0, across - rope)
+		var ceiling: float = (
+			v * v / (2.0 * _gravity) - _gravity * span * span / (2.0 * v * v)
+		)
+		if rise - reach <= ceiling:
+			return true
 	return false

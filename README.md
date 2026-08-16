@@ -348,11 +348,17 @@ the editor: the editor holds its own copy and writes it back on the next save.
 Clear it in the editor instead — revert the Script property on each node, or
 reload the scene.
 
+It models two ways of crossing a gap, and needs both. A release at a **horizontal
+rope** throws you straight up — the best possible height, the worst possible
+distance. Let go **lower on the arc** and you trade height for a fast flat
+trajectory, bounded by the projectile safety parabola, which is how a long
+sideways gap is actually crossed. With only the first, a chain built on 700px
+hops reads as a dead end at the second vine.
+
 It is a guide, not a proof, and it errs in both directions. It ignores bounces,
 wall rebounds and grabbing on the way down, all of which make *more* things
 reachable. It also ignores solid geometry, so it will happily call a route open
-when a `Block` sits across it — if you build with blocks, the autopilot is the
-better check.
+when a `Block` sits across it.
 
 ### Starting from something
 
@@ -490,6 +496,7 @@ godot --headless --path . --script res://test/grab_feel.gd
 godot --headless --path . res://test/ledge_catch.tscn --quit-after 900
 godot --headless --path . res://test/bounce.tscn --quit-after 26000
 godot --headless --path . res://test/autopilot.tscn --quit-after 10000
+godot --headless --path . res://test/fall_lines.tscn --quit-after 30000
 ```
 
 - **ascent_envelope** — solves the release physics. Re-run after changing
@@ -511,6 +518,23 @@ godot --headless --path . res://test/autopilot.tscn --quit-after 10000
   speeds are caught.)
 - **autopilot** — climbs the tower with synthetic input, sizing each swing to
   the gap ahead. Add `--  --dump-ledges` to audit per-tier coverage.
+
+- **fall_lines** — drops from the top of each section of `tower_01` and reports
+  where you end up. This is the one that measures the actual design goal: a
+  Foddian tower wants a *spread* of punishments, not one safety net catching
+  everything or nothing catching anything. Current tower:
+
+  | dropped from | landed | lost |
+  |---|---|---|
+  | summit push, 147m | 65m | **81m** |
+  | thin air, left, 122m | 49m | **72m** |
+  | under the eaves, 53m | 0m | 53m (the floor) |
+  | thin air high, 127m | 91m | 35m |
+  | summit push left, 142m | 127m | 15m |
+  | right ascent low, 67m | 65m | 2m |
+
+  Falls also scatter you sideways, so a bad one costs the walk back as well as
+  the height.
 
 **What autopilot does and does not prove.** It is a reachability check, not a
 skill benchmark. It has perfect timing but a rigid policy — it cannot aim, and
