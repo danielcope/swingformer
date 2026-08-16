@@ -536,10 +536,15 @@ metadata/slippery_grip = 0.0
 [node name="Slippery" parent="Blockers/Block11" unique_id=1692452449 instance=ExtResource("8_m0d6n")]
 position = Vector2(-2.289032, -2.7857666)
 
-[node name="Block6" parent="Blockers" unique_id=1566967771 instance=ExtResource("9_block")]
-position = Vector2(-1458, -6299)
+[node name="Block6a" parent="Blockers" unique_id=1566967771 instance=ExtResource("9_block")]
+position = Vector2(-2829, -6299)
 rotation = 1.5707964
-height = 5600.0
+height = 2858.0
+
+[node name="Block6b" parent="Blockers" instance=ExtResource("9_block")]
+position = Vector2(371, -6299)
+rotation = 1.5707964
+height = 1942.0
 
 [node name="Block2" parent="Blockers" unique_id=206904696 instance=ExtResource("9_block")]
 position = Vector2(-1601, -150.00002)

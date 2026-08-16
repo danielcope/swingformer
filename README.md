@@ -530,16 +530,22 @@ godot --headless --path . res://test/fall_lines.tscn --quit-after 30000
 
   | dropped from | landed | lost |
   |---|---|---|
-  | **BAIT** the high line, 197m | 100m | **97m** |
+  | crown low, 219m | 50m | **169m** |
+  | **BAIT** the high line, 197m | 49m | **147m** |
   | safe, the left wall, 196m | 189m | 7m |
   | **BAIT** the right skip, 163m | **0m** | **162m** — the floor |
   | safe, the zigzag, 159m | 65m | 93m |
-  | crown low, 219m | 100m | 119m |
   | crown top, 239m | 224m | 15m |
   | right ascent low, 67m | 65m | 2m |
 
   Falls also scatter you sideways — the right-skip bait ends at x=−2689, back
   near the start — so a bad one costs the walk as well as the height.
+
+  The single biggest lever on all of this is **whether the big horizontal slabs
+  have holes in them**. `Block6` spans 5600px and was quietly catching every
+  upper-tower fall at 100m; opening an 800px gap under the upper-left tower
+  turned three of those from 81–119m losses into 131–169m ones, while leaving
+  falls further right untouched. Where you fall from started to matter.
 
 **What autopilot does and does not prove.** It is a reachability check, not a
 skill benchmark. It has perfect timing but a rigid policy — it cannot aim, and
