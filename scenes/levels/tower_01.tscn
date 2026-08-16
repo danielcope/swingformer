@@ -544,14 +544,19 @@ length = 268.0
 color = Color(0.4, 0.48, 0.7, 1)
 
 [node name="BaitK1" parent="Vines" instance=ExtResource("4_owkwv")]
-position = Vector2(-100, -18220)
+position = Vector2(700, -18150)
 length = 276.0
-color = Color(0.4, 0.48, 0.7, 1)
+color = Color(0.68, 0.55, 0.42, 1)
 
 [node name="BaitK2" parent="Vines" instance=ExtResource("4_owkwv")]
-position = Vector2(700, -18560)
+position = Vector2(1300, -18500)
 length = 276.0
-color = Color(0.4, 0.48, 0.7, 1)
+color = Color(0.68, 0.55, 0.42, 1)
+
+[node name="BaitK3" parent="Vines" instance=ExtResource("4_owkwv")]
+position = Vector2(2100, -18800)
+length = 276.0
+color = Color(0.68, 0.55, 0.42, 1)
 
 [node name="L1" parent="Vines" instance=ExtResource("4_owkwv")]
 position = Vector2(1000, -18250)
@@ -927,8 +932,8 @@ position = Vector2(1600, -18700)
 width = 240.0
 
 [node name="BoughK" parent="Ledges" instance=ExtResource("6_uq6gp")]
-position = Vector2(-750, -17100)
-width = 1600.0
+position = Vector2(-750, -16900)
+width = 2800.0
 height = 40.0
 is_bough = true
 

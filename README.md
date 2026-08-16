@@ -528,18 +528,29 @@ godot --headless --path . res://test/fall_lines.tscn --quit-after 30000
   from the same height, so the trade being offered is a number rather than an
   intention:
 
+  Every bait is dropped alongside the safe line it skips, from the same height:
+
+  | pair | bait loses | safe loses | ratio |
+  |---|---|---|---|
+  | the east skip / the ladder sweep | **198m** | 6m | 33x |
+  | the high line / the left wall | **195m** | 7m | 28x |
+  | the chimney skip / the chimney | **110m** | 16m | 7x |
+  | the right skip / the zigzag | **162m** | 93m | 1.7x |
+
+  And the unpaired sections, for spread:
+
   | dropped from | landed | lost |
   |---|---|---|
   | M the teeth, 350m | 100m | **250m** |
-  | **BAIT** the high line, 197m | 2m | **195m** |
   | crown low, 219m | 49m | 169m |
-  | **BAIT** the right skip, 163m | **0m** | **162m** — the floor |
-  | L the span, 314m | 179m | 135m |
-  | **BAIT** the chimney skip, 292m | 177m | 115m |
-  | **BAIT** the west line, 383m | 278m | 105m |
-  | safe, the chimney, 288m | 278m | **10m** |
-  | safe, the ladder, 374m | 366m | **8m** |
-  | safe, the left wall, 196m | 189m | **7m** |
+  | J the far west sweep, 253m | 100m | 153m |
+  | under the eaves, 53m | **0m** | 53m — the floor |
+  | O the vault climb, 417m | 406m | 11m |
+
+  A bait only works if its fall corridor is laterally SEPARATE from the safe
+  line's. The chimney pair sat at the same x, so both landed on the same slab
+  and cost the same — three attempts at gapping the slab underneath failed for
+  that reason. Moving the bait 1300px east of the bough fixed it immediately.
 
   Falls also scatter you sideways — the deep ones end around x=−2000 to −2700,
   a long walk from anywhere — so a bad one costs the trek as well as the height.
