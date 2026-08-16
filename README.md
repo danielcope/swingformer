@@ -519,22 +519,27 @@ godot --headless --path . res://test/fall_lines.tscn --quit-after 30000
 - **autopilot** — climbs the tower with synthetic input, sizing each swing to
   the gap ahead. Add `--  --dump-ledges` to audit per-tier coverage.
 
-- **fall_lines** — drops from the top of each section of `tower_01` and reports
-  where you end up. This is the one that measures the actual design goal: a
-  Foddian tower wants a *spread* of punishments, not one safety net catching
-  everything or nothing catching anything. Current tower:
+- **fall_lines** — drops from each section of `tower_01` and reports where you
+  end up. This is the one that measures the actual design goal: a Foddian tower
+  wants a *spread* of punishments, not one safety net catching everything or
+  nothing catching anything.
+
+  Where a **bait line** exists it is dropped alongside the safe line it skips,
+  from the same height, so the trade being offered is a number rather than an
+  intention:
 
   | dropped from | landed | lost |
   |---|---|---|
-  | summit push, 147m | 65m | **81m** |
-  | thin air, left, 122m | 49m | **72m** |
-  | under the eaves, 53m | 0m | 53m (the floor) |
-  | thin air high, 127m | 91m | 35m |
-  | summit push left, 142m | 127m | 15m |
+  | **BAIT** the high line, 197m | 100m | **97m** |
+  | safe, the left wall, 196m | 189m | 7m |
+  | **BAIT** the right skip, 163m | **0m** | **162m** — the floor |
+  | safe, the zigzag, 159m | 65m | 93m |
+  | crown low, 219m | 100m | 119m |
+  | crown top, 239m | 224m | 15m |
   | right ascent low, 67m | 65m | 2m |
 
-  Falls also scatter you sideways, so a bad one costs the walk back as well as
-  the height.
+  Falls also scatter you sideways — the right-skip bait ends at x=−2689, back
+  near the start — so a bad one costs the walk as well as the height.
 
 **What autopilot does and does not prove.** It is a reachability check, not a
 skill benchmark. It has perfect timing but a rigid policy — it cannot aim, and

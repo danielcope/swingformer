@@ -17,14 +17,21 @@ extends Node
 const LevelScene := preload("res://scenes/levels/tower_01.tscn")
 const PlayerScene := preload("res://scenes/player.tscn")
 
+## Paired where it matters: a bait line and the safe line it skips, dropped from
+## roughly the same height, so the trade the player is being offered is visible
+## as a number rather than an intention.
 const DROPS := [
+	[Vector2(-1000, -15300), "crown, top"],
+	[Vector2(-1180, -14000), "crown, low"],
+	[Vector2(500, -12600), "BAIT: the high line"],
+	[Vector2(-1350, -12520), "safe: the left wall"],
+	[Vector2(-1050, -11570), "the climb out"],
+	[Vector2(600, -10780), "the underside traverse"],
+	[Vector2(2600, -10400), "BAIT: the right skip"],
+	[Vector2(1900, -10160), "safe: the zigzag"],
 	[Vector2(1920, -9400), "summit push"],
-	[Vector2(1600, -9100), "summit push, left"],
 	[Vector2(1860, -8100), "thin air, high"],
-	[Vector2(1560, -7800), "thin air, left"],
-	[Vector2(1840, -7400), "thin air, low"],
 	[Vector2(1750, -6200), "above the ceiling"],
-	[Vector2(1450, -5200), "right ascent, high"],
 	[Vector2(560, -4300), "right ascent, low"],
 	[Vector2(250, -3400), "under the eaves"],
 ]

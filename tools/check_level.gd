@@ -24,6 +24,9 @@ extends SceneTree
 
 const PlayerScene := preload("res://scenes/player.tscn")
 
+## Largest deliberate step DOWN counted as a route. See _reachable_between.
+const MAX_STEP_DOWN := 700.0
+
 var _gravity: float = 1500.0
 var _max_omega: float = 6.0
 
@@ -302,7 +305,23 @@ func _reachable_between(a_pos: Vector2, b_pos: Vector2, reach: float, min_rope: 
 	var a := {"pos": a_pos}
 	var b := {"pos": b_pos}
 	var rise: float = a["pos"].y - b["pos"].y
+
+	# Dropping to a lower anchor. A route is allowed to go DOWN to go on, and
+	# without this every such step reads as a dead end.
+	#
+	# Capped at MAX_STEP_DOWN on purpose. Sideways-while-falling covers enormous
+	# distance, so an uncapped rule would connect nearly every anchor to every
+	# other and the reachability graph would stop meaning anything. A step down
+	# is a deliberate move to a place you can see; a longer drop is just falling.
 	if rise <= 0.0:
+		var drop: float = -rise
+		if drop > MAX_STEP_DOWN:
+			return false
+		var sideways: float = absf(b["pos"].x - a["pos"].x)
+		var fall_time: float = sqrt(2.0 * maxf(drop, 1.0) / _gravity)
+		for rope in [min_rope, (min_rope + max_rope) * 0.5, max_rope]:
+			if sideways <= rope + _max_omega * rope * fall_time + reach:
+				return true
 		return false  # not above us; nothing to climb to
 
 	for side in [-1.0, 1.0]:
