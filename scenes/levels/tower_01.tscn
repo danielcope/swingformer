@@ -502,10 +502,15 @@ position = Vector2(-2018, -1533)
 width = 80.0
 height = 2600.0
 
-[node name="Block7" parent="Blockers" unique_id=1952997670 instance=ExtResource("9_block")]
-position = Vector2(-1105.0001, -3094.0002)
+[node name="Block7a" parent="Blockers" unique_id=1952997670 instance=ExtResource("9_block")]
+position = Vector2(-1978, -3094.0002)
 rotation = -1.5830137
-height = 2600.0
+height = 855.0
+
+[node name="Block7b" parent="Blockers" instance=ExtResource("9_block")]
+position = Vector2(-227, -3094.0002)
+rotation = -1.5830137
+height = 845.0
 
 [node name="Block9" parent="Blockers" unique_id=1905151799 instance=ExtResource("9_block")]
 position = Vector2(-3160, -2875)

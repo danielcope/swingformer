@@ -530,22 +530,25 @@ godot --headless --path . res://test/fall_lines.tscn --quit-after 30000
 
   | dropped from | landed | lost |
   |---|---|---|
-  | crown low, 219m | 50m | **169m** |
-  | **BAIT** the high line, 197m | 49m | **147m** |
-  | safe, the left wall, 196m | 189m | 7m |
+  | crown low, 219m | **0m** | **219m** — the floor |
+  | **BAIT** the high line, 197m | 2m | **195m** |
+  | the climb out, 181m | **0m** | **181m** — the floor |
   | **BAIT** the right skip, 163m | **0m** | **162m** — the floor |
   | safe, the zigzag, 159m | 65m | 93m |
   | crown top, 239m | 224m | 15m |
+  | safe, the left wall, 196m | 189m | **7m** |
   | right ascent low, 67m | 65m | 2m |
 
-  Falls also scatter you sideways — the right-skip bait ends at x=−2689, back
-  near the start — so a bad one costs the walk as well as the height.
+  Falls also scatter you sideways — the deep ones end around x=−2000 to −2700,
+  a long walk from anywhere — so a bad one costs the trek as well as the height.
 
   The single biggest lever on all of this is **whether the big horizontal slabs
-  have holes in them**. `Block6` spans 5600px and was quietly catching every
-  upper-tower fall at 100m; opening an 800px gap under the upper-left tower
-  turned three of those from 81–119m losses into 131–169m ones, while leaving
-  falls further right untouched. Where you fall from started to matter.
+  have holes in them**. `Block6` and `Block7` each spanned thousands of pixels
+  unbroken, and between them they caught every upper-tower fall at the same two
+  heights, which flattened the punishment: it did not matter where you came off.
+  Opening one gap in each, positioned under where falls actually land, turned
+  81–119m losses into 181–219m ones while leaving falls further right untouched.
+  A slab with no hole in it is a safety net you did not mean to build.
 
 **What autopilot does and does not prove.** It is a reachability check, not a
 skill benchmark. It has perfect timing but a rigid policy — it cannot aim, and
