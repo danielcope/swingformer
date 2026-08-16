@@ -110,14 +110,22 @@ signal grab_missed
 ## while still demanding a genuinely aimed launch. Drop it back towards 180 if
 ## the climb feels too soft.
 @export var grab_reach: float = 225.0
-@export var max_rope_length: float = 320.0
+## The reel-out cap, and the strongest lever in the game: height gained off a
+## release goes as (max_angular_speed * L)^2 / 2g, so it scales with the SQUARE
+## of this. 320 -> 290 is only 9% shorter but takes about 18% off the swing.
+##
+## Do not drop it much further without re-running check_level on the levels.
+## tower_01 still validates at 290 and at 260, and breaks at 240 -- its long
+## flat hops are the first thing to go, since ballistic range scales with the
+## square of launch speed and launch speed scales with this.
+@export var max_rope_length: float = 290.0
 @export var min_rope_length: float = 70.0
 @export var reel_speed: float = 230.0
 
 # --- Swing -------------------------------------------------------------------
 @export_group("Swing")
 ## Must exceed gravity's restoring torque at full rope (g / max_rope_length,
-## about 4.7) or the swing physically cannot be driven past horizontal -- and
+## about 5.2) or the swing physically cannot be driven past horizontal -- and
 ## horizontal is exactly where you need to be to launch upward.
 @export var pump_accel: float = 6.5
 @export var swing_damping: float = 0.32

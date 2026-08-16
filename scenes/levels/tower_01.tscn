@@ -20,162 +20,162 @@ height = 17000.0
 
 [node name="Vine0" parent="Vines" unique_id=1625348594 instance=ExtResource("4_owkwv")]
 position = Vector2(-3745, -298)
-length = 200.0
+length = 184.0
 color = Color(0.2935, 0.55149996, 0.269, 1)
 
 [node name="Vine1" parent="Vines" unique_id=522808869 instance=ExtResource("4_owkwv")]
 position = Vector2(-2982, -472)
-length = 188.38391
+length = 173.3
 color = Color(0.30161455, 0.5704339, 0.27440968, 1)
 
 [node name="Vine2" parent="Vines" unique_id=464757068 instance=ExtResource("4_owkwv")]
 position = Vector2(-3448, -721)
-length = 210.0188
+length = 193.2
 color = Color(0.3098141, 0.58956623, 0.27987605, 1)
 
 [node name="Vine3" parent="Vines" unique_id=1338176661 instance=ExtResource("4_owkwv")]
 position = Vector2(-2718, -863)
-length = 197.3075
+length = 181.5
 color = Color(0.31647196, 0.6051013, 0.28431463, 1)
 
 [node name="Vine4" parent="Vines" unique_id=150246801 instance=ExtResource("4_owkwv")]
 position = Vector2(-2773, -1377)
-length = 208.35393
+length = 191.7
 color = Color(0.32424062, 0.6232281, 0.28949374, 1)
 
 [node name="Vine5" parent="Vines" unique_id=247843272 instance=ExtResource("4_owkwv")]
 position = Vector2(-3896, -1429)
-length = 242.46289
+length = 223.1
 color = Color(0.33161616, 0.6404377, 0.2944108, 1)
 
 [node name="Vine8" parent="Vines" unique_id=2060612678 instance=ExtResource("4_owkwv")]
 position = Vector2(-3745, -1853)
-length = 242.46289
+length = 223.1
 color = Color(0.33161616, 0.6404377, 0.2944108, 1)
 
 [node name="Vine32" parent="Vines" unique_id=192796445 instance=ExtResource("4_owkwv")]
 position = Vector2(-3380, -1951)
-length = 174.41481
+length = 160.5
 color = Color(0.48292598, 0.59881485, 0.37644458, 1)
 
 [node name="Vine33" parent="Vines" unique_id=1980118314 instance=ExtResource("4_owkwv")]
 position = Vector2(-3027, -2213)
-length = 174.41481
+length = 160.5
 color = Color(0.48292598, 0.59881485, 0.37644458, 1)
 
 [node name="Vine34" parent="Vines" unique_id=1287199406 instance=ExtResource("4_owkwv")]
 position = Vector2(-2816, -2558)
-length = 174.41481
+length = 160.5
 color = Color(0.48292598, 0.59881485, 0.37644458, 1)
 
 [node name="Vine36" parent="Vines" unique_id=1203390620 instance=ExtResource("4_owkwv")]
 position = Vector2(-1648, -2659)
-length = 174.41481
+length = 160.5
 color = Color(0.48292598, 0.59881485, 0.37644458, 1)
 
 [node name="Vine37" parent="Vines" unique_id=1672360314 instance=ExtResource("4_owkwv")]
 position = Vector2(-1282, -2464)
-length = 174.41481
+length = 160.5
 color = Color(0.48292598, 0.59881485, 0.37644458, 1)
 
 [node name="Vine35" parent="Vines" unique_id=1480610970 instance=ExtResource("4_owkwv")]
 position = Vector2(-2559, -2655)
-length = 174.41481
+length = 160.5
 color = Color(0.48292598, 0.59881485, 0.37644458, 1)
 
 [node name="Vine38" parent="Vines" instance=ExtResource("4_owkwv")]
 position = Vector2(-760, -2380)
-length = 200.0
+length = 184.0
 color = Color(0.47, 0.6, 0.37, 1)
 
 [node name="Vine39" parent="Vines" instance=ExtResource("4_owkwv")]
 position = Vector2(-400, -2560)
-length = 215.0
+length = 197.8
 color = Color(0.47, 0.6, 0.37, 1)
 
 [node name="Vine40" parent="Vines" instance=ExtResource("4_owkwv")]
 position = Vector2(-100, -2760)
-length = 210.0
+length = 193.2
 color = Color(0.47, 0.6, 0.37, 1)
 
 [node name="Vine41" parent="Vines" instance=ExtResource("4_owkwv")]
 position = Vector2(230, -2900)
-length = 205.0
+length = 188.6
 color = Color(0.47, 0.6, 0.37, 1)
 
 [node name="Vine42" parent="Vines" instance=ExtResource("4_owkwv")]
 position = Vector2(520, -3180)
-length = 230.0
+length = 211.6
 color = Color(0.46, 0.6, 0.4, 1)
 
 [node name="Vine43" parent="Vines" instance=ExtResource("4_owkwv")]
 position = Vector2(250, -3480)
-length = 230.0
+length = 211.6
 color = Color(0.46, 0.6, 0.4, 1)
 
 [node name="Vine44" parent="Vines" instance=ExtResource("4_owkwv")]
 position = Vector2(540, -3790)
-length = 240.0
+length = 220.8
 color = Color(0.46, 0.6, 0.4, 1)
 
 [node name="Vine45" parent="Vines" instance=ExtResource("4_owkwv")]
 position = Vector2(270, -4100)
-length = 240.0
+length = 220.8
 color = Color(0.46, 0.6, 0.4, 1)
 
 [node name="Vine46" parent="Vines" instance=ExtResource("4_owkwv")]
 position = Vector2(560, -4400)
-length = 240.0
+length = 220.8
 color = Color(0.46, 0.6, 0.4, 1)
 
 [node name="Vine47" parent="Vines" instance=ExtResource("4_owkwv")]
 position = Vector2(860, -4700)
-length = 250.0
+length = 230.0
 color = Color(0.46, 0.61, 0.46, 1)
 
 [node name="Vine48" parent="Vines" instance=ExtResource("4_owkwv")]
 position = Vector2(1150, -5000)
-length = 250.0
+length = 230.0
 color = Color(0.46, 0.61, 0.46, 1)
 
 [node name="Vine49" parent="Vines" instance=ExtResource("4_owkwv")]
 position = Vector2(1450, -5300)
-length = 250.0
+length = 230.0
 color = Color(0.46, 0.61, 0.46, 1)
 
 [node name="Vine50" parent="Vines" instance=ExtResource("4_owkwv")]
 position = Vector2(1750, -5620)
-length = 255.0
+length = 234.6
 color = Color(0.46, 0.61, 0.46, 1)
 
 [node name="Vine51" parent="Vines" instance=ExtResource("4_owkwv")]
 position = Vector2(1480, -5940)
-length = 255.0
+length = 234.6
 color = Color(0.46, 0.61, 0.46, 1)
 
 [node name="Vine52" parent="Vines" instance=ExtResource("4_owkwv")]
 position = Vector2(1780, -6260)
-length = 260.0
+length = 239.2
 color = Color(0.46, 0.61, 0.46, 1)
 
 [node name="Vine53" parent="Vines" instance=ExtResource("4_owkwv")]
 position = Vector2(1520, -6580)
-length = 260.0
+length = 239.2
 color = Color(0.48, 0.63, 0.54, 1)
 
 [node name="Vine54" parent="Vines" instance=ExtResource("4_owkwv")]
 position = Vector2(1820, -6900)
-length = 260.0
+length = 239.2
 color = Color(0.48, 0.63, 0.54, 1)
 
 [node name="Vine55" parent="Vines" instance=ExtResource("4_owkwv")]
 position = Vector2(1540, -7220)
-length = 265.0
+length = 243.8
 color = Color(0.48, 0.63, 0.54, 1)
 
 [node name="Vine56" parent="Vines" instance=ExtResource("4_owkwv")]
 position = Vector2(1840, -7540)
-length = 265.0
+length = 243.8
 color = Color(0.48, 0.63, 0.54, 1)
 
 [node name="Mover" parent="Vines/Vine56" instance=ExtResource("10_mover")]
@@ -185,182 +185,182 @@ duration = 3.5
 
 [node name="Vine57" parent="Vines" instance=ExtResource("4_owkwv")]
 position = Vector2(1560, -7860)
-length = 270.0
+length = 248.4
 color = Color(0.48, 0.63, 0.54, 1)
 
 [node name="Vine58" parent="Vines" instance=ExtResource("4_owkwv")]
 position = Vector2(1860, -8180)
-length = 270.0
+length = 248.4
 color = Color(0.48, 0.63, 0.54, 1)
 
 [node name="Vine59" parent="Vines" instance=ExtResource("4_owkwv")]
 position = Vector2(1580, -8500)
-length = 270.0
+length = 248.4
 color = Color(0.53, 0.67, 0.63, 1)
 
 [node name="Vine60" parent="Vines" instance=ExtResource("4_owkwv")]
 position = Vector2(1900, -8840)
-length = 280.0
+length = 257.6
 color = Color(0.53, 0.67, 0.63, 1)
 
 [node name="Vine61" parent="Vines" instance=ExtResource("4_owkwv")]
 position = Vector2(1600, -9180)
-length = 280.0
+length = 257.6
 color = Color(0.53, 0.67, 0.63, 1)
 
 [node name="Vine62" parent="Vines" instance=ExtResource("4_owkwv")]
 position = Vector2(1920, -9520)
-length = 280.0
+length = 257.6
 color = Color(0.53, 0.67, 0.63, 1)
 
 [node name="F1" parent="Vines" instance=ExtResource("4_owkwv")]
 position = Vector2(1620, -9840)
-length = 270.0
+length = 248.4
 color = Color(0.53, 0.67, 0.63, 1)
 
 [node name="F2" parent="Vines" instance=ExtResource("4_owkwv")]
 position = Vector2(1900, -10160)
-length = 270.0
+length = 248.4
 color = Color(0.53, 0.67, 0.63, 1)
 
 [node name="F3" parent="Vines" instance=ExtResource("4_owkwv")]
 position = Vector2(1600, -10480)
-length = 270.0
+length = 248.4
 color = Color(0.53, 0.67, 0.63, 1)
 
 [node name="F4" parent="Vines" instance=ExtResource("4_owkwv")]
 position = Vector2(1880, -10800)
-length = 270.0
+length = 248.4
 color = Color(0.53, 0.67, 0.63, 1)
 
 [node name="F5" parent="Vines" instance=ExtResource("4_owkwv")]
 position = Vector2(2100, -11120)
-length = 270.0
+length = 248.4
 color = Color(0.53, 0.67, 0.63, 1)
 
 [node name="Bait1" parent="Vines" instance=ExtResource("4_owkwv")]
 position = Vector2(2600, -10400)
-length = 300.0
+length = 276.0
 color = Color(0.68, 0.55, 0.42, 1)
 
 [node name="Bait2" parent="Vines" instance=ExtResource("4_owkwv")]
 position = Vector2(2500, -11050)
-length = 290.0
+length = 266.8
 color = Color(0.68, 0.55, 0.42, 1)
 
 [node name="G1" parent="Vines" instance=ExtResource("4_owkwv")]
 position = Vector2(1700, -10850)
-length = 260.0
+length = 239.2
 color = Color(0.5, 0.64, 0.66, 1)
 
 [node name="G2" parent="Vines" instance=ExtResource("4_owkwv")]
 position = Vector2(1150, -10800)
-length = 260.0
+length = 239.2
 color = Color(0.5, 0.64, 0.66, 1)
 
 [node name="G3" parent="Vines" instance=ExtResource("4_owkwv")]
 position = Vector2(600, -10780)
-length = 260.0
+length = 239.2
 color = Color(0.5, 0.64, 0.66, 1)
 
 [node name="G4" parent="Vines" instance=ExtResource("4_owkwv")]
 position = Vector2(50, -10800)
-length = 260.0
+length = 239.2
 color = Color(0.5, 0.64, 0.66, 1)
 
 [node name="G5" parent="Vines" instance=ExtResource("4_owkwv")]
 position = Vector2(-500, -10850)
-length = 260.0
+length = 239.2
 color = Color(0.5, 0.64, 0.66, 1)
 
 [node name="G6" parent="Vines" instance=ExtResource("4_owkwv")]
 position = Vector2(-1050, -10950)
-length = 260.0
+length = 239.2
 color = Color(0.5, 0.64, 0.66, 1)
 
 [node name="G7" parent="Vines" instance=ExtResource("4_owkwv")]
 position = Vector2(-1350, -11250)
-length = 270.0
+length = 248.4
 color = Color(0.5, 0.64, 0.66, 1)
 
 [node name="G8" parent="Vines" instance=ExtResource("4_owkwv")]
 position = Vector2(-1050, -11570)
-length = 270.0
+length = 248.4
 color = Color(0.5, 0.64, 0.66, 1)
 
 [node name="G9" parent="Vines" instance=ExtResource("4_owkwv")]
 position = Vector2(-1350, -11890)
-length = 270.0
+length = 248.4
 color = Color(0.5, 0.64, 0.66, 1)
 
 [node name="H1" parent="Vines" instance=ExtResource("4_owkwv")]
 position = Vector2(-1050, -12200)
-length = 270.0
+length = 248.4
 color = Color(0.47, 0.6, 0.68, 1)
 
 [node name="H2" parent="Vines" instance=ExtResource("4_owkwv")]
 position = Vector2(-1350, -12520)
-length = 270.0
+length = 248.4
 color = Color(0.47, 0.6, 0.68, 1)
 
 [node name="H3" parent="Vines" instance=ExtResource("4_owkwv")]
 position = Vector2(-1050, -12840)
-length = 270.0
+length = 248.4
 color = Color(0.47, 0.6, 0.68, 1)
 
 [node name="H4" parent="Vines" instance=ExtResource("4_owkwv")]
 position = Vector2(-1350, -13160)
-length = 270.0
+length = 248.4
 color = Color(0.47, 0.6, 0.68, 1)
 
 [node name="Bait3" parent="Vines" instance=ExtResource("4_owkwv")]
 position = Vector2(500, -12600)
-length = 300.0
+length = 276.0
 color = Color(0.68, 0.55, 0.42, 1)
 
 [node name="Bait4" parent="Vines" instance=ExtResource("4_owkwv")]
 position = Vector2(900, -12950)
-length = 290.0
+length = 266.8
 color = Color(0.68, 0.55, 0.42, 1)
 
 [node name="Bait5" parent="Vines" instance=ExtResource("4_owkwv")]
 position = Vector2(600, -13300)
-length = 290.0
+length = 266.8
 color = Color(0.68, 0.55, 0.42, 1)
 
 [node name="I1" parent="Vines" instance=ExtResource("4_owkwv")]
 position = Vector2(-1000, -13480)
-length = 280.0
+length = 257.6
 color = Color(0.44, 0.55, 0.7, 1)
 
 [node name="I2" parent="Vines" instance=ExtResource("4_owkwv")]
 position = Vector2(-1350, -13800)
-length = 280.0
+length = 257.6
 color = Color(0.44, 0.55, 0.7, 1)
 
 [node name="I3" parent="Vines" instance=ExtResource("4_owkwv")]
 position = Vector2(-1000, -14120)
-length = 280.0
+length = 257.6
 color = Color(0.44, 0.55, 0.7, 1)
 
 [node name="I4" parent="Vines" instance=ExtResource("4_owkwv")]
 position = Vector2(-1350, -14440)
-length = 280.0
+length = 257.6
 color = Color(0.44, 0.55, 0.7, 1)
 
 [node name="I5" parent="Vines" instance=ExtResource("4_owkwv")]
 position = Vector2(-1000, -14760)
-length = 280.0
+length = 257.6
 color = Color(0.44, 0.55, 0.7, 1)
 
 [node name="I6" parent="Vines" instance=ExtResource("4_owkwv")]
 position = Vector2(-1350, -15080)
-length = 280.0
+length = 257.6
 color = Color(0.44, 0.55, 0.7, 1)
 
 [node name="I7" parent="Vines" instance=ExtResource("4_owkwv")]
 position = Vector2(-1000, -15400)
-length = 280.0
+length = 257.6
 color = Color(0.44, 0.55, 0.7, 1)
 
 [node name="Ledges" type="Node2D" parent="." unique_id=1421281408]
