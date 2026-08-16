@@ -21,18 +21,21 @@ const PlayerScene := preload("res://scenes/player.tscn")
 ## roughly the same height, so the trade the player is being offered is visible
 ## as a number rather than an intention.
 const DROPS := [
-	[Vector2(-1000, -15300), "crown, top"],
+	[Vector2(-800, -28800), "P: the crown"],
+	[Vector2(-700, -26700), "O: the vault climb"],
+	[Vector2(2000, -24500), "BAIT: the west line"],
+	[Vector2(3450, -23950), "safe: the ladder"],
+	[Vector2(3350, -22400), "M: the teeth"],
+	[Vector2(2600, -20100), "L: the span"],
+	[Vector2(1000, -18700), "BAIT: the chimney skip"],
+	[Vector2(350, -18400), "safe: the chimney"],
+	[Vector2(-600, -15950), "J: the shelf traverse"],
 	[Vector2(-1180, -14000), "crown, low"],
 	[Vector2(500, -12600), "BAIT: the high line"],
 	[Vector2(-1350, -12520), "safe: the left wall"],
-	[Vector2(-1050, -11570), "the climb out"],
-	[Vector2(600, -10780), "the underside traverse"],
 	[Vector2(2600, -10400), "BAIT: the right skip"],
 	[Vector2(1900, -10160), "safe: the zigzag"],
-	[Vector2(1920, -9400), "summit push"],
-	[Vector2(1860, -8100), "thin air, high"],
 	[Vector2(1750, -6200), "above the ceiling"],
-	[Vector2(560, -4300), "right ascent, low"],
 	[Vector2(250, -3400), "under the eaves"],
 ]
 

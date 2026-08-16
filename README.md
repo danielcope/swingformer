@@ -530,14 +530,16 @@ godot --headless --path . res://test/fall_lines.tscn --quit-after 30000
 
   | dropped from | landed | lost |
   |---|---|---|
-  | crown low, 219m | **0m** | **219m** — the floor |
+  | M the teeth, 350m | 100m | **250m** |
   | **BAIT** the high line, 197m | 2m | **195m** |
-  | the climb out, 181m | **0m** | **181m** — the floor |
+  | crown low, 219m | 49m | 169m |
   | **BAIT** the right skip, 163m | **0m** | **162m** — the floor |
-  | safe, the zigzag, 159m | 65m | 93m |
-  | crown top, 239m | 224m | 15m |
+  | L the span, 314m | 179m | 135m |
+  | **BAIT** the chimney skip, 292m | 177m | 115m |
+  | **BAIT** the west line, 383m | 278m | 105m |
+  | safe, the chimney, 288m | 278m | **10m** |
+  | safe, the ladder, 374m | 366m | **8m** |
   | safe, the left wall, 196m | 189m | **7m** |
-  | right ascent low, 67m | 65m | 2m |
 
   Falls also scatter you sideways — the deep ones end around x=−2000 to −2700,
   a long walk from anywhere — so a bad one costs the trek as well as the height.
