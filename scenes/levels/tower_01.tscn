@@ -83,6 +83,36 @@ position = Vector2(-2559, -2655)
 length = 160.5
 color = Color(0.48292598, 0.59881485, 0.37644458, 1)
 
+[node name="W1" parent="Vines" instance=ExtResource("4_owkwv")]
+position = Vector2(-2850, -1990)
+length = 184.0
+color = Color(0.44, 0.6, 0.34, 1)
+
+[node name="W2" parent="Vines" instance=ExtResource("4_owkwv")]
+position = Vector2(-2200, -2090)
+length = 193.2
+color = Color(0.44, 0.6, 0.34, 1)
+
+[node name="W3" parent="Vines" instance=ExtResource("4_owkwv")]
+position = Vector2(-1850, -2210)
+length = 193.2
+color = Color(0.44, 0.6, 0.34, 1)
+
+[node name="W4" parent="Vines" instance=ExtResource("4_owkwv")]
+position = Vector2(-1400, -2340)
+length = 197.8
+color = Color(0.44, 0.6, 0.34, 1)
+
+[node name="W5" parent="Vines" instance=ExtResource("4_owkwv")]
+position = Vector2(-1850, -2510)
+length = 197.8
+color = Color(0.44, 0.6, 0.34, 1)
+
+[node name="W6" parent="Vines" instance=ExtResource("4_owkwv")]
+position = Vector2(-2450, -2630)
+length = 197.8
+color = Color(0.44, 0.6, 0.34, 1)
+
 [node name="Vine38" parent="Vines" instance=ExtResource("4_owkwv")]
 position = Vector2(-760, -2380)
 length = 184.0
@@ -637,6 +667,12 @@ height = 1000.0
 position = Vector2(1350, -8300)
 width = 80.0
 height = 700.0
+
+[node name="SealW" parent="Blockers" instance=ExtResource("9_block")]
+position = Vector2(-3200, -2080)
+rotation = 1.5707964
+width = 120.0
+height = 600.0
 
 [node name="Ceiling1" parent="Blockers" instance=ExtResource("9_block")]
 position = Vector2(1900, -11400)
