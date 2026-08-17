@@ -154,15 +154,23 @@ func _initialize() -> void:
 		edges.append(out)
 
 	# How high can the climb actually get, following edges from the entry set?
+	# Breadth-first, keeping parents, so we can recover not just WHETHER the top
+	# is reachable but the cheapest way there -- which is the route players will
+	# actually find, and the only one whose shape is worth measuring.
 	var seen := {}
+	var parent := {}
 	var queue := entry.duplicate()
 	for i in entry:
 		seen[i] = true
-	while not queue.is_empty():
-		var cur: int = queue.pop_back()
+		parent[i] = -1
+	var head := 0
+	while head < queue.size():
+		var cur: int = queue[head]
+		head += 1
 		for nxt in edges[cur]:
 			if not seen.has(nxt):
 				seen[nxt] = true
+				parent[nxt] = cur
 				queue.append(nxt)
 
 	var top := INF
@@ -181,6 +189,22 @@ func _initialize() -> void:
 		print("summit at %.0f m : %s" % [-sy / 64.0,
 			("REACHABLE" if top - reach - 320.0 <= sy
 			else "*** UNREACHABLE -- climb tops out below it ***")])
+
+	# Report the shape of the route people actually climb, not the one a perfect
+	# swing can cheat. Tuning the tower against the cap would be tuning it for
+	# the handful of players who never miss a pump.
+	var capped: Array = _route_at(vines, entry, reach, min_rope, max_rope, 1.0)
+	var ordinary: Array = _route_at(vines, entry, reach, min_rope, max_rope, 0.83)
+	if ordinary.size() > 1:
+		_report_route(vines, ordinary, reach, min_rope, max_rope)
+		var reached: float = -vines[ordinary[-1]]["pos"].y / 64.0
+		print("\n  a perfect pump instead: %d swings, saving %d -- %s"
+			% [capped.size() - 1, (ordinary.size() - 1) - (capped.size() - 1),
+				("that is the skill reward" if capped.size() < ordinary.size()
+				else "the cap buys nothing, so precision is unrewarded")])
+		if reached < -vines[capped[-1]]["pos"].y / 64.0 - 1.0:
+			print("  *** an ordinary pump tops out at %.0f m -- the top needs the cap ***"
+				% reached)
 
 	# Dead ends are the actionable output: these vines go nowhere.
 	# The highest anchor has nothing above it by definition, so it is the top of
@@ -244,6 +268,122 @@ func _initialize() -> void:
 	level.free()
 	p.free()
 	quit()
+
+
+## The cheapest way to the top at a given fraction of the pump cap, as vine
+## indices from the start. Rebuilding the whole graph per speed is the point:
+## which anchors connect at all is what changes with pump, so re-walking the
+## fast line at a lower speed would answer a different, easier question.
+func _route_at(vines: Array, entry: Array, reach: float, min_rope: float,
+		max_rope: float, scale: float) -> Array:
+	var saved: float = _max_omega
+	_max_omega = saved * scale
+
+	var n := vines.size()
+	var seen := {}
+	var parent := {}
+	var queue := entry.duplicate()
+	for i in entry:
+		seen[i] = true
+		parent[i] = -1
+	var head := 0
+	while head < queue.size():
+		var cur: int = queue[head]
+		head += 1
+		for j in range(n):
+			if j == cur or seen.has(j):
+				continue
+			if _reachable(vines[cur], vines[j], reach, min_rope, max_rope):
+				seen[j] = true
+				parent[j] = cur
+				queue.append(j)
+	_max_omega = saved
+
+	var top := INF
+	var goal := -1
+	for i in seen.keys():
+		if vines[i]["pos"].y < top:
+			top = vines[i]["pos"].y
+			goal = i
+	var route: Array = []
+	while goal >= 0:
+		route.append(goal)
+		goal = parent[goal]
+	route.reverse()
+	return route
+
+
+## The cheapest way to the top, and how much of the shaft it makes you cross.
+##
+## Reachability alone cannot tell a tower from a ladder. A route that never
+## leaves a narrow column passes every other check in this file, so the shape of
+## the fastest line has to be measured on purpose or it silently drifts into
+## "hold up". The headline number is lateral travel per 100 m climbed: below
+## about 600 the route is a ladder, whatever the vines look like laid out.
+func _report_route(vines: Array, route: Array, reach: float,
+		min_rope: float, max_rope: float) -> void:
+	if route.size() < 2:
+		return
+
+	var climbed: float = vines[route[0]]["pos"].y - vines[route[-1]]["pos"].y
+	print("\n--- the route at an ordinary pump: %d swings for %.0f m ---"
+		% [route.size() - 1, climbed / 64.0])
+
+	# How much of the tower the fast line actually touches. A route that reaches
+	# the top in a fraction of the placed vines is not being skipped because the
+	# player is clever -- it is skipped because consecutive anchors sit inside a
+	# single swing's climb, so most of them are decoration.
+	var biggest := 0.0
+	for k in range(1, route.size()):
+		biggest = maxf(biggest, vines[route[k - 1]]["pos"].y - vines[route[k]]["pos"].y)
+	print("  touches %d of %d vines (%.0f%%), mean gain %.0f px/swing, biggest %.0f px"
+		% [route.size(), vines.size(), 100.0 * float(route.size()) / float(vines.size()),
+			climbed / float(route.size() - 1), biggest])
+
+	# Swings that give height back. A tower where every step goes up is a ladder
+	# no matter how far apart the rungs are, so this is worth stating separately
+	# from the traverse: it is the other half of "not just up".
+	var down := 0
+	var given_back := 0.0
+	for k in range(1, route.size()):
+		var drop: float = vines[route[k]]["pos"].y - vines[route[k - 1]]["pos"].y
+		if drop > 40.0:
+			down += 1
+			given_back += drop
+	print("  %d swings go DOWN, giving back %.0f m before earning it again"
+		% [down, given_back / 64.0])
+
+	# Turning points, not every anchor: the route's shape is its reversals, and
+	# a list of 40 x-values hides them.
+	var turns: Array = [0]
+	for k in range(1, route.size() - 1):
+		var prev: float = vines[route[k]]["pos"].x - vines[route[k - 1]]["pos"].x
+		var next: float = vines[route[k + 1]]["pos"].x - vines[route[k]]["pos"].x
+		if prev * next < 0.0 and absf(prev) > 200.0:
+			turns.append(k)
+	turns.append(route.size() - 1)
+
+	# Net displacement between reversals, NOT the sum of every swing's sideways
+	# component. Zigzagging up a narrow column racks up a huge per-swing total
+	# while going nowhere, so summing swings would score a ladder as a traverse.
+	var amplitude := 0.0
+	var last_x: float = vines[route[0]]["pos"].x
+	for k in turns:
+		var v: Dictionary = vines[route[k]]
+		var leg: float = v["pos"].x - last_x
+		amplitude += absf(leg)
+		print("  %6.0f m   x = %6.0f   %s"
+			% [-v["pos"].y / 64.0, v["pos"].x,
+				("" if absf(leg) < 200.0 else "%s %.0f" % [
+					("east" if leg > 0.0 else "west"), absf(leg)])])
+		last_x = v["pos"].x
+
+	var per100: float = amplitude / maxf(climbed / 6400.0, 0.001)
+	print("  %d reversals, %.0f px of traverse, %.0f px per 100 m climbed  %s"
+		% [turns.size() - 2, amplitude, per100,
+			("(a ladder)" if per100 < 2000.0
+			else "(a climb)" if per100 < 4000.0
+			else "(an obstacle course)")])
 
 
 ## Every position a vine occupies. A vine with a Mover sweeps, so reasoning
