@@ -340,6 +340,25 @@ func _floor_grip() -> float:
 		if collision.get_normal().y > -0.4:
 			continue  # a wall or a ceiling, not something being stood on
 		var collider := collision.get_collider()
+
+		# Tiled terrain. One TileMapLayer is a single collider for the whole
+		# map, so asking the node what its grip is would answer for the entire
+		# level at once -- the RID has to be resolved back to the individual
+		# cell that was actually hit.
+		#
+		# The tile stores SLIP where the Slippery node stores GRIP, because a
+		# custom data value equal to its type's default is dropped from the
+		# saved TileSet: with grip, every tile nobody configured would read 0
+		# and be frictionless. Inverted here so the two surfaces answer the same
+		# question.
+		if collider is TileMapLayer:
+			var layer := collider as TileMapLayer
+			var cell := layer.get_coords_for_body_rid(collision.get_collider_rid())
+			var data := layer.get_cell_tile_data(cell)
+			if data:
+				return clampf(1.0 - float(data.get_custom_data("slip")), 0.0, 1.0)
+			continue
+
 		if collider is Object and (collider as Object).has_meta("slippery_grip"):
 			return float((collider as Object).get_meta("slippery_grip"))
 	return 1.0
