@@ -181,7 +181,20 @@ var _squash_normal: Vector2 = Vector2.UP
 var _boost_flash: float = 0.0
 var _boost_perfect: bool = false
 
-const SPRITE_RADIUS := 14.0
+## Matched to the CircleShape2D in player.tscn at _ready rather than typed
+## twice. It used to be a const that happened to agree with the scene; resize
+## the shape and the art, the reach ring and the aim line all silently drifted.
+var sprite_radius: float = 14.0
+
+## The ball. A Sprite2D now rather than a draw_circle, so it can carry real art.
+var _sprite: Sprite2D = null
+
+
+func _ready() -> void:
+	_sprite = get_node_or_null("Sprite") as Sprite2D
+	var shape := get_node_or_null("CollisionShape2D") as CollisionShape2D
+	if shape and shape.shape is CircleShape2D:
+		sprite_radius = (shape.shape as CircleShape2D).radius
 
 
 func _physics_process(delta: float) -> void:
@@ -219,6 +232,7 @@ func _physics_process(delta: float) -> void:
 	_set_target(_find_best_vine())
 
 	peak_height = minf(peak_height, global_position.y)
+	_pose_sprite()
 	queue_redraw()
 
 
@@ -658,7 +672,6 @@ func reset_at(pos: Vector2) -> void:
 # Placeholder art
 # -----------------------------------------------------------------------------
 func _draw() -> void:
-	var body := Color(0.98, 0.82, 0.32)
 	var outline := Color(0.15, 0.11, 0.08)
 
 	# Missed grab: flash the reach radius. This is the only place the game ever
@@ -675,7 +688,7 @@ func _draw() -> void:
 	if is_instance_valid(target_vine) and state == State.FREE:
 		var to_target := (target_vine.global_position - global_position).rotated(-rotation)
 		draw_line(
-			to_target.normalized() * (SPRITE_RADIUS + 4.0), to_target,
+			to_target.normalized() * (sprite_radius + 4.0), to_target,
 			Color(1.0, 1.0, 0.85, 0.34), 2.0, true
 		)
 
@@ -690,30 +703,40 @@ func _draw() -> void:
 			reach = 104.0
 			ring = Color(1.0, 0.95, 0.55, 0.9 * _boost_flash)
 			draw_arc(
-				Vector2.ZERO, SPRITE_RADIUS + (1.0 - _boost_flash) * 62.0, 0.0, TAU, 32,
+				Vector2.ZERO, sprite_radius + (1.0 - _boost_flash) * 62.0, 0.0, TAU, 32,
 				Color(1.0, 1.0, 1.0, 0.55 * _boost_flash), 5.0, true
 			)
 		draw_arc(
-			Vector2.ZERO, SPRITE_RADIUS + (1.0 - _boost_flash) * reach, 0.0, TAU, 32,
+			Vector2.ZERO, sprite_radius + (1.0 - _boost_flash) * reach, 0.0, TAU, 32,
 			ring, 3.0, true
 		)
 
-	# Squash along the impact normal, stretch across it. The node itself is
-	# never scaled -- that would drag the collision shape with it -- so this is
-	# a draw-only transform: rotate the squash axis onto X, scale, rotate back.
-	# _draw runs in the body's rotated space, hence the -rotation.
+	# The arms are still drawn, so they need the same squash the sprite gets.
 	if _squash > 0.0:
-		var axis := Transform2D(_squash_normal.angle() - rotation, Vector2.ZERO)
-		var amount := _squash * squash_amount
-		var scale_m := Transform2D(
-			Vector2(1.0 - amount, 0.0), Vector2(0.0, 1.0 + amount), Vector2.ZERO
-		)
-		draw_set_transform_matrix(axis * scale_m * axis.affine_inverse())
-
-	draw_circle(Vector2.ZERO, SPRITE_RADIUS, body)
-	draw_arc(Vector2.ZERO, SPRITE_RADIUS, 0.0, TAU, 24, outline, 2.5, true)
-	draw_line(Vector2(0, -SPRITE_RADIUS), Vector2(0, -SPRITE_RADIUS - 8.0), outline, 3.0)
+		draw_set_transform_matrix(_squash_matrix())
 
 	if state == State.SWINGING:
-		draw_line(Vector2(-6, -4), Vector2(-3, -SPRITE_RADIUS - 4), outline, 3.0)
-		draw_line(Vector2(6, -4), Vector2(3, -SPRITE_RADIUS - 4), outline, 3.0)
+		draw_line(Vector2(-6, -4), Vector2(-3, -sprite_radius - 4), outline, 3.0)
+		draw_line(Vector2(6, -4), Vector2(3, -sprite_radius - 4), outline, 3.0)
+
+
+## Squash along the impact normal, stretch across it: rotate the squash axis
+## onto X, scale, rotate back. Runs in the body's rotated space, hence the
+## -rotation.
+##
+## The Player node is never scaled itself -- that would drag the collision shape
+## with it -- so this goes on the child Sprite2D, which has no collision to
+## disturb.
+func _squash_matrix() -> Transform2D:
+	var axis := Transform2D(_squash_normal.angle() - rotation, Vector2.ZERO)
+	var amount := _squash * squash_amount
+	var scale_m := Transform2D(
+		Vector2(1.0 - amount, 0.0), Vector2(0.0, 1.0 + amount), Vector2.ZERO
+	)
+	return axis * scale_m * axis.affine_inverse()
+
+
+func _pose_sprite() -> void:
+	if _sprite == null:
+		return
+	_sprite.transform = _squash_matrix() if _squash > 0.0 else Transform2D.IDENTITY

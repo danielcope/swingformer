@@ -1,6 +1,30 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://scripts/vine.gd" id="1_vine"]
+[ext_resource type="Texture2D" path="res://art/rope.png" id="2_rope"]
+[ext_resource type="Texture2D" path="res://art/leaf.png" id="3_leaf"]
+
+[sub_resource type="Curve" id="Curve_rope"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.66), 0.0, 0.0, 0, 0]
+point_count = 2
 
 [node name="Vine" type="Node2D"]
 script = ExtResource("1_vine")
+
+[node name="Rope" type="Line2D" parent="."]
+texture = ExtResource("2_rope")
+texture_mode = 1
+width = 5.0
+width_curve = SubResource("Curve_rope")
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
+
+[node name="Leaf1" type="Sprite2D" parent="."]
+texture = ExtResource("3_leaf")
+offset = Vector2(12, 0)
+
+[node name="Leaf2" type="Sprite2D" parent="."]
+texture = ExtResource("3_leaf")
+offset = Vector2(12, 0)
