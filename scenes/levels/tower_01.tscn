@@ -8,6 +8,7 @@
 [ext_resource type="PackedScene" path="res://scenes/summit.tscn" id="8_m0goe"]
 [ext_resource type="PackedScene" path="res://scenes/block.tscn" id="9_block"]
 [ext_resource type="PackedScene" path="res://scenes/mover.tscn" id="10_mover"]
+[ext_resource type="PackedScene" path="res://scenes/levels/tower_01_terrain.tscn" id="11_terrain"]
 
 [sub_resource type="Curve2D" id="Curve2D_m0d6n"]
 _data = {
@@ -21,6 +22,8 @@ script = ExtResource("1_f5dit")
 [node name="Shaft" parent="." unique_id=655580632 instance=ExtResource("2_jo613")]
 width = 8520.0
 height = 31000.0
+
+[node name="Terrain" parent="." instance=ExtResource("11_terrain")]
 
 [node name="Vines" type="Node2D" parent="." unique_id=706151572]
 
@@ -849,25 +852,6 @@ color = Color(0.6, 0.56, 0.72, 1)
 
 [node name="Ledges" type="Node2D" parent="." unique_id=1421281408]
 
-[node name="Ledge0" parent="Ledges" unique_id=418209515 instance=ExtResource("6_uq6gp")]
-position = Vector2(-3508.3713, -509.4702)
-
-[node name="Ledge1" parent="Ledges" unique_id=1523201635 instance=ExtResource("6_uq6gp")]
-position = Vector2(-2855.8896, -469.31036)
-
-[node name="Ledge2" parent="Ledges" unique_id=751590288 instance=ExtResource("6_uq6gp")]
-position = Vector2(-2399, -684)
-
-[node name="Ledge3" parent="Ledges" unique_id=685404614 instance=ExtResource("6_uq6gp")]
-position = Vector2(-3958, -720)
-
-[node name="Ledge4" parent="Ledges" unique_id=1438420472 instance=ExtResource("6_uq6gp")]
-position = Vector2(-2760.2256, -984.1546)
-
-[node name="Narrow1" parent="Ledges" unique_id=176282064 instance=ExtResource("6_uq6gp")]
-position = Vector2(350, -3400)
-width = 260.0
-
 [node name="Narrow10" parent="Ledges" unique_id=116305577 instance=ExtResource("6_uq6gp")]
 position = Vector2(137, -2729)
 width = 260.0
@@ -889,10 +873,6 @@ width = 800.0
 height = 40.0
 is_bough = true
 
-[node name="Narrow2" parent="Ledges" unique_id=1795343763 instance=ExtResource("6_uq6gp")]
-position = Vector2(1500, -5800)
-width = 240.0
-
 [node name="BoughB_left" parent="Ledges" unique_id=578903170 instance=ExtResource("6_uq6gp")]
 position = Vector2(1350, -7080)
 width = 700.0
@@ -905,22 +885,11 @@ width = 700.0
 height = 40.0
 is_bough = true
 
-[node name="Narrow3" parent="Ledges" unique_id=640109843 instance=ExtResource("6_uq6gp")]
-position = Vector2(1750, -8100)
-width = 220.0
-
-[node name="Narrow4" parent="Ledges" unique_id=1678665627 instance=ExtResource("6_uq6gp")]
-position = Vector2(1880, -9050)
-
 [node name="BoughC" parent="Ledges" unique_id=1648716104 instance=ExtResource("6_uq6gp")]
 position = Vector2(1750, -10250)
 width = 900.0
 height = 40.0
 is_bough = true
-
-[node name="Narrow5" parent="Ledges" unique_id=1379287940 instance=ExtResource("6_uq6gp")]
-position = Vector2(-100, -10600)
-width = 240.0
 
 [node name="BoughD_left" parent="Ledges" unique_id=395533354 instance=ExtResource("6_uq6gp")]
 position = Vector2(-1500, -12060)
@@ -934,22 +903,11 @@ width = 500.0
 height = 40.0
 is_bough = true
 
-[node name="Narrow6" parent="Ledges" unique_id=1592632435 instance=ExtResource("6_uq6gp")]
-position = Vector2(700, -12300)
-
-[node name="Narrow7" parent="Ledges" unique_id=688348044 instance=ExtResource("6_uq6gp")]
-position = Vector2(-1200, -13020)
-width = 240.0
-
 [node name="BoughE" parent="Ledges" unique_id=1390966554 instance=ExtResource("6_uq6gp")]
 position = Vector2(-1180, -14290)
 width = 900.0
 height = 40.0
 is_bough = true
-
-[node name="Narrow8" parent="Ledges" unique_id=1161001083 instance=ExtResource("6_uq6gp")]
-position = Vector2(-1180, -15000)
-width = 220.0
 
 [node name="BoughF_left" parent="Ledges" unique_id=701860907 instance=ExtResource("6_uq6gp")]
 position = Vector2(-3300, -16700)
@@ -962,10 +920,6 @@ position = Vector2(-2000, -16700)
 width = 700.0
 height = 40.0
 is_bough = true
-
-[node name="Narrow9" parent="Ledges" unique_id=868620981 instance=ExtResource("6_uq6gp")]
-position = Vector2(1600, -18700)
-width = 240.0
 
 [node name="BoughK" parent="Ledges" unique_id=590269112 instance=ExtResource("6_uq6gp")]
 position = Vector2(-750, -16900)
@@ -991,19 +945,11 @@ width = 1200.0
 height = 40.0
 is_bough = true
 
-[node name="Narrow11" parent="Ledges" unique_id=126881345 instance=ExtResource("6_uq6gp")]
-position = Vector2(2750, -24380)
-width = 240.0
-
 [node name="BoughI" parent="Ledges" unique_id=1882831263 instance=ExtResource("6_uq6gp")]
 position = Vector2(-750, -25980)
 width = 1000.0
 height = 40.0
 is_bough = true
-
-[node name="Narrow12" parent="Ledges" unique_id=612651190 instance=ExtResource("6_uq6gp")]
-position = Vector2(-800, -27980)
-width = 220.0
 
 [node name="Blockers" type="Node2D" parent="." unique_id=66330808]
 
@@ -1016,31 +962,6 @@ height = 44.0
 travel = Vector2(460, 0)
 duration = 2.0
 dwell = 0.7
-
-[node name="Block" parent="Blockers" unique_id=2053733470 instance=ExtResource("9_block")]
-position = Vector2(-2343, -1111)
-height = 1600.0
-
-[node name="Block13" parent="Blockers" unique_id=1882609866 instance=ExtResource("9_block")]
-position = Vector2(-2336, -2458)
-width = 80.0
-height = 750.0
-
-[node name="Block15" parent="Blockers" unique_id=913720676 instance=ExtResource("9_block")]
-position = Vector2(-2336, -2458)
-width = 80.0
-height = 750.0
-
-[node name="Block16" parent="Blockers" unique_id=415334863 instance=ExtResource("9_block")]
-position = Vector2(-1665, -2061)
-rotation = 1.5707964
-width = 20.0
-height = 400.0
-
-[node name="Block14" parent="Blockers" unique_id=1251735958 instance=ExtResource("9_block")]
-position = Vector2(-986, -2662)
-width = 80.0
-height = 750.0
 
 [node name="Block17" parent="Blockers" unique_id=1102943096 instance=ExtResource("9_block")]
 position = Vector2(-1248, -1824)
@@ -1057,33 +978,10 @@ metadata/slippery_grip = 0.0
 
 [node name="Slippery" parent="Blockers/Block18" unique_id=1121674066 instance=ExtResource("8_m0d6n")]
 
-[node name="Block12" parent="Blockers" unique_id=768108538 instance=ExtResource("9_block")]
-position = Vector2(-2018, -1533)
-width = 80.0
-height = 2600.0
-
-[node name="Block7a" parent="Blockers" unique_id=1952997670 instance=ExtResource("9_block")]
-position = Vector2(-2153, -3094.0002)
-rotation = -1.5830137
-height = 505.0
-
-[node name="Block7b" parent="Blockers" unique_id=1700061450 instance=ExtResource("9_block")]
-position = Vector2(-402, -3094.0002)
-rotation = -1.5830137
-height = 1195.0
-
 [node name="Block9" parent="Blockers" unique_id=1905151799 instance=ExtResource("9_block")]
 position = Vector2(-3160, -2875)
 rotation = -1.8325957
 height = 1600.0
-
-[node name="Block10" parent="Blockers" unique_id=1671707479 instance=ExtResource("9_block")]
-position = Vector2(-3919, -3406)
-height = 1600.0
-
-[node name="Block20" parent="Blockers" unique_id=435034740 instance=ExtResource("9_block")]
-position = Vector2(-255, -3958)
-height = 1000.0
 
 [node name="Block19" parent="Blockers" unique_id=2064263091 instance=ExtResource("9_block")]
 position = Vector2(-1673, -3830)
@@ -1113,21 +1011,6 @@ metadata/slippery_grip = 0.0
 
 [node name="Slippery" parent="Blockers/Block11" unique_id=1692452449 instance=ExtResource("8_m0d6n")]
 position = Vector2(-2.289032, -2.7857666)
-
-[node name="Block6a1" parent="Blockers" unique_id=1566967771 instance=ExtResource("9_block")]
-position = Vector2(-3929, -6299)
-rotation = 1.5707964
-height = 658.0
-
-[node name="Block6a2" parent="Blockers" unique_id=1576697931 instance=ExtResource("9_block")]
-position = Vector2(-2200, -6299)
-rotation = 1.5707964
-height = 1600.0
-
-[node name="Block6b" parent="Blockers" unique_id=2060715404 instance=ExtResource("9_block")]
-position = Vector2(371, -6299)
-rotation = 1.5707964
-height = 1942.0
 
 [node name="Block2" parent="Blockers" unique_id=206904696 instance=ExtResource("9_block")]
 position = Vector2(-2149, -142.99995)
@@ -1218,31 +1101,6 @@ height = 1000.0
 metadata/slippery_grip = 0.0
 
 [node name="Slippery" parent="Blockers/IceFin3" unique_id=620301954 instance=ExtResource("8_m0d6n")]
-
-[node name="SpirePillar" parent="Blockers" unique_id=746611760 instance=ExtResource("9_block")]
-position = Vector2(2600, -8300)
-width = 80.0
-height = 700.0
-
-[node name="SealW" parent="Blockers" unique_id=1187923275 instance=ExtResource("9_block")]
-position = Vector2(-3200, -2080)
-rotation = 1.5707964
-
-[node name="Ceiling1a" parent="Blockers" unique_id=639075919 instance=ExtResource("9_block")]
-position = Vector2(100, -11400)
-rotation = 1.5707964
-height = 1400.0
-
-[node name="Ceiling1b" parent="Blockers" unique_id=867937240 instance=ExtResource("9_block")]
-position = Vector2(2950, -11400)
-rotation = 1.5707964
-height = 2900.0
-
-[node name="Shelf1" parent="Blockers" unique_id=575672537 instance=ExtResource("9_block")]
-position = Vector2(500, -11165)
-rotation = 1.5707964
-width = 350.0
-height = 2600.0
 
 [node name="IceFin4" parent="Blockers" unique_id=815198584 instance=ExtResource("9_block")]
 position = Vector2(0, -12000)
@@ -1343,17 +1201,6 @@ height = 44.0
 travel = Vector2(0, -400)
 speed = 190.0
 dwell = 0.45
-
-[node name="CeilingO" parent="Blockers" unique_id=1372751384 instance=ExtResource("9_block")]
-position = Vector2(2000, -25000)
-rotation = 1.5707964
-height = 5000.0
-
-[node name="ShelfO" parent="Blockers" unique_id=55677317 instance=ExtResource("9_block")]
-position = Vector2(1500, -24850)
-rotation = 1.5707964
-width = 340.0
-height = 4000.0
 
 [node name="GateP" parent="Blockers" unique_id=396416946 instance=ExtResource("9_block")]
 position = Vector2(-780, -28100)

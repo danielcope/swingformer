@@ -87,8 +87,25 @@ func _initialize() -> void:
 		for l in ledges:
 			if (l as Ledge).is_bough:
 				boughs += 1
-		print("%d ledges (%d boughs), %d blocks\n"
-			% [ledges.size(), boughs, level.find_children("*", "Block", true, false).size()])
+		# Terrain lives in two places now -- tiles for the big axis-aligned slabs,
+		# nodes for everything that rotates, moves, or that the game reasons about
+		# individually. Reporting both is how you notice a piece that was meant to
+		# be converted and got left behind, sitting inside its own tiles.
+		var cells := 0
+		var one_way := 0
+		for node in level.find_children("*", "TileMapLayer", true, false):
+			var layer := node as TileMapLayer
+			for cell in layer.get_used_cells():
+				cells += 1
+				var data := layer.get_cell_tile_data(cell)
+				if data == null or data.get_collision_polygons_count(0) == 0:
+					continue
+				if data.is_collision_polygon_one_way(0, 0):
+					one_way += 1
+		print("%d ledges (%d boughs), %d blocks, %d tiles (%d one-way)
+"
+			% [ledges.size(), boughs,
+				level.find_children("*", "Block", true, false).size(), cells, one_way])
 	else:
 		print("\n*** %d NODE(S) WITH NO SCRIPT ***" % orphans.size())
 		print("    They build no collision and draw nothing -- inert but still in the tree.")
