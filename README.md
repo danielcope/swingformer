@@ -1,8 +1,15 @@
 # swingformer
 
 A Foddian vine-swinging climber. One shaft, straight up, no checkpoints and no
-respawn. Godot 4.7, no art assets — everything is drawn procedurally so the feel
-can be tuned before anything gets locked into sprites.
+respawn. Godot 4.7.
+
+The art is placeholder and generated: run `tools/make_art.gd` and it writes the
+PNGs in `art/`, then `tools/make_tileset.gd` builds the `TileSet` from the
+atlas. Everything the game recolours at runtime — rock, moss, ice, rope, leaf —
+is generated **white**, because vines carry a per-vine colour that the biome
+shifts as you climb and ledges carry a `tint`; art with the colour already baked
+in would multiply twice and go muddy. Swap the PNGs for real art and nothing in
+the code has to change.
 
 ```bash
 godot --path .
@@ -68,11 +75,37 @@ Open **`scenes/levels/tower_01.tscn`** and edit it. It is an ordinary scene:
 ```
 Tower                 (HandBuiltLevel)
   Shaft               walls + floor, resize with width / height
+  Terrain             TileMapLayer — paint plain terrain here
   Vines/              drag in scenes/vine.tscn, set length per vine
   Ledges/             drag in scenes/ledge.tscn, tick is_bough for a checkpoint
+  Blockers/           blocks that rotate, move, or are icy
   StartPoint          where the player spawns
   Summit              win trigger
 ```
+
+### Tiles or nodes?
+
+Terrain lives in two places, and the split is not arbitrary. Paint into
+**`Terrain`** for ordinary square rock and platforms. Use a **node** when the
+piece has to do something a tile cannot:
+
+| Use a node when | Because |
+|---|---|
+| it sits at an angle | a `TileSet` only flips and transposes at 90° |
+| it moves | it needs a `Mover`, and tiles do not move |
+| it is a bough | `bough_below()` finds boughs by class, and the HUD's fall-cost readout reads them |
+| it is icy | the ice fins are **tilted on purpose** — a flat frictionless surface does nothing, since gravity needs a slope to pull along |
+
+`tools/tiles_from_blocks.gd` converts the eligible pieces of an existing level
+and reports what it left behind. `check_level` prints tile counts next to node
+counts, which is how you spot a piece meant to be converted still sitting inside
+its own tiles.
+
+Ice works either way: the `Slippery` node publishes `slippery_grip` as metadata,
+and a tile carries `slip` as custom data. The player reads whichever the surface
+underfoot provides. Tiles store *slip* rather than *grip* because Godot drops a
+custom value equal to its type's default from the saved resource — under `grip`,
+every tile nobody configured would read 0 and be silently frictionless.
 
 Everything is discovery, not configuration. Add a bough by placing a `Ledge`
 and ticking `is_bough` — the level finds its own boughs, and the HUD's "what a
@@ -89,6 +122,7 @@ a different level and that is the whole switch.
 | `mover.tscn` | Drop it **under** any node to animate that node. See below. |
 | `slippery.tscn` | Drop it **under** a block or ledge and its surface stops gripping. See below. |
 | `shaft.tscn` | The walls and floor, sized by `width` / `height`. |
+| `art/terrain.tres` | The `TileSet` for the `Terrain` layer. Paint into it with Godot's tile editor. |
 | `summit.tscn` | Win trigger. Put it where the climb ends. |
 
 ### Changing how a ledge looks
@@ -114,7 +148,16 @@ and it only applies **when you change it** — so editing the `Polygon2D` colour
 directly is not undone on the next rebuild. `Slippery` and the generator both go
 through it, so an icy ledge still reads as icy whatever you have done to the art.
 
-`Block` still paints itself in `_draw()`. Same treatment on request.
+`Block` works the same way — `Body`, `TopEdge`, `BottomEdge` — and for the same
+reason. A piece whose only visual is a `_draw()` call goes **invisible and inert
+with no error** if it ever loses its script, which Godot does to every instance
+in an open level when a scene's base class changes underneath it. Both scenes
+ship real polygons and real collision so they survive that.
+
+The polygons carry no UVs on purpose. `Polygon2D` then uses vertex positions as
+texture coordinates, so the rock grain stays the same size on a 120×600 pillar
+and a 350×2600 shelf instead of stretching to fit, and resizing a piece re-tiles
+it rather than smearing it.
 
 `Ledge` versus `Block` is the distinction worth internalising, because in the
 editor they are both just rock. One-way means a ledge never walls off the route
