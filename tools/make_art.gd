@@ -38,6 +38,7 @@ func _initialize() -> void:
 	_grain("res://art/rock.png", 64, 0.10)
 	_grain("res://art/moss.png", 64, 0.22)
 	_leaf()
+	_ice()
 	_atlas()
 
 	print("art written to res://art -- now run: godot --headless --path . --import")
@@ -236,3 +237,28 @@ func _leaf() -> void:
 				v *= 0.88
 			img.set_pixel(x, y, Color(v, v, v, 1.0))
 	_save(img, "res://art/leaf.png")
+
+
+## Ice, for the surfaces Slippery takes over. Seamless like the other grains and
+## white for the same reason -- Slippery already lerps the piece's colour toward
+## blue, so a blue texture on top would double it.
+##
+## Streaked rather than grainy: the streaks run across the slab, which is the
+## direction you slide, and that is the only cue telling you a fin is ice before
+## you touch it.
+func _ice() -> void:
+	var size := 64
+	var img := _img(size, size)
+	for y in range(size):
+		for x in range(size):
+			var n := _wrapped_noise(x, y, size, 8)
+			var v: float = 0.86 + n * 0.14
+			# Long shallow streaks. The lattice is coarse across and fine along,
+			# so the grain stretches instead of speckling.
+			var streak := _wrapped_noise(x, y * 6, size, 16)
+			if streak > 0.72:
+				v = minf(1.0, v + 0.16)
+			elif streak < 0.2:
+				v -= 0.1
+			img.set_pixel(x, y, Color(v, v, v, 1.0))
+	_save(img, "res://art/ice.png")

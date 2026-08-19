@@ -36,6 +36,8 @@ extends Node2D
 @export var tint: bool = true
 @export var ice: Color = Color(0.62, 0.82, 0.92)
 
+const ICE_TEXTURE := preload("res://art/ice.png")
+
 
 func _ready() -> void:
 	_apply()
@@ -52,6 +54,11 @@ func _ready() -> void:
 			parent.call("set_visual_color", Color(parent.call("get_visual_color")).lerp(ice, 0.75))
 		elif parent.get("color") != null:
 			parent.set("color", Color(parent.get("color")).lerp(ice, 0.75))
+		# Streaked art as well as a blue tint. Tint alone leaves ice reading as
+		# blue rock, and the streaks run the way you slide, which is the only
+		# warning you get before standing on a fin.
+		if parent.has_method("set_visual_texture"):
+			parent.call("set_visual_texture", ICE_TEXTURE)
 
 
 ## Published as metadata rather than a group, so the player can ask the surface

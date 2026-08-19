@@ -1,6 +1,7 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=4 format=3]
 
 [ext_resource type="Script" path="res://scripts/block.gd" id="1_block"]
+[ext_resource type="Texture2D" path="res://art/rock.png" id="2_rock"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_block"]
 resource_local_to_scene = true
@@ -10,6 +11,24 @@ size = Vector2(120, 600)
 collision_layer = 1
 collision_mask = 0
 script = ExtResource("1_block")
+
+[node name="Body" type="Polygon2D" parent="."]
+texture_repeat = 2
+color = Color(0.3, 0.28, 0.24, 1)
+texture = ExtResource("2_rock")
+polygon = PackedVector2Array(-60, -300, 60, -300, 60, 300, -60, 300)
+
+[node name="TopEdge" type="Polygon2D" parent="."]
+texture_repeat = 2
+color = Color(0.366, 0.3416, 0.2928, 1)
+texture = ExtResource("2_rock")
+polygon = PackedVector2Array(-60, -300, 60, -300, 60, -295, -60, -295)
+
+[node name="BottomEdge" type="Polygon2D" parent="."]
+texture_repeat = 2
+color = Color(0.18, 0.168, 0.144, 1)
+texture = ExtResource("2_rock")
+polygon = PackedVector2Array(-60, 295, 60, 295, 60, 300, -60, 300)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("RectangleShape2D_block")

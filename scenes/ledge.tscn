@@ -1,6 +1,8 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://scripts/ledge.gd" id="1_ledge"]
+[ext_resource type="Texture2D" path="res://art/rock.png" id="2_rock"]
+[ext_resource type="Texture2D" path="res://art/moss.png" id="3_moss"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ledge"]
 resource_local_to_scene = true
@@ -12,14 +14,20 @@ collision_mask = 0
 script = ExtResource("1_ledge")
 
 [node name="Body" type="Polygon2D" parent="."]
+texture_repeat = 2
+texture = ExtResource("2_rock")
 color = Color(0.34, 0.31, 0.25, 1)
 polygon = PackedVector2Array(-100, -17, 100, -17, 100, 17, -100, 17)
 
 [node name="TopEdge" type="Polygon2D" parent="."]
+texture_repeat = 2
+texture = ExtResource("2_rock")
 color = Color(0.44, 0.4, 0.33, 1)
 polygon = PackedVector2Array(-100, -17, 100, -17, 100, -12, -100, -12)
 
 [node name="Moss" type="Polygon2D" parent="."]
+texture_repeat = 2
+texture = ExtResource("3_moss")
 color = Color(0.3, 0.44, 0.26, 1)
 polygon = PackedVector2Array(-90, -17, -83, -17, -83, -25, -90, -25, -50, -17, -43, -17, -43, -25, -50, -25, -10, -17, -3, -17, -3, -25, -10, -25, 30, -17, 37, -17, 37, -25, 30, -25, 70, -17, 77, -17, 77, -25, 70, -25)
 polygons = [PackedInt32Array(0, 1, 2, 3), PackedInt32Array(4, 5, 6, 7), PackedInt32Array(8, 9, 10, 11), PackedInt32Array(12, 13, 14, 15), PackedInt32Array(16, 17, 18, 19)]

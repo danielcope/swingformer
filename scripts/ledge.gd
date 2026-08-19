@@ -195,3 +195,14 @@ func set_visual_color(value: Color) -> void:
 
 func get_visual_color() -> Color:
 	return tint
+
+
+## Swap the surface art. Slippery uses this to make ice look like ice;
+## nothing else needs it, and a piece with no polygons just ignores it.
+func set_visual_texture(tex: Texture2D) -> void:
+	var body := get_node_or_null("Body") as Polygon2D
+	if body:
+		body.texture = tex
+	var topedge := get_node_or_null("TopEdge") as Polygon2D
+	if topedge:
+		topedge.texture = tex
