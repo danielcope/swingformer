@@ -9,6 +9,12 @@
 [ext_resource type="PackedScene" path="res://scenes/block.tscn" id="9_block"]
 [ext_resource type="PackedScene" path="res://scenes/mover.tscn" id="10_mover"]
 
+[sub_resource type="Curve2D" id="Curve2D_m0d6n"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 218, 212, 0, 0, 0, 0, -52, 406, 0, 0, 0, 0, -371, 288, 0, 0, 0, 0, -268, 64, 0, 0, 0, 0, 1, -4, 0, 0, 0, 0, 218, 212)
+}
+point_count = 6
+
 [node name="Tower" type="Node2D" unique_id=1747310486]
 script = ExtResource("1_f5dit")
 
@@ -83,737 +89,760 @@ position = Vector2(-2559, -2655)
 length = 160.5
 color = Color(0.48292598, 0.59881485, 0.37644458, 1)
 
-[node name="W1" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="W1" parent="Vines" unique_id=1365466206 instance=ExtResource("4_owkwv")]
 position = Vector2(-2850, -1990)
 length = 184.0
 color = Color(0.44, 0.6, 0.34, 1)
 
-[node name="W2" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="W2" parent="Vines" unique_id=1836536878 instance=ExtResource("4_owkwv")]
 position = Vector2(-2200, -2090)
 length = 193.2
 color = Color(0.44, 0.6, 0.34, 1)
 
-[node name="W3" parent="Vines" instance=ExtResource("4_owkwv")]
-position = Vector2(-1850, -2210)
+[node name="W3" parent="Vines" unique_id=1358755789 instance=ExtResource("4_owkwv")]
+position = Vector2(-1907, -2127)
 length = 193.2
 color = Color(0.44, 0.6, 0.34, 1)
 
-[node name="W4" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="W7" parent="Vines" unique_id=1291577139 instance=ExtResource("4_owkwv")]
+position = Vector2(-1869, -1415)
+length = 193.2
+color = Color(0.44, 0.6, 0.34, 1)
+
+[node name="W8" parent="Vines" unique_id=901038231 instance=ExtResource("4_owkwv")]
+position = Vector2(-1572, -1752)
+length = 193.2
+color = Color(0.44, 0.6, 0.34, 1)
+
+[node name="W4" parent="Vines" unique_id=1601292060 instance=ExtResource("4_owkwv")]
 position = Vector2(-1400, -2340)
 length = 197.8
 color = Color(0.44, 0.6, 0.34, 1)
 
-[node name="W5" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="W5" parent="Vines" unique_id=93202713 instance=ExtResource("4_owkwv")]
 position = Vector2(-1850, -2510)
 length = 197.8
 color = Color(0.44, 0.6, 0.34, 1)
 
-[node name="W6" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="W6" parent="Vines" unique_id=2122873811 instance=ExtResource("4_owkwv")]
 position = Vector2(-2450, -2630)
 length = 197.8
 color = Color(0.44, 0.6, 0.34, 1)
 
-[node name="Vine38" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="Vine38" parent="Vines" unique_id=721280319 instance=ExtResource("4_owkwv")]
 position = Vector2(-760, -2380)
 length = 184.0
 color = Color(0.47, 0.6, 0.37, 1)
 
-[node name="Vine39" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="Vine63" parent="Vines" unique_id=966173006 instance=ExtResource("4_owkwv")]
+position = Vector2(-315, -2130)
+length = 184.0
+color = Color(0.47, 0.6, 0.37, 1)
+
+[node name="Mover2" parent="Vines/Vine63" unique_id=691232461 instance=ExtResource("10_mover")]
+mode = 3
+travel = Vector2(0, -110)
+duration = 3.5
+
+[node name="Path2D" type="Path2D" parent="Vines/Vine63/Mover2" unique_id=619128767]
+curve = SubResource("Curve2D_m0d6n")
+
+[node name="Vine39" parent="Vines" unique_id=577450825 instance=ExtResource("4_owkwv")]
 position = Vector2(-400, -2560)
 length = 197.8
 color = Color(0.47, 0.6, 0.37, 1)
 
-[node name="Vine40" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="Vine40" parent="Vines" unique_id=1363727772 instance=ExtResource("4_owkwv")]
 position = Vector2(-501, -2894)
 length = 195.1
 color = Color(0.47, 0.6, 0.37, 1)
 
-[node name="Vine41" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="Vine41" parent="Vines" unique_id=44686286 instance=ExtResource("4_owkwv")]
 position = Vector2(647, -3140)
 length = 195.1
 color = Color(0.47, 0.6, 0.37, 1)
 
-[node name="Vine42" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="Vine42" parent="Vines" unique_id=373298427 instance=ExtResource("4_owkwv")]
 position = Vector2(1795, -3417)
 length = 195.1
 color = Color(0.46, 0.6, 0.4, 1)
 
-[node name="Vine43" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="Vine43" parent="Vines" unique_id=496955545 instance=ExtResource("4_owkwv")]
 position = Vector2(2942, -3668)
 length = 195.1
 color = Color(0.46, 0.6, 0.4, 1)
 
-[node name="Vine44" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="Vine44" parent="Vines" unique_id=1291643589 instance=ExtResource("4_owkwv")]
 position = Vector2(3900, -3947)
 length = 173.2
 color = Color(0.46, 0.6, 0.4, 1)
 
-[node name="Vine45" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="Vine45" parent="Vines" unique_id=1854020065 instance=ExtResource("4_owkwv")]
 position = Vector2(2541, -4233)
 length = 231.1
 color = Color(0.46, 0.6, 0.4, 1)
 
-[node name="Vine46" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="Vine46" parent="Vines" unique_id=1074182134 instance=ExtResource("4_owkwv")]
 position = Vector2(1046, -4523)
 length = 254.1
 color = Color(0.46, 0.6, 0.4, 1)
 
-[node name="Vine47" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="Vine47" parent="Vines" unique_id=509517294 instance=ExtResource("4_owkwv")]
 position = Vector2(-397, -4817)
 length = 245.3
 color = Color(0.46, 0.61, 0.46, 1)
 
-[node name="Vine48" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="Vine48" parent="Vines" unique_id=1221583050 instance=ExtResource("4_owkwv")]
 position = Vector2(-1545, -5056)
 length = 195.1
 color = Color(0.46, 0.61, 0.46, 1)
 
-[node name="Vine49" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="Vine49" parent="Vines" unique_id=1064419561 instance=ExtResource("4_owkwv")]
 position = Vector2(2309, -6477)
 length = 246.5
 color = Color(0.46, 0.61, 0.46, 1)
 
-[node name="Vine50" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="Vine50" parent="Vines" unique_id=314297843 instance=ExtResource("4_owkwv")]
 position = Vector2(-2613, -5986)
 length = 290.0
 color = Color(0.46, 0.61, 0.46, 1)
 
-[node name="Vine51" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="Vine51" parent="Vines" unique_id=940546663 instance=ExtResource("4_owkwv")]
 position = Vector2(-3491, -5486)
 length = 246.5
 color = Color(0.46, 0.61, 0.46, 1)
 
-[node name="Vine52" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="Vine52" parent="Vines" unique_id=2001268912 instance=ExtResource("4_owkwv")]
 position = Vector2(848, -6318)
 length = 260.9
 color = Color(0.46, 0.61, 0.46, 1)
 
-[node name="Vine53" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="Vine53" parent="Vines" unique_id=1126304810 instance=ExtResource("4_owkwv")]
 position = Vector2(105, -9769)
 length = 219.4
 color = Color(0.48, 0.63, 0.54, 1)
 
-[node name="Vine54" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="Vine54" parent="Vines" unique_id=1415799614 instance=ExtResource("4_owkwv")]
 position = Vector2(3170, -9202)
 length = 195.1
 color = Color(0.48, 0.63, 0.54, 1)
 
-[node name="Vine55" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="Vine55" parent="Vines" unique_id=853293116 instance=ExtResource("4_owkwv")]
 position = Vector2(-3854, -10688)
 length = 202.7
 color = Color(0.48, 0.63, 0.54, 1)
 
-[node name="Vine56" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="Vine56" parent="Vines" unique_id=1075893285 instance=ExtResource("4_owkwv")]
 position = Vector2(-1559, -10205)
 length = 195.1
 color = Color(0.48, 0.63, 0.54, 1)
 
-[node name="Mover" parent="Vines/Vine56" instance=ExtResource("10_mover")]
+[node name="Mover" parent="Vines/Vine56" unique_id=538016815 instance=ExtResource("10_mover")]
 mode = 1
 travel = Vector2(0, -110)
 duration = 3.5
 
-[node name="Vine57" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="Vine57" parent="Vines" unique_id=1754827009 instance=ExtResource("4_owkwv")]
 position = Vector2(2684, -9204)
 length = 206.7
 color = Color(0.48, 0.63, 0.54, 1)
 
-[node name="Vine58" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="Vine58" parent="Vines" unique_id=654381785 instance=ExtResource("4_owkwv")]
 position = Vector2(-412, -9979)
 length = 195.1
 color = Color(0.48, 0.63, 0.54, 1)
 
-[node name="Vine59" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="Vine59" parent="Vines" unique_id=1444814129 instance=ExtResource("4_owkwv")]
 position = Vector2(736, -9710)
 length = 195.1
 color = Color(0.53, 0.67, 0.63, 1)
 
-[node name="Vine60" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="Vine60" parent="Vines" unique_id=753585697 instance=ExtResource("4_owkwv")]
 position = Vector2(1396, -9485)
 length = 219.0
 color = Color(0.53, 0.67, 0.63, 1)
 
-[node name="Vine61" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="Vine61" parent="Vines" unique_id=902091375 instance=ExtResource("4_owkwv")]
 position = Vector2(-591, -5958)
 length = 246.5
 color = Color(0.53, 0.67, 0.63, 1)
 
-[node name="Vine62" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="Vine62" parent="Vines" unique_id=990586955 instance=ExtResource("4_owkwv")]
 position = Vector2(2147, -6513)
 length = 221.0
 color = Color(0.53, 0.67, 0.63, 1)
 
-[node name="E1" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="E1" parent="Vines" unique_id=1958591568 instance=ExtResource("4_owkwv")]
 position = Vector2(-3900, -5584)
 length = 155.2
 color = Color(0.53, 0.67, 0.63, 1)
 
-[node name="E2" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="E2" parent="Vines" unique_id=620054667 instance=ExtResource("4_owkwv")]
 position = Vector2(814, -7486)
 length = 290.0
 color = Color(0.53, 0.67, 0.63, 1)
 
-[node name="E3" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="E3" parent="Vines" unique_id=255313565 instance=ExtResource("4_owkwv")]
 position = Vector2(-328, -6986)
 length = 290.0
 color = Color(0.53, 0.67, 0.63, 1)
 
-[node name="E4" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="E4" parent="Vines" unique_id=2066987415 instance=ExtResource("4_owkwv")]
 position = Vector2(-1471, -6486)
 length = 290.0
 color = Color(0.53, 0.67, 0.63, 1)
 
-[node name="E5" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="E5" parent="Vines" unique_id=1753197243 instance=ExtResource("4_owkwv")]
 position = Vector2(-2244, -5779)
 length = 281.5
 color = Color(0.53, 0.67, 0.63, 1)
 
-[node name="E6" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="E6" parent="Vines" unique_id=703371826 instance=ExtResource("4_owkwv")]
 position = Vector2(-2987, -5374)
 length = 245.2
 color = Color(0.53, 0.67, 0.63, 1)
 
-[node name="E7" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="E7" parent="Vines" unique_id=1576075056 instance=ExtResource("4_owkwv")]
 position = Vector2(-2041, -5727)
 length = 246.5
 color = Color(0.53, 0.67, 0.63, 1)
 
-[node name="E8" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="E8" parent="Vines" unique_id=1521974584 instance=ExtResource("4_owkwv")]
 position = Vector2(3099, -8486)
 length = 290.0
 color = Color(0.53, 0.67, 0.63, 1)
 
-[node name="E9" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="E9" parent="Vines" unique_id=2078444158 instance=ExtResource("4_owkwv")]
 position = Vector2(859, -6230)
 length = 246.5
 color = Color(0.53, 0.67, 0.63, 1)
 
-[node name="F1" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="F1" parent="Vines" unique_id=2028209783 instance=ExtResource("4_owkwv")]
 position = Vector2(3759, -6710)
 length = 274.0
 color = Color(0.53, 0.67, 0.63, 1)
 
-[node name="F2" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="F2" parent="Vines" unique_id=1253344582 instance=ExtResource("4_owkwv")]
 position = Vector2(-687, -6038)
 length = 264.7
 color = Color(0.53, 0.67, 0.63, 1)
 
-[node name="F3" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="F3" parent="Vines" unique_id=458939540 instance=ExtResource("4_owkwv")]
 position = Vector2(-2707, -10459)
 length = 195.1
 color = Color(0.53, 0.67, 0.63, 1)
 
-[node name="F4" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="F4" parent="Vines" unique_id=42415028 instance=ExtResource("4_owkwv")]
 position = Vector2(1956, -7986)
 length = 290.0
 color = Color(0.53, 0.67, 0.63, 1)
 
-[node name="F5" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="F5" parent="Vines" unique_id=228345908 instance=ExtResource("4_owkwv")]
 position = Vector2(-3219, -11173)
 length = 201.7
 color = Color(0.53, 0.67, 0.63, 1)
 
-[node name="Bait1" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="Bait1" parent="Vines" unique_id=1678380728 instance=ExtResource("4_owkwv")]
 position = Vector2(243, -7236)
 length = 150.0
 color = Color(0.68, 0.55, 0.42, 1)
 
-[node name="Bait2" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="Bait2" parent="Vines" unique_id=388259432 instance=ExtResource("4_owkwv")]
 position = Vector2(-715, -6633)
 length = 290.0
 color = Color(0.68, 0.55, 0.42, 1)
 
-[node name="G1" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="G1" parent="Vines" unique_id=927674691 instance=ExtResource("4_owkwv")]
 position = Vector2(3900, -8986)
 length = 290.0
 color = Color(0.5, 0.64, 0.66, 1)
 
-[node name="G2" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="G2" parent="Vines" unique_id=1146702315 instance=ExtResource("4_owkwv")]
 position = Vector2(2023, -9453)
 length = 218.7
 color = Color(0.5, 0.64, 0.66, 1)
 
-[node name="G3" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="G3" parent="Vines" unique_id=1529335510 instance=ExtResource("4_owkwv")]
 position = Vector2(2758, -9475)
 length = 290.0
 color = Color(0.5, 0.64, 0.66, 1)
 
-[node name="G4" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="G4" parent="Vines" unique_id=1932089208 instance=ExtResource("4_owkwv")]
 position = Vector2(-2662, -10383)
 length = 245.1
 color = Color(0.5, 0.64, 0.66, 1)
 
-[node name="G5" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="G5" parent="Vines" unique_id=1013022588 instance=ExtResource("4_owkwv")]
 position = Vector2(473, -10475)
 length = 290.0
 color = Color(0.5, 0.64, 0.66, 1)
 
-[node name="G6" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="G6" parent="Vines" unique_id=1097845357 instance=ExtResource("4_owkwv")]
 position = Vector2(-2032, -11404)
 length = 224.0
 color = Color(0.5, 0.64, 0.66, 1)
 
-[node name="G7" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="G7" parent="Vines" unique_id=398774382 instance=ExtResource("4_owkwv")]
 position = Vector2(2880, -12414)
 length = 195.1
 color = Color(0.5, 0.64, 0.66, 1)
 
-[node name="G8" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="G8" parent="Vines" unique_id=775375790 instance=ExtResource("4_owkwv")]
 position = Vector2(2753, -12379)
 length = 195.1
 color = Color(0.5, 0.64, 0.66, 1)
 
-[node name="G9" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="G9" parent="Vines" unique_id=1784709902 instance=ExtResource("4_owkwv")]
 position = Vector2(1733, -12219)
 length = 216.8
 color = Color(0.5, 0.64, 0.66, 1)
 
-[node name="H1" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="H1" parent="Vines" unique_id=1042282448 instance=ExtResource("4_owkwv")]
 position = Vector2(669, -12936)
 length = 290.0
 color = Color(0.47, 0.6, 0.68, 1)
 
-[node name="H2" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="H2" parent="Vines" unique_id=890790027 instance=ExtResource("4_owkwv")]
 position = Vector2(-1691, -14924)
 length = 195.1
 color = Color(0.47, 0.6, 0.68, 1)
 
-[node name="H3" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="H3" parent="Vines" unique_id=1710243809 instance=ExtResource("4_owkwv")]
 position = Vector2(3350, -14162)
 length = 246.5
 color = Color(0.47, 0.6, 0.68, 1)
 
-[node name="H4" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="H4" parent="Vines" unique_id=1232875514 instance=ExtResource("4_owkwv")]
 position = Vector2(1555, -15162)
 length = 290.0
 color = Color(0.47, 0.6, 0.68, 1)
 
-[node name="Bait3" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="Bait3" parent="Vines" unique_id=875112025 instance=ExtResource("4_owkwv")]
 position = Vector2(-1590, -11448)
 length = 290.0
 color = Color(0.68, 0.55, 0.42, 1)
 
-[node name="Bait4" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="Bait4" parent="Vines" unique_id=633893582 instance=ExtResource("4_owkwv")]
 position = Vector2(-116, -11814)
 length = 150.0
 color = Color(0.68, 0.55, 0.42, 1)
 
-[node name="Bait5" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="Bait5" parent="Vines" unique_id=426104370 instance=ExtResource("4_owkwv")]
 position = Vector2(-2186, -11686)
 length = 150.0
 color = Color(0.68, 0.55, 0.42, 1)
 
-[node name="I1" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="I1" parent="Vines" unique_id=1635927465 instance=ExtResource("4_owkwv")]
 position = Vector2(-3900, -15450)
 length = 163.6
 color = Color(0.44, 0.55, 0.7, 1)
 
-[node name="I2" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="I2" parent="Vines" unique_id=1995363569 instance=ExtResource("4_owkwv")]
 position = Vector2(-2938, -15229)
 length = 212.0
 color = Color(0.44, 0.55, 0.7, 1)
 
-[node name="I3" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="I3" parent="Vines" unique_id=1266608163 instance=ExtResource("4_owkwv")]
 position = Vector2(615, -14429)
 length = 195.1
 color = Color(0.44, 0.55, 0.7, 1)
 
-[node name="I4" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="I4" parent="Vines" unique_id=2122627223 instance=ExtResource("4_owkwv")]
 position = Vector2(1812, -13436)
 length = 290.0
 color = Color(0.44, 0.55, 0.7, 1)
 
-[node name="I5" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="I5" parent="Vines" unique_id=1875320997 instance=ExtResource("4_owkwv")]
 position = Vector2(-1615, -11936)
 length = 290.0
 color = Color(0.44, 0.55, 0.7, 1)
 
-[node name="I6" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="I6" parent="Vines" unique_id=924385616 instance=ExtResource("4_owkwv")]
 position = Vector2(3900, -12616)
 length = 173.4
 color = Color(0.44, 0.55, 0.7, 1)
 
-[node name="I7" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="I7" parent="Vines" unique_id=1089724503 instance=ExtResource("4_owkwv")]
 position = Vector2(3900, -8975)
 length = 150.0
 color = Color(0.44, 0.55, 0.7, 1)
 
-[node name="I8" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="I8" parent="Vines" unique_id=1795861267 instance=ExtResource("4_owkwv")]
 position = Vector2(458, -11901)
 length = 195.1
 color = Color(0.44, 0.55, 0.7, 1)
 
-[node name="I9" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="I9" parent="Vines" unique_id=186073872 instance=ExtResource("4_owkwv")]
 position = Vector2(-3900, -10936)
 length = 150.0
 color = Color(0.44, 0.55, 0.7, 1)
 
-[node name="I10" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="I10" parent="Vines" unique_id=1911285376 instance=ExtResource("4_owkwv")]
 position = Vector2(-714, -11663)
 length = 199.2
 color = Color(0.44, 0.55, 0.7, 1)
 
-[node name="I11" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="I11" parent="Vines" unique_id=669674922 instance=ExtResource("4_owkwv")]
 position = Vector2(1605, -12156)
 length = 195.1
 color = Color(0.44, 0.55, 0.7, 1)
 
-[node name="I12" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="I12" parent="Vines" unique_id=911979445 instance=ExtResource("4_owkwv")]
 position = Vector2(-669, -10975)
 length = 290.0
 color = Color(0.44, 0.55, 0.7, 1)
 
-[node name="J1" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="J1" parent="Vines" unique_id=1919649387 instance=ExtResource("4_owkwv")]
 position = Vector2(-1812, -11475)
 length = 290.0
 color = Color(0.42, 0.52, 0.7, 1)
 
-[node name="J2" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="J2" parent="Vines" unique_id=1411754498 instance=ExtResource("4_owkwv")]
 position = Vector2(-1220, -10080)
 length = 225.2
 color = Color(0.42, 0.52, 0.7, 1)
 
-[node name="J3" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="J3" parent="Vines" unique_id=1308315256 instance=ExtResource("4_owkwv")]
 position = Vector2(458, -11936)
 length = 195.1
 color = Color(0.42, 0.52, 0.7, 1)
 
-[node name="J4" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="J4" parent="Vines" unique_id=1968860541 instance=ExtResource("4_owkwv")]
 position = Vector2(-473, -12436)
 length = 290.0
 color = Color(0.42, 0.52, 0.7, 1)
 
-[node name="J5" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="J5" parent="Vines" unique_id=2093351893 instance=ExtResource("4_owkwv")]
 position = Vector2(1615, -9975)
 length = 290.0
 color = Color(0.42, 0.52, 0.7, 1)
 
-[node name="J6" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="J6" parent="Vines" unique_id=1959686790 instance=ExtResource("4_owkwv")]
 position = Vector2(-690, -11692)
 length = 190.7
 color = Color(0.42, 0.52, 0.7, 1)
 
-[node name="J7" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="J7" parent="Vines" unique_id=1125454190 instance=ExtResource("4_owkwv")]
 position = Vector2(-2758, -11436)
 length = 290.0
 color = Color(0.42, 0.52, 0.7, 1)
 
-[node name="J8" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="J8" parent="Vines" unique_id=515303 instance=ExtResource("4_owkwv")]
 position = Vector2(2954, -13936)
 length = 290.0
 color = Color(0.42, 0.52, 0.7, 1)
 
-[node name="J9" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="J9" parent="Vines" unique_id=122470348 instance=ExtResource("4_owkwv")]
 position = Vector2(-2450, -15181)
 length = 246.5
 color = Color(0.42, 0.52, 0.7, 1)
 
-[node name="J10" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="J10" parent="Vines" unique_id=991936867 instance=ExtResource("4_owkwv")]
 position = Vector2(450, -14663)
 length = 246.5
 color = Color(0.42, 0.52, 0.7, 1)
 
-[node name="K1" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="K1" parent="Vines" unique_id=2021685343 instance=ExtResource("4_owkwv")]
 position = Vector2(1763, -14192)
 length = 202.5
 color = Color(0.4, 0.48, 0.7, 1)
 
-[node name="K2" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="K2" parent="Vines" unique_id=893826336 instance=ExtResource("4_owkwv")]
 position = Vector2(1900, -14426)
 length = 246.5
 color = Color(0.4, 0.48, 0.7, 1)
 
-[node name="K3" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="K3" parent="Vines" unique_id=54496557 instance=ExtResource("4_owkwv")]
 position = Vector2(2697, -14662)
 length = 290.0
 color = Color(0.4, 0.48, 0.7, 1)
 
-[node name="K4" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="K4" parent="Vines" unique_id=122054621 instance=ExtResource("4_owkwv")]
 position = Vector2(-543, -14625)
 length = 196.9
 color = Color(0.4, 0.48, 0.7, 1)
 
-[node name="K5" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="K5" parent="Vines" unique_id=772913081 instance=ExtResource("4_owkwv")]
 position = Vector2(-1000, -14910)
 length = 246.5
 color = Color(0.4, 0.48, 0.7, 1)
 
-[node name="K6" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="K6" parent="Vines" unique_id=1213980425 instance=ExtResource("4_owkwv")]
 position = Vector2(413, -15662)
 length = 290.0
 color = Color(0.4, 0.48, 0.7, 1)
 
-[node name="BaitK1" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="BaitK1" parent="Vines" unique_id=1478005075 instance=ExtResource("4_owkwv")]
 position = Vector2(-3900, -16556)
 length = 290.0
 color = Color(0.68, 0.55, 0.42, 1)
 
-[node name="BaitK2" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="BaitK2" parent="Vines" unique_id=1443630018 instance=ExtResource("4_owkwv")]
 position = Vector2(-3121, -17795)
 length = 150.0
 color = Color(0.68, 0.55, 0.42, 1)
 
-[node name="BaitK3" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="BaitK3" parent="Vines" unique_id=94420833 instance=ExtResource("4_owkwv")]
 position = Vector2(-3171, -20780)
 length = 150.0
 color = Color(0.68, 0.55, 0.42, 1)
 
-[node name="L1" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="L1" parent="Vines" unique_id=2036585772 instance=ExtResource("4_owkwv")]
 position = Vector2(-730, -16162)
 length = 290.0
 color = Color(0.4, 0.45, 0.68, 1)
 
-[node name="L2" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="L2" parent="Vines" unique_id=817603896 instance=ExtResource("4_owkwv")]
 position = Vector2(-1872, -16662)
 length = 290.0
 color = Color(0.4, 0.45, 0.68, 1)
 
-[node name="L3" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="L3" parent="Vines" unique_id=1151571607 instance=ExtResource("4_owkwv")]
 position = Vector2(-3014, -17162)
 length = 290.0
 color = Color(0.4, 0.45, 0.68, 1)
 
-[node name="L4" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="L4" parent="Vines" unique_id=450592856 instance=ExtResource("4_owkwv")]
 position = Vector2(-3900, -17662)
 length = 290.0
 color = Color(0.4, 0.45, 0.68, 1)
 
-[node name="L5" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="L5" parent="Vines" unique_id=269571607 instance=ExtResource("4_owkwv")]
 position = Vector2(-2343, -17927)
 length = 264.7
 color = Color(0.4, 0.45, 0.68, 1)
 
-[node name="L6" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="L6" parent="Vines" unique_id=1525273273 instance=ExtResource("4_owkwv")]
 position = Vector2(-979, -18180)
 length = 231.9
 color = Color(0.4, 0.45, 0.68, 1)
 
-[node name="L7" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="L7" parent="Vines" unique_id=1765233179 instance=ExtResource("4_owkwv")]
 position = Vector2(598, -18431)
 length = 268.1
 color = Color(0.4, 0.45, 0.68, 1)
 
-[node name="L8" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="L8" parent="Vines" unique_id=783100458 instance=ExtResource("4_owkwv")]
 position = Vector2(2132, -18712)
 length = 260.7
 color = Color(0.4, 0.45, 0.68, 1)
 
-[node name="L9" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="L9" parent="Vines" unique_id=284854448 instance=ExtResource("4_owkwv")]
 position = Vector2(3535, -19029)
 length = 238.6
 color = Color(0.4, 0.45, 0.68, 1)
 
-[node name="M1" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="M1" parent="Vines" unique_id=1545744771 instance=ExtResource("4_owkwv")]
 position = Vector2(2388, -19340)
 length = 195.1
 color = Color(0.42, 0.44, 0.66, 1)
 
-[node name="M2" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="M2" parent="Vines" unique_id=556511753 instance=ExtResource("4_owkwv")]
 position = Vector2(1125, -19582)
 length = 214.6
 color = Color(0.42, 0.44, 0.66, 1)
 
-[node name="M3" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="M3" parent="Vines" unique_id=1469990431 instance=ExtResource("4_owkwv")]
 position = Vector2(-22, -19774)
 length = 195.1
 color = Color(0.42, 0.44, 0.66, 1)
 
-[node name="M4" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="M4" parent="Vines" unique_id=831903479 instance=ExtResource("4_owkwv")]
 position = Vector2(-1204, -19988)
 length = 200.8
 color = Color(0.42, 0.44, 0.66, 1)
 
-[node name="M5" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="M5" parent="Vines" unique_id=1600644417 instance=ExtResource("4_owkwv")]
 position = Vector2(-2438, -20260)
 length = 209.8
 color = Color(0.42, 0.44, 0.66, 1)
 
-[node name="M6" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="M6" parent="Vines" unique_id=15001525 instance=ExtResource("4_owkwv")]
 position = Vector2(-3585, -20454)
 length = 195.1
 color = Color(0.42, 0.44, 0.66, 1)
 
-[node name="N1" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="N1" parent="Vines" unique_id=476836877 instance=ExtResource("4_owkwv")]
 position = Vector2(-3900, -20640)
 length = 150.0
 color = Color(0.46, 0.46, 0.66, 1)
 
-[node name="N2" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="N2" parent="Vines" unique_id=1892552339 instance=ExtResource("4_owkwv")]
 position = Vector2(-2442, -20919)
 length = 247.9
 color = Color(0.46, 0.46, 0.66, 1)
 
-[node name="N3" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="N3" parent="Vines" unique_id=346326203 instance=ExtResource("4_owkwv")]
 position = Vector2(-1106, -21236)
 length = 227.0
 color = Color(0.46, 0.46, 0.66, 1)
 
-[node name="N4" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="N4" parent="Vines" unique_id=1057470642 instance=ExtResource("4_owkwv")]
 position = Vector2(331, -21491)
 length = 244.4
 color = Color(0.46, 0.46, 0.66, 1)
 
-[node name="N5" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="N5" parent="Vines" unique_id=1428679911 instance=ExtResource("4_owkwv")]
 position = Vector2(1505, -21722)
 length = 199.6
 color = Color(0.46, 0.46, 0.66, 1)
 
-[node name="N6" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="N6" parent="Vines" unique_id=1176032541 instance=ExtResource("4_owkwv")]
 position = Vector2(2851, -22037)
 length = 228.8
 color = Color(0.46, 0.46, 0.66, 1)
 
-[node name="N7" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="N7" parent="Vines" unique_id=2085464654 instance=ExtResource("4_owkwv")]
 position = Vector2(3900, -22299)
 length = 178.3
 color = Color(0.46, 0.46, 0.66, 1)
 
-[node name="N8" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="N8" parent="Vines" unique_id=1704041545 instance=ExtResource("4_owkwv")]
 position = Vector2(2664, -22615)
 length = 210.1
 color = Color(0.46, 0.46, 0.66, 1)
 
-[node name="N9" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="N9" parent="Vines" unique_id=1130558234 instance=ExtResource("4_owkwv")]
 position = Vector2(369, -23101)
 length = 195.1
 color = Color(0.46, 0.46, 0.66, 1)
 
-[node name="N10" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="N10" parent="Vines" unique_id=1457078483 instance=ExtResource("4_owkwv")]
 position = Vector2(1516, -22868)
 length = 195.1
 color = Color(0.46, 0.46, 0.66, 1)
 
-[node name="N11" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="N11" parent="Vines" unique_id=1056786735 instance=ExtResource("4_owkwv")]
 position = Vector2(-3186, -23804)
 length = 197.8
 color = Color(0.46, 0.46, 0.66, 1)
 
-[node name="BaitN1" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="BaitN1" parent="Vines" unique_id=553118466 instance=ExtResource("4_owkwv")]
 position = Vector2(-2604, -23687)
 length = 150.0
 color = Color(0.68, 0.55, 0.42, 1)
 
-[node name="BaitN2" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="BaitN2" parent="Vines" unique_id=2022698069 instance=ExtResource("4_owkwv")]
 position = Vector2(-1054, -26624)
 length = 150.0
 color = Color(0.68, 0.55, 0.42, 1)
 
-[node name="O1" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="O1" parent="Vines" unique_id=972522392 instance=ExtResource("4_owkwv")]
 position = Vector2(-2680, -24256)
 length = 207.5
 color = Color(0.52, 0.5, 0.68, 1)
 
-[node name="O2" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="O2" parent="Vines" unique_id=1166251683 instance=ExtResource("4_owkwv")]
 position = Vector2(-866, -23359)
 length = 210.0
 color = Color(0.52, 0.5, 0.68, 1)
 
-[node name="O3" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="O3" parent="Vines" unique_id=1582272854 instance=ExtResource("4_owkwv")]
 position = Vector2(-1532, -24478)
 length = 195.1
 color = Color(0.52, 0.5, 0.68, 1)
 
-[node name="O4" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="O4" parent="Vines" unique_id=2120141660 instance=ExtResource("4_owkwv")]
 position = Vector2(-3900, -24028)
 length = 150.0
 color = Color(0.52, 0.5, 0.68, 1)
 
-[node name="O5" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="O5" parent="Vines" unique_id=698483288 instance=ExtResource("4_owkwv")]
 position = Vector2(-385, -24692)
 length = 195.1
 color = Color(0.52, 0.5, 0.68, 1)
 
-[node name="O6" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="O6" parent="Vines" unique_id=1073774028 instance=ExtResource("4_owkwv")]
 position = Vector2(-2023, -23570)
 length = 196.6
 color = Color(0.52, 0.5, 0.68, 1)
 
-[node name="O7" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="O7" parent="Vines" unique_id=22260785 instance=ExtResource("4_owkwv")]
 position = Vector2(763, -24967)
 length = 195.1
 color = Color(0.52, 0.5, 0.68, 1)
 
-[node name="O8" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="O8" parent="Vines" unique_id=1999426667 instance=ExtResource("4_owkwv")]
 position = Vector2(2043, -25195)
 length = 217.6
 color = Color(0.52, 0.5, 0.68, 1)
 
-[node name="O9" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="O9" parent="Vines" unique_id=631305654 instance=ExtResource("4_owkwv")]
 position = Vector2(3190, -25477)
 length = 195.1
 color = Color(0.52, 0.5, 0.68, 1)
 
-[node name="O10" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="O10" parent="Vines" unique_id=1954956405 instance=ExtResource("4_owkwv")]
 position = Vector2(3900, -25741)
 length = 163.8
 color = Color(0.52, 0.5, 0.68, 1)
 
-[node name="O11" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="O11" parent="Vines" unique_id=1318311228 instance=ExtResource("4_owkwv")]
 position = Vector2(2479, -26006)
 length = 241.6
 color = Color(0.52, 0.5, 0.68, 1)
 
-[node name="O12" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="O12" parent="Vines" unique_id=841318836 instance=ExtResource("4_owkwv")]
 position = Vector2(1040, -26284)
 length = 244.5
 color = Color(0.52, 0.5, 0.68, 1)
 
-[node name="O13" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="O13" parent="Vines" unique_id=897012107 instance=ExtResource("4_owkwv")]
 position = Vector2(-377, -26524)
 length = 241.0
 color = Color(0.52, 0.5, 0.68, 1)
 
-[node name="P1" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="P1" parent="Vines" unique_id=923288698 instance=ExtResource("4_owkwv")]
 position = Vector2(-1731, -26723)
 length = 230.2
 color = Color(0.6, 0.56, 0.72, 1)
 
-[node name="P2" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="P2" parent="Vines" unique_id=619577606 instance=ExtResource("4_owkwv")]
 position = Vector2(-3258, -26917)
 length = 259.5
 color = Color(0.6, 0.56, 0.72, 1)
 
-[node name="P3" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="P3" parent="Vines" unique_id=1159059152 instance=ExtResource("4_owkwv")]
 position = Vector2(-2016, -27224)
 length = 211.1
 color = Color(0.6, 0.56, 0.72, 1)
 
-[node name="P4" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="P4" parent="Vines" unique_id=111162101 instance=ExtResource("4_owkwv")]
 position = Vector2(-540, -27482)
 length = 250.9
 color = Color(0.6, 0.56, 0.72, 1)
 
-[node name="P5" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="P5" parent="Vines" unique_id=1772286340 instance=ExtResource("4_owkwv")]
 position = Vector2(928, -27705)
 length = 249.6
 color = Color(0.6, 0.56, 0.72, 1)
 
-[node name="P6" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="P6" parent="Vines" unique_id=1122551771 instance=ExtResource("4_owkwv")]
 position = Vector2(2212, -27899)
 length = 218.2
 color = Color(0.6, 0.56, 0.72, 1)
 
-[node name="P7" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="P7" parent="Vines" unique_id=1993293040 instance=ExtResource("4_owkwv")]
 position = Vector2(3696, -28174)
 length = 252.3
 color = Color(0.6, 0.56, 0.72, 1)
 
-[node name="P8" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="P8" parent="Vines" unique_id=551706894 instance=ExtResource("4_owkwv")]
 position = Vector2(2522, -28445)
 length = 199.7
 color = Color(0.6, 0.56, 0.72, 1)
 
-[node name="P9" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="P9" parent="Vines" unique_id=622858580 instance=ExtResource("4_owkwv")]
 position = Vector2(1374, -28696)
 length = 195.1
 color = Color(0.6, 0.56, 0.72, 1)
 
-[node name="P10" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="P10" parent="Vines" unique_id=193114774 instance=ExtResource("4_owkwv")]
 position = Vector2(212, -29014)
 length = 197.5
 color = Color(0.6, 0.56, 0.72, 1)
 
-[node name="P11" parent="Vines" instance=ExtResource("4_owkwv")]
+[node name="P11" parent="Vines" unique_id=379991660 instance=ExtResource("4_owkwv")]
 position = Vector2(-640, -29240)
 length = 150.0
 color = Color(0.6, 0.56, 0.72, 1)
@@ -835,137 +864,144 @@ position = Vector2(-3958, -720)
 [node name="Ledge4" parent="Ledges" unique_id=1438420472 instance=ExtResource("6_uq6gp")]
 position = Vector2(-2760.2256, -984.1546)
 
-[node name="Narrow1" parent="Ledges" instance=ExtResource("6_uq6gp")]
+[node name="Narrow1" parent="Ledges" unique_id=176282064 instance=ExtResource("6_uq6gp")]
 position = Vector2(350, -3400)
 width = 260.0
 
-[node name="BoughA_left" parent="Ledges" instance=ExtResource("6_uq6gp")]
+[node name="Narrow10" parent="Ledges" unique_id=116305577 instance=ExtResource("6_uq6gp")]
+position = Vector2(137, -2729)
+width = 260.0
+
+[node name="Mover" parent="Ledges/Narrow10" unique_id=428891129 instance=ExtResource("10_mover")]
+travel = Vector2(460, 0)
+duration = 2.0
+dwell = 0.7
+
+[node name="BoughA_left" parent="Ledges" unique_id=214476545 instance=ExtResource("6_uq6gp")]
 position = Vector2(200, -4150)
 width = 800.0
 height = 40.0
 is_bough = true
 
-[node name="BoughA_right" parent="Ledges" instance=ExtResource("6_uq6gp")]
+[node name="BoughA_right" parent="Ledges" unique_id=1960649851 instance=ExtResource("6_uq6gp")]
 position = Vector2(1250, -4150)
 width = 800.0
 height = 40.0
 is_bough = true
 
-[node name="Narrow2" parent="Ledges" instance=ExtResource("6_uq6gp")]
+[node name="Narrow2" parent="Ledges" unique_id=1795343763 instance=ExtResource("6_uq6gp")]
 position = Vector2(1500, -5800)
 width = 240.0
 
-[node name="BoughB_left" parent="Ledges" instance=ExtResource("6_uq6gp")]
+[node name="BoughB_left" parent="Ledges" unique_id=578903170 instance=ExtResource("6_uq6gp")]
 position = Vector2(1350, -7080)
 width = 700.0
 height = 40.0
 is_bough = true
 
-[node name="BoughB_right" parent="Ledges" instance=ExtResource("6_uq6gp")]
+[node name="BoughB_right" parent="Ledges" unique_id=327096861 instance=ExtResource("6_uq6gp")]
 position = Vector2(2350, -7080)
 width = 700.0
 height = 40.0
 is_bough = true
 
-[node name="Narrow3" parent="Ledges" instance=ExtResource("6_uq6gp")]
+[node name="Narrow3" parent="Ledges" unique_id=640109843 instance=ExtResource("6_uq6gp")]
 position = Vector2(1750, -8100)
 width = 220.0
 
-[node name="Narrow4" parent="Ledges" instance=ExtResource("6_uq6gp")]
+[node name="Narrow4" parent="Ledges" unique_id=1678665627 instance=ExtResource("6_uq6gp")]
 position = Vector2(1880, -9050)
-width = 200.0
 
-[node name="BoughC" parent="Ledges" instance=ExtResource("6_uq6gp")]
+[node name="BoughC" parent="Ledges" unique_id=1648716104 instance=ExtResource("6_uq6gp")]
 position = Vector2(1750, -10250)
 width = 900.0
 height = 40.0
 is_bough = true
 
-[node name="Narrow5" parent="Ledges" instance=ExtResource("6_uq6gp")]
+[node name="Narrow5" parent="Ledges" unique_id=1379287940 instance=ExtResource("6_uq6gp")]
 position = Vector2(-100, -10600)
 width = 240.0
 
-[node name="BoughD_left" parent="Ledges" instance=ExtResource("6_uq6gp")]
+[node name="BoughD_left" parent="Ledges" unique_id=395533354 instance=ExtResource("6_uq6gp")]
 position = Vector2(-1500, -12060)
 width = 600.0
 height = 40.0
 is_bough = true
 
-[node name="BoughD_right" parent="Ledges" instance=ExtResource("6_uq6gp")]
+[node name="BoughD_right" parent="Ledges" unique_id=1587049520 instance=ExtResource("6_uq6gp")]
 position = Vector2(-500, -12060)
 width = 500.0
 height = 40.0
 is_bough = true
 
-[node name="Narrow6" parent="Ledges" instance=ExtResource("6_uq6gp")]
+[node name="Narrow6" parent="Ledges" unique_id=1592632435 instance=ExtResource("6_uq6gp")]
 position = Vector2(700, -12300)
-width = 200.0
 
-[node name="Narrow7" parent="Ledges" instance=ExtResource("6_uq6gp")]
+[node name="Narrow7" parent="Ledges" unique_id=688348044 instance=ExtResource("6_uq6gp")]
 position = Vector2(-1200, -13020)
 width = 240.0
 
-[node name="BoughE" parent="Ledges" instance=ExtResource("6_uq6gp")]
+[node name="BoughE" parent="Ledges" unique_id=1390966554 instance=ExtResource("6_uq6gp")]
 position = Vector2(-1180, -14290)
 width = 900.0
 height = 40.0
 is_bough = true
 
-[node name="Narrow8" parent="Ledges" instance=ExtResource("6_uq6gp")]
+[node name="Narrow8" parent="Ledges" unique_id=1161001083 instance=ExtResource("6_uq6gp")]
 position = Vector2(-1180, -15000)
 width = 220.0
 
-[node name="BoughF_left" parent="Ledges" instance=ExtResource("6_uq6gp")]
+[node name="BoughF_left" parent="Ledges" unique_id=701860907 instance=ExtResource("6_uq6gp")]
 position = Vector2(-3300, -16700)
 width = 700.0
 height = 40.0
 is_bough = true
 
-[node name="BoughF_right" parent="Ledges" instance=ExtResource("6_uq6gp")]
+[node name="BoughF_right" parent="Ledges" unique_id=1976613476 instance=ExtResource("6_uq6gp")]
 position = Vector2(-2000, -16700)
 width = 700.0
 height = 40.0
 is_bough = true
 
-[node name="Narrow9" parent="Ledges" instance=ExtResource("6_uq6gp")]
+[node name="Narrow9" parent="Ledges" unique_id=868620981 instance=ExtResource("6_uq6gp")]
 position = Vector2(1600, -18700)
 width = 240.0
 
-[node name="BoughK" parent="Ledges" instance=ExtResource("6_uq6gp")]
+[node name="BoughK" parent="Ledges" unique_id=590269112 instance=ExtResource("6_uq6gp")]
 position = Vector2(-750, -16900)
 width = 2800.0
 height = 40.0
 is_bough = true
 
-[node name="BoughG_left" parent="Ledges" instance=ExtResource("6_uq6gp")]
+[node name="BoughG_left" parent="Ledges" unique_id=233008862 instance=ExtResource("6_uq6gp")]
 position = Vector2(1300, -20600)
 width = 700.0
 height = 40.0
 is_bough = true
 
-[node name="BoughG_right" parent="Ledges" instance=ExtResource("6_uq6gp")]
+[node name="BoughG_right" parent="Ledges" unique_id=702311692 instance=ExtResource("6_uq6gp")]
 position = Vector2(2600, -20600)
 width = 700.0
 height = 40.0
 is_bough = true
 
-[node name="BoughH" parent="Ledges" instance=ExtResource("6_uq6gp")]
+[node name="BoughH" parent="Ledges" unique_id=1602612542 instance=ExtResource("6_uq6gp")]
 position = Vector2(1500, -23100)
 width = 1200.0
 height = 40.0
 is_bough = true
 
-[node name="Narrow11" parent="Ledges" instance=ExtResource("6_uq6gp")]
+[node name="Narrow11" parent="Ledges" unique_id=126881345 instance=ExtResource("6_uq6gp")]
 position = Vector2(2750, -24380)
 width = 240.0
 
-[node name="BoughI" parent="Ledges" instance=ExtResource("6_uq6gp")]
+[node name="BoughI" parent="Ledges" unique_id=1882831263 instance=ExtResource("6_uq6gp")]
 position = Vector2(-750, -25980)
 width = 1000.0
 height = 40.0
 is_bough = true
 
-[node name="Narrow12" parent="Ledges" instance=ExtResource("6_uq6gp")]
+[node name="Narrow12" parent="Ledges" unique_id=612651190 instance=ExtResource("6_uq6gp")]
 position = Vector2(-800, -27980)
 width = 220.0
 
@@ -1006,6 +1042,21 @@ position = Vector2(-986, -2662)
 width = 80.0
 height = 750.0
 
+[node name="Block17" parent="Blockers" unique_id=1102943096 instance=ExtResource("9_block")]
+position = Vector2(-1248, -1824)
+rotation = -0.9948377
+width = 80.0
+height = 750.0
+
+[node name="Block18" parent="Blockers" unique_id=1635413404 instance=ExtResource("9_block")]
+position = Vector2(1069, -1885.0002)
+rotation = -0.9948377
+width = 80.0
+height = 750.0
+metadata/slippery_grip = 0.0
+
+[node name="Slippery" parent="Blockers/Block18" unique_id=1121674066 instance=ExtResource("8_m0d6n")]
+
 [node name="Block12" parent="Blockers" unique_id=768108538 instance=ExtResource("9_block")]
 position = Vector2(-2018, -1533)
 width = 80.0
@@ -1016,7 +1067,7 @@ position = Vector2(-2153, -3094.0002)
 rotation = -1.5830137
 height = 505.0
 
-[node name="Block7b" parent="Blockers" instance=ExtResource("9_block")]
+[node name="Block7b" parent="Blockers" unique_id=1700061450 instance=ExtResource("9_block")]
 position = Vector2(-402, -3094.0002)
 rotation = -1.5830137
 height = 1195.0
@@ -1029,6 +1080,19 @@ height = 1600.0
 [node name="Block10" parent="Blockers" unique_id=1671707479 instance=ExtResource("9_block")]
 position = Vector2(-3919, -3406)
 height = 1600.0
+
+[node name="Block20" parent="Blockers" unique_id=435034740 instance=ExtResource("9_block")]
+position = Vector2(-255, -3958)
+height = 1000.0
+
+[node name="Block19" parent="Blockers" unique_id=2064263091 instance=ExtResource("9_block")]
+position = Vector2(-1673, -3830)
+rotation = -1.0541788
+height = 3000.0
+metadata/slippery_grip = 0.0
+
+[node name="Slippery" parent="Blockers/Block19" unique_id=1360248894 instance=ExtResource("8_m0d6n")]
+position = Vector2(-2.289032, -2.7857666)
 
 [node name="Block8" parent="Blockers" unique_id=908396399 instance=ExtResource("9_block")]
 position = Vector2(-2867.0002, -1675.0002)
@@ -1055,18 +1119,18 @@ position = Vector2(-3929, -6299)
 rotation = 1.5707964
 height = 658.0
 
-[node name="Block6a2" parent="Blockers" instance=ExtResource("9_block")]
+[node name="Block6a2" parent="Blockers" unique_id=1576697931 instance=ExtResource("9_block")]
 position = Vector2(-2200, -6299)
 rotation = 1.5707964
 height = 1600.0
 
-[node name="Block6b" parent="Blockers" instance=ExtResource("9_block")]
+[node name="Block6b" parent="Blockers" unique_id=2060715404 instance=ExtResource("9_block")]
 position = Vector2(371, -6299)
 rotation = 1.5707964
 height = 1942.0
 
 [node name="Block2" parent="Blockers" unique_id=206904696 instance=ExtResource("9_block")]
-position = Vector2(-1601, -150.00002)
+position = Vector2(-2149, -142.99995)
 rotation = -1.865757
 height = 1600.0
 metadata/slippery_grip = 0.0
@@ -1075,7 +1139,7 @@ metadata/slippery_grip = 0.0
 position = Vector2(-2.289032, -2.7857666)
 
 [node name="Block3" parent="Blockers" unique_id=607517695 instance=ExtResource("9_block")]
-position = Vector2(-52, -416.00003)
+position = Vector2(-104, -1134)
 rotation = -1.6161749
 height = 1600.0
 metadata/slippery_grip = 0.0
@@ -1083,8 +1147,14 @@ metadata/slippery_grip = 0.0
 [node name="Slippery" parent="Blockers/Block3" unique_id=2105982502 instance=ExtResource("8_m0d6n")]
 position = Vector2(-2.289032, -2.7857666)
 
+[node name="Block6" parent="Blockers" unique_id=1307387145 instance=ExtResource("9_block")]
+position = Vector2(-1192.0001, -1081.9999)
+rotation = -1.6161749
+height = 1600.0
+metadata/slippery_grip = 0.0
+
 [node name="Block4" parent="Blockers" unique_id=2082280442 instance=ExtResource("9_block")]
-position = Vector2(1523, -558)
+position = Vector2(1479, -1283)
 rotation = 1.4329153
 scale = Vector2(0.99999994, 0.99999994)
 height = 1600.0
@@ -1094,7 +1164,7 @@ metadata/slippery_grip = 0.0
 position = Vector2(-2.289032, -2.7857666)
 
 [node name="Block5" parent="Blockers" unique_id=1213648489 instance=ExtResource("9_block")]
-position = Vector2(3314, -905)
+position = Vector2(3166, -1608)
 rotation = -1.8011798
 scale = Vector2(0.99999994, 0.99999994)
 height = 2100.0
@@ -1103,197 +1173,200 @@ metadata/slippery_grip = 0.0
 [node name="Slippery" parent="Blockers/Block5" unique_id=1383629636 instance=ExtResource("8_m0d6n")]
 position = Vector2(-2.289032, -2.7857666)
 
-[node name="GateB" parent="Blockers" instance=ExtResource("9_block")]
+[node name="GateB" parent="Blockers" unique_id=828342478 instance=ExtResource("9_block")]
 position = Vector2(400, -3650)
 width = 200.0
 height = 44.0
 
-[node name="Mover" parent="Blockers/GateB" instance=ExtResource("10_mover")]
+[node name="Mover" parent="Blockers/GateB" unique_id=1071821243 instance=ExtResource("10_mover")]
 travel = Vector2(500, 0)
-dwell = 0.5
 speed = 200.0
+dwell = 0.5
 
-[node name="GateC" parent="Blockers" instance=ExtResource("9_block")]
+[node name="GateC" parent="Blockers" unique_id=396037263 instance=ExtResource("9_block")]
 position = Vector2(1600, -5450)
 width = 220.0
 height = 44.0
 
-[node name="Mover" parent="Blockers/GateC" instance=ExtResource("10_mover")]
+[node name="Mover" parent="Blockers/GateC" unique_id=149115522 instance=ExtResource("10_mover")]
 travel = Vector2(0, -420)
-dwell = 0.6
 speed = 170.0
 
-[node name="IceFin1" parent="Blockers" instance=ExtResource("9_block")]
+[node name="IceFin1" parent="Blockers" unique_id=580265696 instance=ExtResource("9_block")]
 position = Vector2(1400, -4250)
 rotation = -1.75
 width = 80.0
 height = 1000.0
+metadata/slippery_grip = 0.0
 
-[node name="Slippery" parent="Blockers/IceFin1" instance=ExtResource("8_m0d6n")]
+[node name="Slippery" parent="Blockers/IceFin1" unique_id=1546355149 instance=ExtResource("8_m0d6n")]
 
-[node name="IceFin2" parent="Blockers" instance=ExtResource("9_block")]
+[node name="IceFin2" parent="Blockers" unique_id=2096582349 instance=ExtResource("9_block")]
 position = Vector2(2400, -7100)
 rotation = -1.62
 width = 80.0
 height = 1100.0
+metadata/slippery_grip = 0.0
 
-[node name="Slippery" parent="Blockers/IceFin2" instance=ExtResource("8_m0d6n")]
+[node name="Slippery" parent="Blockers/IceFin2" unique_id=58888774 instance=ExtResource("8_m0d6n")]
 
-[node name="IceFin3" parent="Blockers" instance=ExtResource("9_block")]
+[node name="IceFin3" parent="Blockers" unique_id=1084331164 instance=ExtResource("9_block")]
 position = Vector2(2800, -8600)
 rotation = -1.55
 width = 80.0
 height = 1000.0
+metadata/slippery_grip = 0.0
 
-[node name="Slippery" parent="Blockers/IceFin3" instance=ExtResource("8_m0d6n")]
+[node name="Slippery" parent="Blockers/IceFin3" unique_id=620301954 instance=ExtResource("8_m0d6n")]
 
-[node name="SpirePillar" parent="Blockers" instance=ExtResource("9_block")]
+[node name="SpirePillar" parent="Blockers" unique_id=746611760 instance=ExtResource("9_block")]
 position = Vector2(2600, -8300)
 width = 80.0
 height = 700.0
 
-[node name="SealW" parent="Blockers" instance=ExtResource("9_block")]
+[node name="SealW" parent="Blockers" unique_id=1187923275 instance=ExtResource("9_block")]
 position = Vector2(-3200, -2080)
 rotation = 1.5707964
-width = 120.0
-height = 600.0
 
-[node name="Ceiling1a" parent="Blockers" instance=ExtResource("9_block")]
+[node name="Ceiling1a" parent="Blockers" unique_id=639075919 instance=ExtResource("9_block")]
 position = Vector2(100, -11400)
 rotation = 1.5707964
-width = 120.0
 height = 1400.0
 
-[node name="Ceiling1b" parent="Blockers" instance=ExtResource("9_block")]
+[node name="Ceiling1b" parent="Blockers" unique_id=867937240 instance=ExtResource("9_block")]
 position = Vector2(2950, -11400)
 rotation = 1.5707964
-width = 120.0
 height = 2900.0
 
-[node name="Shelf1" parent="Blockers" instance=ExtResource("9_block")]
+[node name="Shelf1" parent="Blockers" unique_id=575672537 instance=ExtResource("9_block")]
 position = Vector2(500, -11165)
 rotation = 1.5707964
 width = 350.0
 height = 2600.0
 
-[node name="IceFin4" parent="Blockers" instance=ExtResource("9_block")]
+[node name="IceFin4" parent="Blockers" unique_id=815198584 instance=ExtResource("9_block")]
 position = Vector2(0, -12000)
 rotation = -1.6
 width = 80.0
 height = 1200.0
+metadata/slippery_grip = 0.0
 
-[node name="Slippery" parent="Blockers/IceFin4" instance=ExtResource("8_m0d6n")]
+[node name="Slippery" parent="Blockers/IceFin4" unique_id=1738935874 instance=ExtResource("8_m0d6n")]
 
-[node name="GateI" parent="Blockers" instance=ExtResource("9_block")]
+[node name="GateI" parent="Blockers" unique_id=1508437521 instance=ExtResource("9_block")]
 position = Vector2(-1180, -14700)
 width = 220.0
 height = 44.0
 
-[node name="Mover" parent="Blockers/GateI" instance=ExtResource("10_mover")]
+[node name="Mover" parent="Blockers/GateI" unique_id=5172507 instance=ExtResource("10_mover")]
 travel = Vector2(0, -400)
-dwell = 0.6
 speed = 160.0
 
-[node name="IceFinJ" parent="Blockers" instance=ExtResource("9_block")]
+[node name="IceFinJ" parent="Blockers" unique_id=2002558610 instance=ExtResource("9_block")]
 position = Vector2(-2700, -16460)
 rotation = -1.6
 width = 80.0
 height = 1300.0
+metadata/slippery_grip = 0.0
 
-[node name="Slippery" parent="Blockers/IceFinJ" instance=ExtResource("8_m0d6n")]
+[node name="Slippery" parent="Blockers/IceFinJ" unique_id=727787318 instance=ExtResource("8_m0d6n")]
 
-[node name="IceFinK" parent="Blockers" instance=ExtResource("9_block")]
+[node name="IceFinK" parent="Blockers" unique_id=2135861679 instance=ExtResource("9_block")]
 position = Vector2(1500, -19100)
 rotation = -1.62
 width = 80.0
 height = 1100.0
+metadata/slippery_grip = 0.0
 
-[node name="Slippery" parent="Blockers/IceFinK" instance=ExtResource("8_m0d6n")]
+[node name="Slippery" parent="Blockers/IceFinK" unique_id=1419499783 instance=ExtResource("8_m0d6n")]
 
-[node name="GateL" parent="Blockers" instance=ExtResource("9_block")]
+[node name="GateL" parent="Blockers" unique_id=956163926 instance=ExtResource("9_block")]
 position = Vector2(2100, -20350)
 width = 220.0
 height = 44.0
 
-[node name="Mover" parent="Blockers/GateL" instance=ExtResource("10_mover")]
+[node name="Mover" parent="Blockers/GateL" unique_id=1219527156 instance=ExtResource("10_mover")]
 travel = Vector2(0, -420)
-dwell = 0.6
 speed = 170.0
 
-[node name="IceFinM1" parent="Blockers" instance=ExtResource("9_block")]
+[node name="IceFinM1" parent="Blockers" unique_id=1977839622 instance=ExtResource("9_block")]
 position = Vector2(2600, -21450)
 rotation = -1.58
 width = 80.0
 height = 1200.0
+metadata/slippery_grip = 0.0
 
-[node name="Slippery" parent="Blockers/IceFinM1" instance=ExtResource("8_m0d6n")]
+[node name="Slippery" parent="Blockers/IceFinM1" unique_id=644526573 instance=ExtResource("8_m0d6n")]
 
-[node name="IceFinM2" parent="Blockers" instance=ExtResource("9_block")]
+[node name="IceFinM2" parent="Blockers" unique_id=1834016313 instance=ExtResource("9_block")]
 position = Vector2(2600, -22250)
 rotation = -1.58
 width = 80.0
 height = 1200.0
+metadata/slippery_grip = 0.0
 
-[node name="Slippery" parent="Blockers/IceFinM2" instance=ExtResource("8_m0d6n")]
+[node name="Slippery" parent="Blockers/IceFinM2" unique_id=129363664 instance=ExtResource("8_m0d6n")]
 
-[node name="IceFinM3" parent="Blockers" instance=ExtResource("9_block")]
+[node name="IceFinM3" parent="Blockers" unique_id=487073447 instance=ExtResource("9_block")]
 position = Vector2(4000, -21050)
 rotation = -1.58
 width = 80.0
 height = 1000.0
+metadata/slippery_grip = 0.0
 
-[node name="Slippery" parent="Blockers/IceFinM3" instance=ExtResource("8_m0d6n")]
+[node name="Slippery" parent="Blockers/IceFinM3" unique_id=1094581943 instance=ExtResource("8_m0d6n")]
 
-[node name="IceFinM4" parent="Blockers" instance=ExtResource("9_block")]
+[node name="IceFinM4" parent="Blockers" unique_id=1047961558 instance=ExtResource("9_block")]
 position = Vector2(4000, -21850)
 rotation = -1.58
 width = 80.0
 height = 1000.0
+metadata/slippery_grip = 0.0
 
-[node name="Slippery" parent="Blockers/IceFinM4" instance=ExtResource("8_m0d6n")]
+[node name="Slippery" parent="Blockers/IceFinM4" unique_id=456603278 instance=ExtResource("8_m0d6n")]
 
-[node name="IceFinM5" parent="Blockers" instance=ExtResource("9_block")]
+[node name="IceFinM5" parent="Blockers" unique_id=2009890659 instance=ExtResource("9_block")]
 position = Vector2(4000, -22650)
 rotation = -1.58
 width = 80.0
 height = 1000.0
+metadata/slippery_grip = 0.0
 
-[node name="Slippery" parent="Blockers/IceFinM5" instance=ExtResource("8_m0d6n")]
+[node name="Slippery" parent="Blockers/IceFinM5" unique_id=1167733938 instance=ExtResource("8_m0d6n")]
 
-[node name="GateM" parent="Blockers" instance=ExtResource("9_block")]
+[node name="GateM" parent="Blockers" unique_id=773204475 instance=ExtResource("9_block")]
 position = Vector2(3350, -21850)
 width = 200.0
 height = 44.0
 
-[node name="Mover" parent="Blockers/GateM" instance=ExtResource("10_mover")]
+[node name="Mover" parent="Blockers/GateM" unique_id=1812839878 instance=ExtResource("10_mover")]
 travel = Vector2(0, -400)
-dwell = 0.45
 speed = 190.0
+dwell = 0.45
 
-[node name="CeilingO" parent="Blockers" instance=ExtResource("9_block")]
+[node name="CeilingO" parent="Blockers" unique_id=1372751384 instance=ExtResource("9_block")]
 position = Vector2(2000, -25000)
 rotation = 1.5707964
-width = 120.0
 height = 5000.0
 
-[node name="ShelfO" parent="Blockers" instance=ExtResource("9_block")]
+[node name="ShelfO" parent="Blockers" unique_id=55677317 instance=ExtResource("9_block")]
 position = Vector2(1500, -24850)
 rotation = 1.5707964
 width = 340.0
 height = 4000.0
 
-[node name="GateP" parent="Blockers" instance=ExtResource("9_block")]
+[node name="GateP" parent="Blockers" unique_id=396416946 instance=ExtResource("9_block")]
 position = Vector2(-780, -28100)
 width = 240.0
 height = 44.0
 
-[node name="Mover" parent="Blockers/GateP" instance=ExtResource("10_mover")]
+[node name="Mover" parent="Blockers/GateP" unique_id=386807505 instance=ExtResource("10_mover")]
 travel = Vector2(0, -450)
-dwell = 0.5
 speed = 180.0
+dwell = 0.5
 
 [node name="StartPoint" type="Marker2D" parent="." unique_id=1318170643]
-position = Vector2(-3900, -200)
+position = Vector2(-1560, -2194)
 
 [node name="Summit" parent="." unique_id=789272341 instance=ExtResource("8_m0goe")]
 position = Vector2(-640, -29540)

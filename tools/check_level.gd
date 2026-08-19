@@ -108,14 +108,19 @@ func _initialize() -> void:
 	if marker:
 		start = marker.position
 	# You do not jump from the spawn marker -- you fall to whatever is beneath it
-	# first, and jump from there. Testing only the marker's own height reports a
-	# perfectly good start as unreachable whenever the marker floats above the
-	# floor, which is the loudest thing this tool says and the worst thing for it
-	# to be wrong about. So consider both.
-	var stands: Array = [start.y]
-	var shafts := level.find_children("*", "Shaft", true, false)
-	if not shafts.is_empty():
-		stands.append((shafts[0] as Node2D).position.y - 14.0)
+	# first, and jump from THERE.
+	#
+	# This used to guess: the marker's own height, or the shaft floor. Both were
+	# wrong whenever the thing you actually land on is a block somebody put in
+	# the way, and it is wrong in the dangerous direction -- test/opening.gd
+	# found a tower whose first grab was really 258 px away while this reported
+	# a reachable start, because the player was standing 109 px lower than
+	# either height considered here. So find the real surface.
+	var radius := 14.0
+	var body_shape := p.get_node_or_null("CollisionShape2D") as CollisionShape2D
+	if body_shape and body_shape.shape is CircleShape2D:
+		radius = (body_shape.shape as CircleShape2D).radius
+	var stands: Array = [_landing_below(level, start) - radius]
 
 	var apex: float = start.y - jump_rise
 	for s in stands:
@@ -268,6 +273,47 @@ func _initialize() -> void:
 	level.free()
 	p.free()
 	quit()
+
+
+## The top of the highest solid surface underneath `from`, which is where the
+## player ends up after spawning. Considers ledges, blocks and the shaft floor.
+##
+## Uses each piece's rotated bounding box rather than its width and height, so a
+## slab turned on its side -- which is most of the ceilings and shelves in
+## tower_01 -- is measured as the wide, thin thing it has become rather than the
+## tall, narrow thing it was authored as.
+func _landing_below(level: Node, from: Vector2) -> float:
+	var best := INF
+
+	for node in level.find_children("*", "Node2D", true, false):
+		var w := 0.0
+		var h := 0.0
+		if node is Ledge:
+			w = (node as Ledge).width
+			h = (node as Ledge).height
+		elif node is Block:
+			w = (node as Block).width
+			h = (node as Block).height
+		else:
+			continue
+		var n2d := node as Node2D
+		var c: float = absf(cos(n2d.rotation))
+		var sn: float = absf(sin(n2d.rotation))
+		var half_x: float = c * w * 0.5 + sn * h * 0.5
+		var half_y: float = sn * w * 0.5 + c * h * 0.5
+		if absf(from.x - n2d.position.x) > half_x:
+			continue
+		var top: float = n2d.position.y - half_y
+		if top > from.y:  # below the spawn, so it is something to land on
+			best = minf(best, top)
+
+	var shafts := level.find_children("*", "Shaft", true, false)
+	if not shafts.is_empty():
+		var floor_y: float = (shafts[0] as Node2D).position.y
+		if floor_y > from.y:
+			best = minf(best, floor_y)
+
+	return best if best < INF else from.y
 
 
 ## The cheapest way to the top at a given fraction of the pump cap, as vine
