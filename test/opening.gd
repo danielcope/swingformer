@@ -17,7 +17,9 @@ extends Node
 ## Being unable to start is the one bug that makes the whole tower unplayable,
 ## and it is invisible from a screenshot of the level.
 
-const LevelScene := preload("res://scenes/levels/tower_01.tscn")
+## Which level to test. Pass one after `--`:
+##   godot --headless --path . res://test/opening.tscn -- res://scenes/levels/x.tscn
+const DEFAULT_LEVEL := "res://scenes/levels/tower_01.tscn"
 const PlayerScene := preload("res://scenes/player.tscn")
 
 var _player: Player
@@ -27,7 +29,12 @@ var _rest: int = 0
 
 
 func _ready() -> void:
-	_level = LevelScene.instantiate() as Level
+	var path := DEFAULT_LEVEL
+	for a in OS.get_cmdline_user_args():
+		if a.ends_with(".tscn"):
+			path = a
+	print("level: %s" % path)
+	_level = (load(path) as PackedScene).instantiate() as Level
 	add_child(_level)
 	_player = PlayerScene.instantiate()
 	add_child(_player)

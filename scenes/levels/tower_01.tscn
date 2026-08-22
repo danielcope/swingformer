@@ -23,7 +23,8 @@ script = ExtResource("1_f5dit")
 width = 8520.0
 height = 31000.0
 
-[node name="Terrain" parent="." instance=ExtResource("11_terrain")]
+[node name="Terrain" parent="." unique_id=1754856231 instance=ExtResource("11_terrain")]
+position = Vector2(0, 2)
 
 [node name="Vines" type="Node2D" parent="." unique_id=706151572]
 

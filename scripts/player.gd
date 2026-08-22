@@ -6,12 +6,19 @@ extends CharacterBody2D
 ##   FREE     - ballistic, or walking if it happens to be standing on rock.
 ##   SWINGING - attached to a Vine. Position is driven by pendulum integration
 ##              around the anchor, NOT by velocity.
+##   GRINDING - riding a Rail. Position is a distance along its curve, and
+##              velocity is that speed pointed along the tangent.
+##
+## The two attached states are the same idea twice: the player stops being a
+## body with a velocity and becomes a parameter on a shape -- an angle on a
+## circle, or an offset on a curve -- with `velocity` kept truthful so that
+## letting go works without either state knowing about the other.
 ##
 ## There is no death state and no kill(). Falling is not failure, it is just
 ## movement -- you fall until a ledge happens to catch you, and you carry on
 ## from wherever that is. Removing the respawn is what makes the fall hurt.
 
-enum State { FREE, SWINGING }
+enum State { FREE, SWINGING, GRINDING }
 ## PLAIN   - no press, or too slow / too early to count.
 ## TIMED   - pressed inside the forgiving buffer. Flat impulse.
 ## PERFECT - pressed inside the tight window while genuinely falling. The save.
@@ -25,6 +32,9 @@ signal bounced(impact_speed: float, quality: BounceQuality)
 ## Fired when a grab press expires with nothing in reach. Drives the "you
 ## missed" feedback, which is also how the player learns what grab_reach is.
 signal grab_missed
+## Rail mounted and left. launch_speed is signed along the rail's own direction.
+signal mounted(rail: Rail, impact_speed: float)
+signal dismounted(rail: Rail, launch_speed: float)
 
 # --- Free flight -------------------------------------------------------------
 @export_group("Free flight")
@@ -156,8 +166,36 @@ signal grab_missed
 ## rope (and a dead stop on any vertical catch); 1 keeps everything.
 @export_range(0.0, 1.0) var grab_momentum_retention: float = 0.65
 
+# --- Grind rail --------------------------------------------------------------
+@export_group("Grind rail")
+## Extra reach beyond the ball's own radius for latching onto a rail. Small on
+## purpose: a rail is a thing you land on, not a thing you reach for. The vine's
+## grab_reach is the forgiving number; this one should feel like contact.
+@export var rail_catch: float = 22.0
+## How much of a badly-angled arrival survives. Only the component ALONG the
+## rail is kept in full; this scales what is left. Lower than the vine's
+## grab_momentum_retention on purpose -- matching the rail's angle is the skill
+## the mechanic is built around, so a flat slam onto a rail should cost you.
+@export_range(0.0, 1.0) var rail_momentum_retention: float = 0.35
+## Drag along the rail, px/s^2. The only place a rail loses energy, so it is
+## what stops a dip from being a perpetual motion machine.
+@export var rail_friction: float = 90.0
+## How hard leaning can push you along a rail, px/s^2. Weak, like air_control:
+## the ride is decided by the speed you arrived with.
+@export var rail_push: float = 520.0
+@export var max_rail_speed: float = 2400.0
+## Stops the rail you just jumped off catching you again on the way up.
+@export var rail_remount_lockout: float = 0.22
+
 var state: State = State.FREE
 var current_vine: Vine = null
+
+## Rail state. `_rail_offset` is a distance along the curve and `_rail_speed` is
+## signed the same way, so negative means riding back toward the start.
+var current_rail: Rail = null
+var _rail_offset: float = 0.0
+var _rail_speed: float = 0.0
+var _rail_lockout: float = 0.0
 
 # Pendulum state. angle is measured from straight-down, positive toward +x.
 var rope_length: float = 0.0
@@ -202,12 +240,13 @@ func _physics_process(delta: float) -> void:
 	_whiff = maxf(0.0, _whiff - delta * 2.0)
 	_squash = maxf(0.0, _squash - delta * 6.0)
 	_boost_flash = maxf(0.0, _boost_flash - delta * 2.5)
+	_rail_lockout = maxf(0.0, _rail_lockout - delta)
 
 	var had_buffer := _grab_buffer > 0.0
 	_grab_buffer = maxf(0.0, _grab_buffer - delta)
 	# The press ran out with nothing in range. Say so, rather than leaving the
 	# player to wonder whether the input registered at all.
-	if had_buffer and _grab_buffer == 0.0 and state == State.FREE:
+	if had_buffer and _grab_buffer == 0.0 and state != State.SWINGING:
 		_whiff = 1.0
 		grab_missed.emit()
 
@@ -219,6 +258,8 @@ func _physics_process(delta: float) -> void:
 		if state == State.SWINGING:
 			release()
 		else:
+			# Buffered while grinding too, so you can leave a rail for a vine
+			# without having to time the press to the frame you come off.
 			_grab_buffer = grab_buffer_time
 	if Input.is_action_just_pressed("jump"):
 		_jump_buffer = jump_buffer_time
@@ -228,6 +269,8 @@ func _physics_process(delta: float) -> void:
 			_process_free(delta)
 		State.SWINGING:
 			_process_swinging(delta)
+		State.GRINDING:
+			_process_grinding(delta)
 
 	_set_target(_find_best_vine())
 
@@ -329,6 +372,13 @@ func _process_free(delta: float) -> void:
 
 	if wanted and is_instance_valid(wanted):
 		attach_to(wanted)
+	elif _rail_lockout <= 0.0:
+		# Rails catch on contact rather than on a press. You arrive at one by
+		# aiming a release at it, and having to also click at the moment of
+		# touchdown would make the aiming worthless.
+		var hit := _find_rail()
+		if not hit.is_empty():
+			mount_rail(hit["rail"], hit["offset"])
 
 
 ## How much the surface underfoot grips: 1 normally, 0 on ice. Read from the
@@ -527,6 +577,142 @@ func _process_swinging(delta: float) -> void:
 ## Unit vector along the direction of travel around the circle. At angle = 90
 ## degrees this is (0, -1) -- straight up, which is why a horizontal rope is
 ## the optimal release point.
+# -----------------------------------------------------------------------------
+# Grind rails
+# -----------------------------------------------------------------------------
+
+## Ride the curve. Position is an offset along it and speed is signed to match,
+## so the whole state is two numbers and the rail's own geometry.
+##
+## Gravity is applied as its component ALONG the tangent, which is what a bead
+## on a wire feels: g*sin(slope). That single line is what makes a rail
+## energy-honest -- downhill buys speed at exactly the rate uphill spends it, so
+## a dip returns you to the far lip at the speed you entered less friction, and
+## no arrangement of rails is a free lift.
+func _process_grinding(delta: float) -> void:
+	if not is_instance_valid(current_rail) or current_rail.length() <= 0.0:
+		_dismount(Vector2.ZERO)
+		return
+
+	var tangent := current_rail.tangent_at(_rail_offset)
+
+	# Leaving, by choice: jump off with the ride's speed plus a hop. Checked
+	# before the step so the launch happens on the frame of the press.
+	if _jump_buffer > 0.0:
+		_jump_buffer = 0.0
+		_dismount(tangent * _rail_speed + Vector2(0.0, -jump_velocity))
+		return
+
+	# Leaving, for a vine. The rail's speed goes into the grab, so a fast ride
+	# becomes a fast swing rather than a dead hang.
+	if _grab_buffer > 0.0:
+		var wanted := _find_best_vine()
+		if wanted and is_instance_valid(wanted):
+			velocity = tangent * _rail_speed
+			current_rail = null
+			state = State.FREE
+			attach_to(wanted)
+			return
+
+	_rail_speed += gravity * tangent.y * delta
+	# Leaning helps a little. Projected onto the tangent so pressing right on a
+	# rail running left slows you, and neither does anything on a vertical one.
+	var lean := Input.get_axis("move_left", "move_right")
+	if lean != 0.0:
+		_rail_speed += Vector2(lean, 0.0).dot(tangent) * rail_push * delta
+	_rail_speed = move_toward(_rail_speed, 0.0, rail_friction * delta)
+	_rail_speed = clampf(_rail_speed, -max_rail_speed, max_rail_speed)
+
+	_rail_offset += _rail_speed * delta
+
+	# Off the end, still moving: keep going, now as a projectile. This is the
+	# payoff -- the rail decides the direction and you keep the speed.
+	var span := current_rail.length()
+	if _rail_offset <= 0.0 or _rail_offset >= span:
+		_rail_offset = clampf(_rail_offset, 0.0, span)
+		global_position = current_rail.point_at(_rail_offset)
+		_dismount(current_rail.tangent_at(_rail_offset) * _rail_speed)
+		return
+
+	global_position = current_rail.point_at(_rail_offset)
+	# Kept truthful so anything asking what the player is doing -- the camera's
+	# lookahead, the HUD, a grab -- gets a real answer without knowing about
+	# rails.
+	velocity = tangent * _rail_speed
+	# Rolling, not sliding.
+	rotation += (_rail_speed / maxf(sprite_radius, 1.0)) * delta
+
+
+## Latch on. Only the speed already pointing along the rail is kept in full.
+##
+## The rest is scaled by rail_momentum_retention, and that asymmetry IS the
+## mechanic: drop straight down onto a horizontal rail and almost everything is
+## thrown away, but come in shallow along its line and you keep nearly all of
+## it. Aiming the release is what a rail asks of you.
+func mount_rail(rail: Rail, offset: float) -> void:
+	var tangent := rail.tangent_at(offset)
+	var speed := velocity.length()
+	var along := velocity.dot(tangent)
+
+	var dir := signf(along)
+	if dir == 0.0:
+		# Arrived exactly across the rail, so it has no opinion. Use intent,
+		# then which way the rail runs, the same fallback order as a grab.
+		var aim := Input.get_axis("move_left", "move_right")
+		dir = signf(aim) if aim != 0.0 else (signf(tangent.x) if tangent.x != 0.0 else 1.0)
+
+	var retained: float = lerpf(absf(along), speed, rail_momentum_retention)
+	_rail_speed = clampf(dir * retained, -max_rail_speed, max_rail_speed)
+	_rail_offset = clampf(offset, 0.0, rail.length())
+
+	current_rail = rail
+	state = State.GRINDING
+	global_position = rail.point_at(_rail_offset)
+	velocity = tangent * _rail_speed
+	_grab_buffer = 0.0
+	_jump_buffer = 0.0
+	_was_on_floor = false
+	_whiff = 0.0
+	_squash = 0.6
+	_squash_normal = tangent.orthogonal()
+	_set_target(null)
+	mounted.emit(rail, speed)
+
+
+func _dismount(launch: Vector2) -> void:
+	var rail := current_rail
+	var speed := _rail_speed
+	current_rail = null
+	state = State.FREE
+	velocity = launch
+	_rail_speed = 0.0
+	# Without this the rail you just left catches you again on the way past.
+	_rail_lockout = rail_remount_lockout
+	# A fall is measured from where you stopped being supported, and a rail
+	# supports you -- so the drop off the end starts here, not wherever you
+	# last touched rock.
+	_fall_start_y = global_position.y
+	peak_height = global_position.y
+	if rail != null and is_instance_valid(rail):
+		dismounted.emit(rail, speed)
+
+
+## The rail close enough to land on, or null. Distance is to the curve itself,
+## so a long rail is no harder to catch than a short one.
+func _find_rail() -> Dictionary:
+	var best := {}
+	var best_distance: float = sprite_radius + rail_catch
+	for node in get_tree().get_nodes_in_group("rails"):
+		var rail := node as Rail
+		if rail == null or rail.length() <= 0.0:
+			continue
+		var hit: Dictionary = rail.nearest(global_position)
+		if hit["distance"] <= best_distance:
+			best_distance = hit["distance"]
+			best = {"rail": rail, "offset": hit["offset"]}
+	return best
+
+
 func _tangent() -> Vector2:
 	return Vector2(cos(angle), -sin(angle))
 
@@ -674,6 +860,10 @@ func nearest_vine_distance() -> float:
 
 func reset_at(pos: Vector2) -> void:
 	state = State.FREE
+	current_rail = null
+	_rail_speed = 0.0
+	_rail_offset = 0.0
+	_rail_lockout = 0.0
 	current_vine = null
 	_last_vine = null
 	_lockout_timer = 0.0
@@ -737,6 +927,21 @@ func _draw() -> void:
 	if state == State.SWINGING:
 		draw_line(Vector2(-6, -4), Vector2(-3, -sprite_radius - 4), outline, 3.0)
 		draw_line(Vector2(6, -4), Vector2(3, -sprite_radius - 4), outline, 3.0)
+
+	# Sparks off the back of a grind, trailing the way you came and longer the
+	# faster you are going. Drawn rather than a particle node because they last
+	# one frame and only exist while a state is active.
+	if state == State.GRINDING and absf(_rail_speed) > 120.0:
+		var back := -signf(_rail_speed) * Vector2.RIGHT.rotated(velocity.angle() - rotation)
+		var heat: float = clampf(absf(_rail_speed) / max_rail_speed, 0.0, 1.0)
+		for i in range(3):
+			var spread := back.rotated((float(i) - 1.0) * 0.45)
+			draw_line(
+				spread * sprite_radius,
+				spread * (sprite_radius + 10.0 + heat * 30.0 * (1.0 - absf(float(i) - 1.0) * 0.4)),
+				Color(1.0, 0.85 - heat * 0.35, 0.35, 0.35 + heat * 0.5),
+				2.0, true
+			)
 
 
 ## Squash along the impact normal, stretch across it: rotate the squash axis

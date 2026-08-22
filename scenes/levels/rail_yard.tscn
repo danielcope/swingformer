@@ -1,0 +1,118 @@
+[gd_scene load_steps=11 format=3]
+
+[ext_resource type="Script" path="res://scripts/hand_built_level.gd" id="1_level"]
+[ext_resource type="PackedScene" path="res://scenes/shaft.tscn" id="2_shaft"]
+[ext_resource type="PackedScene" path="res://scenes/vine.tscn" id="4_vine"]
+[ext_resource type="PackedScene" path="res://scenes/rail.tscn" id="5_rail"]
+[ext_resource type="PackedScene" path="res://scenes/ledge.tscn" id="6_ledge"]
+[ext_resource type="PackedScene" path="res://scenes/summit.tscn" id="7_summit"]
+
+[sub_resource type="Curve2D" id="Curve2D_0"]
+resource_local_to_scene = true
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2000, 190)
+}
+point_count = 2
+
+[sub_resource type="Curve2D" id="Curve2D_1"]
+resource_local_to_scene = true
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 0.0, 0.0, 0, 0, 0, 0, 31.4, 1.2, 0, 0, 0, 0, 62.6, 4.9, 0, 0, 0, 0, 93.4, 11.1, 0, 0, 0, 0, 123.6, 19.6, 0, 0, 0, 0, 153.1, 30.4, 0, 0, 0, 0, 181.6, 43.6, 0, 0, 0, 0, 209.0, 58.9, 0, 0, 0, 0, 235.1, 76.4, 0, 0, 0, 0, 259.8, 95.8, 0, 0, 0, 0, 282.8, 117.2, 0, 0, 0, 0, 304.2, 140.2, 0, 0, 0, 0, 323.6, 164.9, 0, 0, 0, 0, 341.1, 191.0, 0, 0, 0, 0, 356.4, 218.4, 0, 0, 0, 0, 369.6, 246.9, 0, 0, 0, 0, 380.4, 276.4, 0, 0, 0, 0, 388.9, 306.6, 0, 0, 0, 0, 395.1, 337.4, 0, 0, 0, 0, 398.8, 368.6, 0, 0, 0, 0, 400.0, 400.0)
+}
+point_count = 21
+
+[sub_resource type="Curve2D" id="Curve2D_2"]
+resource_local_to_scene = true
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 0.0, 0.0, 0, 0, 0, 0, 80.0, 46.9, 0, 0, 0, 0, 160.0, 92.7, 0, 0, 0, 0, 240.0, 136.2, 0, 0, 0, 0, 320.0, 176.3, 0, 0, 0, 0, 400.0, 212.1, 0, 0, 0, 0, 480.0, 242.7, 0, 0, 0, 0, 560.0, 267.3, 0, 0, 0, 0, 640.0, 285.3, 0, 0, 0, 0, 720.0, 296.3, 0, 0, 0, 0, 800.0, 300.0, 0, 0, 0, 0, 880.0, 296.3, 0, 0, 0, 0, 960.0, 285.3, 0, 0, 0, 0, 1040.0, 267.3, 0, 0, 0, 0, 1120.0, 242.7, 0, 0, 0, 0, 1200.0, 212.1, 0, 0, 0, 0, 1280.0, 176.3, 0, 0, 0, 0, 1360.0, 136.2, 0, 0, 0, 0, 1440.0, 92.7, 0, 0, 0, 0, 1520.0, 46.9, 0, 0, 0, 0, 1600.0, 0.0)
+}
+point_count = 21
+
+[sub_resource type="Curve2D" id="Curve2D_3"]
+resource_local_to_scene = true
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 700, 90, 0, 0, 0, 0, 1250, -300)
+}
+point_count = 3
+
+[node name="RailYard" type="Node2D"]
+script = ExtResource("1_level")
+
+[node name="Shaft" parent="." instance=ExtResource("2_shaft")]
+width = 8400.0
+height = 3200.0
+
+[node name="Rails" type="Node2D" parent="."]
+
+[node name="Vines" type="Node2D" parent="."]
+
+[node name="Ledges" type="Node2D" parent="."]
+
+[node name="Straightaway" parent="Rails" instance=ExtResource("5_rail")]
+position = Vector2(950, -1450)
+curve = SubResource("Curve2D_0")
+
+[node name="QuarterPipe" parent="Rails" instance=ExtResource("5_rail")]
+position = Vector2(3050, -1850)
+curve = SubResource("Curve2D_1")
+
+[node name="Dipper" parent="Rails" instance=ExtResource("5_rail")]
+position = Vector2(-1500, -560)
+curve = SubResource("Curve2D_2")
+
+[node name="Kicker" parent="Rails" instance=ExtResource("5_rail")]
+position = Vector2(500, -700)
+curve = SubResource("Curve2D_3")
+
+[node name="VineA" parent="Vines" instance=ExtResource("4_vine")]
+position = Vector2(-2280, -700)
+length = 200.0
+
+[node name="VineB" parent="Vines" instance=ExtResource("4_vine")]
+position = Vector2(-1800, -1010)
+length = 230.0
+
+[node name="VineC" parent="Vines" instance=ExtResource("4_vine")]
+position = Vector2(-1250, -1320)
+length = 240.0
+
+[node name="VineD" parent="Vines" instance=ExtResource("4_vine")]
+position = Vector2(-650, -1630)
+length = 250.0
+
+[node name="VineE" parent="Vines" instance=ExtResource("4_vine")]
+position = Vector2(0, -1930)
+length = 250.0
+
+[node name="VineF" parent="Vines" instance=ExtResource("4_vine")]
+position = Vector2(700, -2180)
+length = 240.0
+
+[node name="VineG" parent="Vines" instance=ExtResource("4_vine")]
+position = Vector2(1500, -2400)
+length = 230.0
+
+[node name="VineH" parent="Vines" instance=ExtResource("4_vine")]
+position = Vector2(2400, -2250)
+length = 230.0
+
+[node name="VineJ" parent="Vines" instance=ExtResource("4_vine")]
+position = Vector2(3100, -2000)
+length = 220.0
+
+[node name="Perch" parent="Ledges" instance=ExtResource("6_ledge")]
+position = Vector2(-2400, -300)
+width = 420.0
+is_bough = true
+
+[node name="EastDeck" parent="Ledges" instance=ExtResource("6_ledge")]
+position = Vector2(3500, -1500)
+width = 520.0
+is_bough = true
+
+[node name="StartPoint" type="Marker2D" parent="."]
+position = Vector2(-2400, -420)
+
+[node name="Summit" parent="." instance=ExtResource("7_summit")]
+position = Vector2(3500, -1700)
+width = 900.0

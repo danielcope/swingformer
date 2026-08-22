@@ -287,6 +287,8 @@ func _initialize() -> void:
 					else "(timing matters)" if pct > 40.0
 					else "*** mostly out of play ***")])
 
+	_report_rails(level, vines, reach)
+
 	level.free()
 	p.free()
 	quit()
@@ -331,6 +333,55 @@ func _landing_below(level: Node, from: Vector2) -> float:
 			best = minf(best, floor_y)
 
 	return best if best < INF else from.y
+
+
+## Rails, and deliberately NOT as edges in the reachability graph.
+##
+## It is tempting to treat a rail as a link between the vines at either end, and
+## it would be wrong in both directions. Riding one needs enough speed to get
+## where you are going -- uphill spends v^2/2g of it and the model has no idea
+## how fast you arrive -- so scoring rails as free links would invent routes that
+## do not exist. Scoring them as nothing says the tower is harder than it is.
+##
+## So this prints what is there and leaves the judgement to you. The number that
+## matters is the drop: a rail that loses height is a shortcut you PAY for, which
+## is the honest way to use one in a tower that is otherwise all climbing.
+func _report_rails(level: Node, vines: Array, reach: float) -> void:
+	var rails := level.find_children("*", "Rail", true, false)
+	if rails.is_empty():
+		return
+
+	print("
+%d rail(s) -- not counted as routes above, see the note in the source:" % rails.size())
+	for node in rails:
+		var rail := node as Rail
+		var span: float = rail.length()
+		if span <= 0.0:
+			print("  %-12s *** no curve, so nothing to ride ***" % rail.name)
+			continue
+		var from: Vector2 = rail.point_at(0.0)
+		var to: Vector2 = rail.point_at(span)
+		var drop: float = to.y - from.y
+		print("  %-12s %5.0f px long, %6.1f m -> %6.1f m (%s %.0f px)  ends %s / %s"
+			% [rail.name, span, -from.y / 64.0, -to.y / 64.0,
+				("drops" if drop > 0.0 else "climbs"), absf(drop),
+				_nearest_vine(vines, from, reach), _nearest_vine(vines, to, reach)])
+
+
+## What is within grabbing distance of a rail end, since getting on and off is
+## the part a rail cannot do for you.
+func _nearest_vine(vines: Array, at: Vector2, reach: float) -> String:
+	var best := INF
+	var best_name := ""
+	for v in vines:
+		for spot in v["spots"]:
+			var d: float = at.distance_to(spot)
+			if d < best:
+				best = d
+				best_name = v["name"]
+	if best_name == "":
+		return "nothing"
+	return "%s %.0f%s" % [best_name, best, ("" if best <= reach else " (far)")]
 
 
 ## The cheapest way to the top at a given fraction of the pump cap, as vine

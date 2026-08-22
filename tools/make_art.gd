@@ -39,6 +39,7 @@ func _initialize() -> void:
 	_grain("res://art/moss.png", 64, 0.22)
 	_leaf()
 	_ice()
+	_rail()
 	_atlas()
 
 	print("art written to res://art -- now run: godot --headless --path . --import")
@@ -262,3 +263,28 @@ func _ice() -> void:
 				v -= 0.1
 			img.set_pixel(x, y, Color(v, v, v, 1.0))
 	_save(img, "res://art/ice.png")
+
+
+## A length of grind rail, for Line2D in TEXTURE_TILE mode -- same arrangement
+## as the vine rope, so the texture is the bar's cross-section and it repeats
+## along however long the rail is.
+##
+## White, like everything else the game recolours, so a rail can be tinted per
+## level without the metal going green.
+func _rail() -> void:
+	var img := _img(TILE, TILE)
+	for y in range(TILE):
+		for x in range(TILE):
+			# x runs across the bar. Bright along the top third, falling to dark
+			# underneath, which is what makes a flat strip read as a round bar.
+			var t := float(x) / float(TILE - 1)
+			var v: float = 0.45 + 0.55 * pow(1.0 - t, 0.7)
+			if t < 0.18:
+				v = 1.0                                  # the lit highlight
+			elif t > 0.86:
+				v = 0.28                                 # the shadowed underside
+			# Faint bands down its length so speed is legible when it blurs past.
+			if int(posmod(float(y), 8.0)) == 0:
+				v *= 0.9
+			img.set_pixel(x, y, Color(v, v, v, 1.0))
+	_save(img, "res://art/rail.png")

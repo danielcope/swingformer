@@ -123,6 +123,7 @@ a different level and that is the whole switch.
 | `slippery.tscn` | Drop it **under** a block or ledge and its surface stops gripping. See below. |
 | `shaft.tscn` | The walls and floor, sized by `width` / `height`. |
 | `art/terrain.tres` | The `TileSet` for the `Terrain` layer. Paint into it with Godot's tile editor. |
+| `rail.tscn` | A **grind rail**. Land on it and ride it. It is a `Path2D`, so draw the curve with Godot's own path tools. |
 | `summit.tscn` | Win trigger. Put it where the climb ends. |
 
 ### Changing how a ledge looks
@@ -625,3 +626,46 @@ banded across the shaft.
 - Wind or swaying anchors at altitude, to make the upper biomes bite.
 - Replace the `_draw` placeholders with sprites; `background.gd`'s `LAYERS`
   array is built to swap one-for-one with textures.
+
+
+## Grind rails
+
+Swing at one, land on it, ride it, get flung off the end. Rails are `Path2D`
+nodes, so you draw the curve with Godot's path tool — straight, curved, a dip, a
+kicker that ends tilted up. There is a playground at
+`scenes/levels/rail_yard.tscn`: point `game.gd`'s `level_scene` at it.
+
+**Rails are the one thing that breaks the tower's main rule, on purpose.** The
+climb is long because crossing the shaft cheaply is impossible: release at
+1740 px/s, cross 2000 px, and you have been airborne 1.15 s and fallen nearly
+1000 px, because the reachable ceiling falls off as the *square* of the
+distance. A flat rail crosses any gap for the price of friction. So place one
+like a bait — it is the fast line, and the fall off the end should hurt.
+
+**A rail cannot make height.** Gravity acts along the curve, exactly as it does
+on a bead threaded on a wire, so downhill buys speed at the same rate uphill
+spends it. Ride a dip and you come out at the speed you went in, less friction.
+No arrangement of rails is a free lift, and `test/rail.gd` asserts it: at no
+point in any ride may `v²/2 + g·h` exceed what you arrived with. The uphill case
+throws 600 px/s at a 300 px ramp — worth only 120 px of climb — and checks that
+the player stalls and slides back.
+
+What a rail *does* is convert. A 1900 px/s fall is worth nothing sideways, and a
+quarter-pipe turns it into 1900 px/s of sideways, keeping 98% of the energy.
+Same energy, completely different value — the same trade the timed bounce
+already offers.
+
+**Entry angle is the skill.** Only the component of your velocity *along* the
+rail survives in full; the rest is scaled by `rail_momentum_retention` (0.35).
+Measured: 1200 px/s thrown along a rail enters at 1200, and the same 1200 px/s
+dropped straight onto it enters at 516. Aim the release, not just the landing.
+
+Riding: lean with `A`/`D` to nudge your speed, `Space` to hop off with the
+ride's speed plus a jump, `Left click` to leave for a vine — the rail's speed
+goes into the grab, so a fast ride becomes a fast swing. Run off either end and
+you keep going as a projectile, aimed along the rail.
+
+`check_level` lists rails and their drop but does **not** count them as routes,
+and that is deliberate: riding one needs enough speed to get where you are
+going, and the model has no idea how fast you arrive, so scoring rails as free
+links would invent routes that do not exist.
