@@ -2,10 +2,12 @@
 .godot/
 /android/
 
-# Godot export artifacts
-/build/
+# Export output. Rebuild with: gd build
+/builds/*
+!/builds/.gdignore
 /export/
 *.translation
 
-# Claude Code machine-local settings
-.claude/settings.local.json
+# Local editor/tooling config -- machine-specific absolute paths.
+/.claude/settings.local.json
+/.claude/launch.json

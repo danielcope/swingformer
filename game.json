@@ -1,0 +1,143 @@
+{
+  "$schema": "../gamedev/schema/game.schema.json",
+  "name": "swingformer",
+  "title": "swingformer",
+  "godot": "4.7.1",
+  "checks": [
+    {
+      "name": "ascent_envelope",
+      "kind": "script",
+      "target": "res://test/ascent_envelope.gd",
+      "fail_pattern": "NEVER SETTLED|  FAIL"
+    },
+    {
+      "name": "grab_feel",
+      "kind": "script",
+      "target": "res://test/grab_feel.gd",
+      "fail_pattern": "NEVER SETTLED|  FAIL"
+    },
+    {
+      "name": "moving_vine",
+      "kind": "scene",
+      "target": "res://test/moving_vine.tscn",
+      "quit_after": 12000,
+      "fail_pattern": "NEVER SETTLED|  FAIL"
+    },
+    {
+      "name": "rail",
+      "kind": "scene",
+      "target": "res://test/rail.tscn",
+      "quit_after": 12000,
+      "fail_pattern": "NEVER SETTLED|  FAIL"
+    },
+    {
+      "name": "ice_climb",
+      "kind": "scene",
+      "target": "res://test/ice_climb.tscn",
+      "quit_after": 12000,
+      "fail_pattern": "NEVER SETTLED|  FAIL"
+    },
+    {
+      "name": "ledge_catch",
+      "kind": "scene",
+      "target": "res://test/ledge_catch.tscn",
+      "quit_after": 900,
+      "fail_pattern": "NEVER SETTLED|  FAIL"
+    },
+    {
+      "name": "bounce",
+      "kind": "scene",
+      "target": "res://test/bounce.tscn",
+      "quit_after": 26000,
+      "fail_pattern": "NEVER SETTLED|  FAIL"
+    },
+    {
+      "name": "autopilot",
+      "kind": "scene",
+      "target": "res://test/autopilot.tscn",
+      "quit_after": 10000,
+      "fail_pattern": "NEVER SETTLED|  FAIL"
+    },
+    {
+      "name": "fall_lines",
+      "kind": "scene",
+      "target": "res://test/fall_lines.tscn",
+      "quit_after": 30000,
+      "fail_pattern": "NEVER SETTLED|  FAIL"
+    },
+    {
+      "name": "solidity",
+      "kind": "scene",
+      "target": "res://test/solidity.tscn",
+      "quit_after": 10000,
+      "fail_pattern": "NEVER SETTLED|  FAIL"
+    },
+    {
+      "name": "mover",
+      "kind": "scene",
+      "target": "res://test/mover.tscn",
+      "quit_after": 14000,
+      "fail_pattern": "NEVER SETTLED|  FAIL"
+    },
+    {
+      "name": "opening",
+      "kind": "scene",
+      "target": "res://test/opening.tscn",
+      "quit_after": 6000,
+      "fail_pattern": "NEVER SETTLED|  FAIL"
+    },
+    {
+      "name": "slippery",
+      "kind": "scene",
+      "target": "res://test/slippery.tscn",
+      "quit_after": 9000,
+      "fail_pattern": "NEVER SETTLED|  FAIL"
+    },
+    {
+      "name": "tiles",
+      "kind": "scene",
+      "target": "res://test/tiles.tscn",
+      "quit_after": 20000,
+      "fail_pattern": "NEVER SETTLED|  FAIL"
+    },
+    {
+      "name": "level_lint",
+      "kind": "script",
+      "target": "res://tools/check_level.gd",
+      "args": [
+        "res://scenes/levels/tower_01.tscn"
+      ]
+    }
+  ],
+  "shots": [],
+  "export": {
+    "dir": "builds",
+    "targets": [
+      {
+        "preset": "Web",
+        "channel": "html5",
+        "out": "index.html"
+      }
+    ]
+  },
+  "itch": {
+    "user": "ferdner",
+    "game": "swingformer",
+    "viewport": "1280x720"
+  },
+  "linear": {
+    "team": "HEC",
+    "project": "swingformer"
+  },
+  "art": {
+    "preset": "swingformer",
+    "filter": "nearest"
+  },
+  "layout": {
+    "scripts": "scripts/",
+    "scenes": "scenes/, scenes/levels/tower_*.tscn (baked by tools/bake_level.gd)",
+    "art": "art/ — generated white placeholders (tools/make_art.gd), art/terrain.tres (tools/make_tileset.gd)",
+    "tests": "test/*.gd (--script) and test/*.tscn (--quit-after); all listed in game.json",
+    "tools": "tools/ — make_art, make_tileset, bake_level, tiles_from_blocks, check_level, lay_route"
+  }
+}
