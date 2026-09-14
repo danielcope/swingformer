@@ -109,7 +109,18 @@
       ]
     }
   ],
-  "shots": [],
+  "shots": [
+    {
+      "name": "screens",
+      "kind": "script",
+      "target": "res://tools/shot.gd",
+      "args": [
+        "--out",
+        "{out}"
+      ],
+      "timeout": 300
+    }
+  ],
   "export": {
     "dir": "builds",
     "targets": [

@@ -56,5 +56,6 @@ depend on a script running.
 | `mover`, `opening`, `slippery`, `tiles` | scene | platforms carry; the climb can be started; ice refuses to hold; a tile is indistinguishable from the Block it replaces |
 | `level_lint` | script | `tower_01` has no dead ends or null scripts |
 
-No shot harness yet — add `tools/shot.gd` from `gamedev/templates/tools/` and
-list `scenes/levels/tower_01.tscn` in it.
+`tools/shot.gd` photographs `main.tscn` (the `climb` shot). Not a bare
+`scenes/levels/tower_NN.tscn`, which was the obvious idea and is wrong: a baked
+level carries no camera and no player, so it renders as two flat bands.
