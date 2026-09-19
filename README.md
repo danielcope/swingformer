@@ -12,7 +12,7 @@ in would multiply twice and go muddy. Swap the PNGs for real art and nothing in
 the code has to change.
 
 ```bash
-godot --path .
+gd run
 ```
 
 **Controls** — `Left click` grab & release · `Space` jump · `A`/`D` pump the
@@ -22,6 +22,12 @@ The **timed bounce** is on `Space`: press it just as you land for a bigger
 rebound. "Push off as you land" is what jump already means on the ground, so the
 airborne version needs no explaining — and it leaves the click meaning only
 "reach".
+
+**Where the rest is written down** — the rules of the game as they stand:
+[`docs/DESIGN.md`](docs/DESIGN.md). Open work: [`docs/BACKLOG.md`](docs/BACKLOG.md),
+with specs in [`docs/features/`](docs/features/). How to work in the repo and
+run the gate (`gd check`): [`AGENTS.md`](AGENTS.md). This README is the long
+form of the physics and of building levels.
 
 ## The one thing to understand
 
@@ -352,7 +358,8 @@ to be. `Vine.EDITOR_GRAB_REACH` mirrors `Player.grab_reach`; change both togethe
 ### Check a level before you play it
 
 ```bash
-godot --headless --path . --script res://tools/check_level.gd -- res://scenes/levels/tower_01.tscn
+gd check -Only level_lint     # tower_01, as the gate runs it
+godot --headless --path . --script res://tools/check_level.gd -- res://scenes/levels/tower_02.tscn   # any other tower
 ```
 
 A reachability linter. It answers the question you actually have — *which vine
@@ -409,6 +416,10 @@ when a `Block` sits across it.
 ```bash
 godot --headless --path . --script res://tools/bake_level.gd -- --tiers 14 --out res://scenes/levels/tower_02.tscn
 ```
+
+This one is the bare Godot binary on purpose: `gd run` puts everything you
+pass after `--` behind Godot's own `--`, so `--script` arrives as a user
+argument and the game opens instead of the tool running.
 
 Runs the tuned generator once and dumps it to an editable scene, so you never
 start from an empty canvas. Everything it emits is a plain node with plain
@@ -535,12 +546,13 @@ lever. `bough_every` is how forgiving the climb is. `anchor_margin` must exceed
 ## Harnesses
 
 ```bash
-godot --headless --path . --script res://test/ascent_envelope.gd
-godot --headless --path . --script res://test/grab_feel.gd
-godot --headless --path . res://test/ledge_catch.tscn --quit-after 900
-godot --headless --path . res://test/bounce.tscn --quit-after 26000
-godot --headless --path . res://test/autopilot.tscn --quit-after 10000
-godot --headless --path . res://test/fall_lines.tscn --quit-after 30000
+gd check                      # all of them, as the gate runs them
+gd check -Only ascent_envelope
+gd check -Only grab_feel
+gd check -Only ledge_catch
+gd check -Only bounce
+gd check -Only autopilot
+gd check -Only fall_lines
 ```
 
 - **ascent_envelope** — solves the release physics. Re-run after changing
@@ -619,14 +631,6 @@ Its per-tier coverage audit is the more reliable signal, and it caught a real
 bug: independently-drawn ledge positions clump (two ledges 60px apart, both on
 the same side, reporting "29% coverage" over an open chute), so ledges are now
 banded across the shaft.
-
-## Next up
-
-- Hazards, moving anchors, ropes that fray or detach under load.
-- Wind or swaying anchors at altitude, to make the upper biomes bite.
-- Replace the `_draw` placeholders with sprites; `background.gd`'s `LAYERS`
-  array is built to swap one-for-one with textures.
-
 
 ## Grind rails
 

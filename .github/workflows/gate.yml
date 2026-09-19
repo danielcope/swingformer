@@ -1,0 +1,45 @@
+# The gate, in CI. Same `gd check` as local (RULES.md section 3), run inside
+# the gamedev image (gamedev/image/) - the same Godot, pwsh and display stack as
+# `gd check -Image` on Daniel's PC and Cowork's Linux shell. The harness is
+# checked out beside the game exactly as it sits on disk.
+# Needs repo secret GAMEDEV_TOKEN: fine-grained PAT, read-only Contents on
+# danielcope/gamedev. Keep the image tag equal to .godot-version.
+name: gate
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: gate-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    container:
+      image: ghcr.io/danielcope/gamedev-godot:4.7.1
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: game
+          lfs: true
+
+      - uses: actions/checkout@v4
+        with:
+          repository: danielcope/gamedev
+          token: ${{ secrets.GAMEDEV_TOKEN }}
+          path: gamedev
+
+      - name: image matches the game's Godot
+        run: |
+          want="$(tr -d '[:space:]' < game/.godot-version)"
+          have="$(godot --version | grep -o '^[0-9.]*' | sed 's/\.$//')"
+          [ "$want" = "$have" ] || { echo "image has Godot $have, game wants $want - bump the image tag in this workflow"; exit 1; }
+
+      - name: gd check
+        shell: pwsh
+        run: ./gamedev/bin/gd.ps1 check -Project "$env:GITHUB_WORKSPACE/game"
