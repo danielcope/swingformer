@@ -53,8 +53,14 @@ a few seconds.
 - **Ledges are one-way.** You rise through them and land on top; you cannot
   fall back through. Ledges sit where swings need to pass, and a solid one
   would knock you off the only swing available. Blocks are the solid piece.
-- **Bounce never returns more than it received.** A bounce that adds energy
-  turns the tower into a trampoline and the climb stops being a climb.
+- **Bouncing cannot climb the tower.** A plain bounce returns a fraction of
+  the impact. The perfect bounce always returns less than it received (its
+  break-even speed sits below the speed that unlocks it). The timed bounce is
+  a flat impulse on top of the restitution, so on a slow landing it returns
+  *more* than it received — but repeated, it converges to a fixed point
+  (about 844 px/s, a 238 px hop) well under a tier. A bounce that could
+  escalate turns the tower into a trampoline and the climb stops being a
+  climb. `test/bounce.gd` asserts both.
 - **`pump_accel > gravity / max_rope_length`.** Below that ratio pumping
   cannot beat gravity, a swing can never reach horizontal, and horizontal is
   where the launch is.
@@ -102,14 +108,16 @@ a circle around the anchor, with `velocity` kept truthful so release works.
   the ball just stops, so you can stand, walk and line up a jump. Bounces
   always decay to rest. Walls are springier than floors, so the shaft edges
   send you back into play.
-- **The timed bounce:** a jump press that finds no vine becomes a boosted
-  bounce on landing. Three tiers — plain, timed (inside the buffer), perfect
+- **The timed bounce:** a `Space` press buffered just before landing (jump
+  never looks for vines — that is the click) becomes a boosted bounce. Three
+  tiers — plain, timed (inside the buffer), perfect
   (inside a tight window while genuinely falling fast). The perfect bounce is
   the save: nail it off a bad fall and you get most of the height back.
 - The timed boost is a flat impulse, never a multiplier — a multiplier
   refunds a fall in proportion to its size and erases the mistake.
-- The perfect tier's break-even speed sits below the speed that unlocks it,
-  so it always loses a little; repeated timed bounces cannot climb a tier.
+- The perfect tier always loses a little at every speed it is available;
+  repeated timed bounces settle at their fixed point and cannot climb a tier
+  (see *The rules that define it*).
 - A tower wants a **spread** of punishments: bait lines whose fall costs far
   more than the safe line they skip, with laterally separate fall corridors. A
   horizontal slab with no hole in it is a safety net nobody meant to build.
@@ -118,8 +126,11 @@ a circle around the anchor, with `velocity` kept truthful so release works.
 
 A rail is a `Path2D` you land on and ride, and the one piece that breaks the
 tower's "crossing the shaft is expensive" rule on purpose — place it like a
-bait. Gravity acts along the curve, so **a rail cannot make height**: at no
-point may energy exceed what you arrived with. What a rail does is convert
+bait. Gravity acts along the curve and friction is the only other force, so
+**a rail ridden without leaning cannot make height**: at no point may energy
+exceed what you arrived with (`test/rail.gd`, which does not lean). Leaning
+is the exception: its push is stronger than the rail's friction, so a lean
+along the rail adds speed, capped by the maximum rail speed. What a rail does is convert
 (a fall into sideways speed). Only the velocity component along the rail
 survives in full, so entry angle is the skill. Lean to nudge speed, `Space`
 hops off, `Left click` leaves for a vine carrying the ride's speed.
@@ -154,9 +165,10 @@ hops off, `Left click` leaves for a vine carrying the ride's speed.
 
 Deliberately sparse: current height, best height (never goes down), the drop
 to the bough below once there is something to lose, and a brief "-N m" after
-a real fall. The one celebration is "PERFECT BOUNCE". Altitude is also legible
+a real fall. The one celebration is "PERFECT BOUNCE"; reaching the Summit
+shows "SUMMIT" and the best height. Altitude is also legible
 without the number: a height-keyed biome palette (Undergrowth, Canopy, The
-Cliffs, …) bleeds from band to band.
+Cliffs, …) bleeds from band to band, and the HUD names the current band.
 
 ### Art and audio
 

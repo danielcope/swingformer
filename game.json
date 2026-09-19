@@ -8,97 +8,97 @@
       "name": "ascent_envelope",
       "kind": "script",
       "target": "res://test/ascent_envelope.gd",
-      "fail_pattern": "NEVER SETTLED|  FAIL"
+      "fail_pattern": "NEVER SETTLED|\\*\\*\\*"
     },
     {
       "name": "grab_feel",
       "kind": "script",
       "target": "res://test/grab_feel.gd",
-      "fail_pattern": "NEVER SETTLED|  FAIL"
+      "fail_pattern": "NEVER SETTLED|\\*\\*\\*"
     },
     {
       "name": "moving_vine",
       "kind": "scene",
       "target": "res://test/moving_vine.tscn",
       "quit_after": 12000,
-      "fail_pattern": "NEVER SETTLED|  FAIL"
+      "fail_pattern": "NEVER SETTLED|\\*\\*\\*"
     },
     {
       "name": "rail",
       "kind": "scene",
       "target": "res://test/rail.tscn",
       "quit_after": 12000,
-      "fail_pattern": "NEVER SETTLED|  FAIL"
+      "fail_pattern": "NEVER SETTLED|\\*\\*\\*"
     },
     {
       "name": "ice_climb",
       "kind": "scene",
       "target": "res://test/ice_climb.tscn",
       "quit_after": 12000,
-      "fail_pattern": "NEVER SETTLED|  FAIL"
+      "fail_pattern": "NEVER SETTLED|\\*\\*\\*"
     },
     {
       "name": "ledge_catch",
       "kind": "scene",
       "target": "res://test/ledge_catch.tscn",
       "quit_after": 900,
-      "fail_pattern": "NEVER SETTLED|  FAIL"
+      "fail_pattern": "NEVER SETTLED|\\*\\*\\*"
     },
     {
       "name": "bounce",
       "kind": "scene",
       "target": "res://test/bounce.tscn",
       "quit_after": 26000,
-      "fail_pattern": "NEVER SETTLED|  FAIL"
+      "fail_pattern": "NEVER SETTLED|\\*\\*\\*"
     },
     {
       "name": "autopilot",
       "kind": "scene",
       "target": "res://test/autopilot.tscn",
       "quit_after": 10000,
-      "fail_pattern": "NEVER SETTLED|  FAIL"
+      "fail_pattern": "NEVER SETTLED|\\*\\*\\*"
     },
     {
       "name": "fall_lines",
       "kind": "scene",
       "target": "res://test/fall_lines.tscn",
       "quit_after": 30000,
-      "fail_pattern": "NEVER SETTLED|  FAIL"
+      "fail_pattern": "NEVER SETTLED|\\*\\*\\*"
     },
     {
       "name": "solidity",
       "kind": "scene",
       "target": "res://test/solidity.tscn",
       "quit_after": 10000,
-      "fail_pattern": "NEVER SETTLED|  FAIL"
+      "fail_pattern": "NEVER SETTLED|\\*\\*\\*"
     },
     {
       "name": "mover",
       "kind": "scene",
       "target": "res://test/mover.tscn",
       "quit_after": 14000,
-      "fail_pattern": "NEVER SETTLED|  FAIL"
+      "fail_pattern": "NEVER SETTLED|\\*\\*\\*"
     },
     {
       "name": "opening",
       "kind": "scene",
       "target": "res://test/opening.tscn",
       "quit_after": 6000,
-      "fail_pattern": "NEVER SETTLED|  FAIL"
+      "fail_pattern": "NEVER SETTLED|\\*\\*\\*"
     },
     {
       "name": "slippery",
       "kind": "scene",
       "target": "res://test/slippery.tscn",
       "quit_after": 9000,
-      "fail_pattern": "NEVER SETTLED|  FAIL"
+      "fail_pattern": "NEVER SETTLED|\\*\\*\\*"
     },
     {
       "name": "tiles",
       "kind": "scene",
       "target": "res://test/tiles.tscn",
       "quit_after": 20000,
-      "fail_pattern": "NEVER SETTLED|  FAIL"
+      "fail_pattern": "NEVER SETTLED|\\*\\*\\*"
     },
     {
       "name": "level_lint",
@@ -106,7 +106,8 @@
       "target": "res://tools/check_level.gd",
       "args": [
         "res://scenes/levels/tower_01.tscn"
-      ]
+      ],
+      "fail_pattern": "dead end\\(s\\)|NODE\\(S\\) WITH NO SCRIPT|UNREACHABLE START|unreachable from the start|UNREACHABLE --"
     }
   ],
   "shots": [
@@ -147,6 +148,6 @@
     "art": "art/ — generated white placeholders (tools/make_art.gd), art/terrain.tres (tools/make_tileset.gd)",
     "tests": "test/*.gd (--script) and test/*.tscn (--quit-after); all listed in game.json",
     "tools": "tools/ — make_art, make_tileset, bake_level, tiles_from_blocks, check_level, lay_route",
-    "docs": "docs/DESIGN.md (how it works), docs/BACKLOG.md (open work), docs/features/ (specs), README.md (the physics and level building, long form)"
+    "docs": "docs/DESIGN.md (how it works), docs/BACKLOG.md (open work), docs/features/ (specs), docs/DEPARTURES.md, README.md (the physics and level building, long form)"
   }
 }

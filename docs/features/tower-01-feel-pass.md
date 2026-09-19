@@ -1,6 +1,6 @@
 ---
 id: SWG-3
-status: design        # intent | design | planned | building | done | dropped
+status: intent        # intent | design | planned | building | done | dropped
 pr:
 ---
 
@@ -16,6 +16,14 @@ that happened to be baked first. The gate proves a lot about it already —
 started from a real spawn), `ledge_catch` / `bounce` / `fall_lines` /
 `solidity` / `mover` / `slippery` / `tiles` all pass. None of that says it is
 a good climb.
+
+Which of those actually look at `tower_01`: `level_lint` and `opening` load it
+directly, `autopilot` climbs whatever `main.tscn`'s `level_scene` points at,
+and `fall_lines` **hard-codes drop points in `tower_01`** (its sections and
+heights) — so reshaping or replacing the tower means rewriting those drops.
+`ledge_catch`, `bounce`, `solidity`, `mover`, `slippery`, `tiles`, `rail`,
+`ice_climb` and `moving_vine` build their own fixtures and say nothing about
+this tower.
 
 **Outcome** — One tuned tower a stranger can climb to the Summit and want to
 climb again.
@@ -33,6 +41,9 @@ tuned; more towers are out of scope.
 **Open questions** —
 
 ## Design
+_Not approved yet — the criteria below are from the original issue, not an
+approved design._
+
 Judged by playing. The tower is good when:
 
 - The difficulty ramps — the hardest move is not forty metres up with nothing

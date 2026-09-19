@@ -1,6 +1,6 @@
 ---
 id: SWG-1
-status: design        # intent | design | planned | building | done | dropped
+status: intent        # intent | design | planned | building | done | dropped
 pr:
 ---
 
@@ -11,7 +11,8 @@ pr:
 ## Intent
 **Problem** — There is no front door. `run/main_scene` is `scenes/main.tscn`,
 the climb itself, so a stranger lands in the tower with no name, no controls
-and no record in front of them. The controls exist only as the in-world hint
+and no record in front of them. The controls exist only as the HUD hint
+(the `Hint` label in `scenes/main.tscn`)
 ("LEFT CLICK grab / release · SPACE jump · A D pump · W S reel rope"), which
 works, but only once they are already falling. The best height on the HUD
 (`best  N m`) is session-only (`game.gd` `best_height`) and is lost when the
@@ -25,7 +26,7 @@ run can be started without quitting.
 
 **Touches** — a new title scene and `run/main_scene`; `scripts/game.gd`
 (`best_height`); the save (a `user://` file — dev tooling must use a sandbox
-path, RULES.md §3); `scripts/hud.gd` hint; `docs/DESIGN.md` *Core loop*.
+path, RULES.md §3); the `Hint` label in `scenes/main.tscn` (faded by `scripts/hud.gd`); `docs/DESIGN.md` *Core loop*.
 
 **Constraints** — Keep it plain. The game's whole appeal is momentum: a title
 screen with three lines and a number is right. Web build (itch): the save
@@ -39,10 +40,13 @@ mechanic — `kill()` does not exist (DESIGN.md).
   only?
 
 ## Design
-- The game opens on a title screen: the name, the controls, the best height
+_Proposals, not decisions — written on the move into the repo to restate the
+issue's outcome as rules. Daniel has not approved them._
+
+- (proposal) The game opens on a title screen: the name, the controls, the best height
   ever reached.
-- The best height persists across sessions and never goes down.
-- A fresh run can be started from inside the game without relaunching; it
+- (proposal) The best height persists across sessions and never goes down.
+- (proposal) A fresh run can be started from inside the game without relaunching; it
   starts at the tower's start point with the current height at zero and the
   record untouched.
 
