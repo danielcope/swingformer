@@ -23,6 +23,12 @@ rebound. "Push off as you land" is what jump already means on the ground, so the
 airborne version needs no explaining — and it leaves the click meaning only
 "reach".
 
+**Where the rest is written down** — the rules of the game as they stand:
+[`docs/DESIGN.md`](docs/DESIGN.md). Open work: [`docs/BACKLOG.md`](docs/BACKLOG.md),
+with specs in [`docs/features/`](docs/features/). How to work in the repo and
+run the gate (`gd check`): [`AGENTS.md`](AGENTS.md). This README is the long
+form of the physics and of building levels.
+
 ## The one thing to understand
 
 Solving the release physics (`test/ascent_envelope.gd`) gives the whole game:

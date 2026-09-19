@@ -136,10 +136,7 @@
     "game": "swingformer",
     "viewport": "1280x720"
   },
-  "linear": {
-    "team": "HEC",
-    "project": "swingformer"
-  },
+  "id_prefix": "SWG",
   "art": {
     "preset": "swingformer",
     "filter": "nearest"
@@ -149,6 +146,7 @@
     "scenes": "scenes/, scenes/levels/tower_*.tscn (baked by tools/bake_level.gd)",
     "art": "art/ — generated white placeholders (tools/make_art.gd), art/terrain.tres (tools/make_tileset.gd)",
     "tests": "test/*.gd (--script) and test/*.tscn (--quit-after); all listed in game.json",
-    "tools": "tools/ — make_art, make_tileset, bake_level, tiles_from_blocks, check_level, lay_route"
+    "tools": "tools/ — make_art, make_tileset, bake_level, tiles_from_blocks, check_level, lay_route",
+    "docs": "docs/DESIGN.md (how it works), docs/BACKLOG.md (open work), docs/features/ (specs), README.md (the physics and level building, long form)"
   }
 }

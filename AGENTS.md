@@ -34,6 +34,13 @@ depend on a script running.
   than it received. `pump_accel > gravity / max_rope_length`.
 - Keep `Vine.EDITOR_GRAB_REACH` equal to `Player.grab_reach`.
 
+## Where it's written down
+
+- How the game works: `docs/DESIGN.md` (+ canon docs in `game.json` `layout.docs`;
+  `README.md` has the physics and level building in long form)
+- Open work: `docs/BACKLOG.md` · features in progress: `docs/features/`
+- The loop (backlog → feature doc → branch → PR → review → merge): gamedev `WORKFLOW.md`
+
 ## Local gotchas
 
 - `--quit-after` must be large: headless idles faster than physics, and a
@@ -45,6 +52,11 @@ depend on a script running.
 - The Web preset used to have `variant/thread_support=true` and
   cross-origin-isolation on; that needs SharedArrayBuffer and fails on itch.
   Harness rule is threads **off**; the gate guards it.
+
+## Mistakes agents repeat
+
+_One line each: what goes wrong, what to do instead. Added the second time a
+mistake happens (gamedev `docs` skill). The reviewer checks these too._
 
 ## Harness
 
