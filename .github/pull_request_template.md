@@ -2,7 +2,7 @@
 
 <!-- One or two sentences. -->
 
-Backlog: <!-- ID --> · Feature doc: <!-- docs/features/<slug>.md or n/a -->
+Closes #<!-- issue number --> · Feature doc: <!-- docs/features/<slug>.md or n/a -->
 
 ## Why
 

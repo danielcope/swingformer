@@ -24,7 +24,7 @@ airborne version needs no explaining — and it leaves the click meaning only
 "reach".
 
 **Where the rest is written down** — the rules of the game as they stand:
-[`docs/DESIGN.md`](docs/DESIGN.md). Open work: [`docs/BACKLOG.md`](docs/BACKLOG.md),
+[`docs/DESIGN.md`](docs/DESIGN.md). Open work: [GitHub issues](https://github.com/danielcope/swingformer/issues),
 with specs in [`docs/features/`](docs/features/). How to work in the repo and
 run the gate (`gd check`): [`AGENTS.md`](AGENTS.md). This README is the long
 form of the physics and of building levels.

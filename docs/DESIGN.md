@@ -19,8 +19,8 @@ space you already climbed.
 level select, not a story, not unlocks. "Done" (the MVP bar) is that a
 stranger plays it start to end without explanation: reaches the top of one
 good tower and wants to try again. Placeholder art is fine; silence and dead
-ends are not. What stands between today and that bar is `docs/BACKLOG.md` Now
-and Next. More towers, unlocks, objectives and narrative framing are
+ends are not. What stands between today and that bar is in the GitHub issues.
+More towers, unlocks, objectives and narrative framing are
 deliberately **not** in the MVP — they were the alternative answers to "is the
 climb the game", and the answer was no.
 
@@ -178,7 +178,7 @@ would tint twice; `art/terrain.tres` comes from `tools/make_tileset.gd`.
 Polygons carry no UVs, so textures tile by vertex position and resizing a
 piece re-tiles it. Swapping the PNGs for real art needs no code change.
 
-There is no audio yet (`docs/BACKLOG.md`).
+There is no audio yet (#4, SWG-2).
 
 ### Web
 

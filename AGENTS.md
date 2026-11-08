@@ -47,8 +47,8 @@ depend on a script running.
 
 - How the game works: `docs/DESIGN.md` (+ canon docs in `game.json` `layout.docs`;
   `README.md` has the physics and level building in long form)
-- Open work: `docs/BACKLOG.md` · features in progress: `docs/features/`
-- The loop (backlog → feature doc → branch → PR → review → merge): gamedev `WORKFLOW.md`
+- Open work: GitHub issues on danielcope/swingformer (`docs/agents/issue-tracker.md`; the old backlog's history in `docs/BACKLOG.md`) · decisions: `docs/adr/` · words: `GLOSSARY.md` · features in progress: `docs/features/`
+- The loop (issue → feature doc → branch → PR → review → merge): gamedev `WORKFLOW.md`
 
 ## Local gotchas
 

@@ -148,6 +148,6 @@
     "art": "art/ — generated white placeholders (tools/make_art.gd), art/terrain.tres (tools/make_tileset.gd)",
     "tests": "test/*.gd (--script) and test/*.tscn (--quit-after); all listed in game.json",
     "tools": "tools/ — make_art, make_tileset, bake_level, tiles_from_blocks, check_level, lay_route",
-    "docs": "docs/DESIGN.md (how it works), docs/BACKLOG.md (open work), docs/features/ (specs), docs/DEPARTURES.md, README.md (the physics and level building, long form)"
+    "docs": "docs/DESIGN.md (how it works), GitHub issues (open work; the old backlog's history in docs/BACKLOG.md), docs/features/ (specs), docs/DEPARTURES.md, README.md (the physics and level building, long form)"
   }
 }
